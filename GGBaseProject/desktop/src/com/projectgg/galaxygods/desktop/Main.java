@@ -4,9 +4,12 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.projectgg.galaxygods.GalaxyGods;
 
-public class DesktopLauncher {
+public class Main {
 	public static void main (String[] arg) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new GalaxyGods(), config);
+		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+		cfg.title = "Galaxy Gods";
+        cfg.width = 480;
+        cfg.height = 320;
+		new LwjglApplication(new GalaxyGods(), cfg);
 	}
 }
