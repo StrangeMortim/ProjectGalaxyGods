@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="C:\VolumeF\Uni\Semester 6\SWP_2\ProjectGalaxyGods\libGdx\GGBaseProject\android\assets"><file name="data/badlogic.jpg" path="C:\VolumeF\Uni\Semester 6\SWP_2\ProjectGalaxyGods\libGdx\GGBaseProject\android\assets\data\badlogic.jpg"/></source></dataSet><dataSet config="debug"><source path="C:\VolumeF\Uni\Semester 6\SWP_2\ProjectGalaxyGods\libGdx\GGBaseProject\android\src\debug\assets"/></dataSet></merger>
