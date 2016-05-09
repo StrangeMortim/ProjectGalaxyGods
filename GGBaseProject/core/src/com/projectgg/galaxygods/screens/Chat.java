@@ -1,0 +1,130 @@
+package com.projectgg.galaxygods.screens;
+
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+
+/**
+ * Created by benja_000 on 07.05.2016.
+ */
+public class Chat implements Screen{
+    private Game game;
+    private SpriteBatch batch;
+    private Skin skin;
+    private Stage stage;
+    private Label labelDetails;
+    private Label labelMessage;
+    private TextButton button;
+    private TextArea textIPAddress;
+    private TextArea textMessage;
+
+    public Chat(Game pGame){
+        game=pGame;
+    }
+
+    @Override
+    public void show() {
+        stage = new Stage();
+        batch = new SpriteBatch();//
+
+        //Create a font
+        BitmapFont font = new BitmapFont();
+
+        skin = new Skin(Gdx.files.internal("desktop/assets/uiskin.json"));
+        skin.add("default", font);
+
+        Gdx.input.setInputProcessor(stage);
+
+        // Create our controls
+        labelDetails = new Label("Hier steht die IP-Adresse",skin);
+        labelMessage = new Label("Chat-Prototyp",skin);
+        button = new TextButton("Send message",skin);
+        textIPAddress = new TextArea("",skin);
+        textMessage = new TextArea("",skin);
+
+
+        // Vertical group groups contents vertically.  I suppose that was probably pretty obvious
+        VerticalGroup vg = new VerticalGroup().space(3).pad(5).fill();//.space(2).pad(5).fill();//.space(3).reverse().fill();
+        // Set the bounds of the group to the entire virtual display
+        vg.setBounds(0, 0, 1024, 768);
+
+        //Create a texture
+        Pixmap pixmap = new Pixmap((int)Gdx.graphics.getWidth()/4,(int)Gdx.graphics.getHeight()/10, Pixmap.Format.RGB888);
+        pixmap.setColor(Color.WHITE);
+        pixmap.fill();
+        skin.add("background",new Texture(pixmap));
+
+        //Create a button style
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.up = skin.newDrawable("background", Color.GRAY);
+        textButtonStyle.down = skin.newDrawable("background", Color.DARK_GRAY);
+        textButtonStyle.checked = skin.newDrawable("background", Color.DARK_GRAY);
+        textButtonStyle.over = skin.newDrawable("background", Color.LIGHT_GRAY);
+        textButtonStyle.font = skin.getFont("default");
+        skin.add("default", textButtonStyle);
+
+        TextButton playB = new TextButton("Zurück", skin);
+        playB.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                game.setScreen(new Menu(game));
+            }
+        });
+        playB.setPosition(Gdx.graphics.getWidth()/2 - Gdx.graphics.getWidth()/8 , 300);
+        stage.addActor(playB);
+
+        // Add them to scene
+        vg.addActor(labelDetails);
+        vg.addActor(labelMessage);
+        vg.addActor(textIPAddress);
+        vg.addActor(textMessage);
+        vg.addActor(button);
+
+        // Add scene to stage
+        stage.addActor(vg);
+
+    }
+
+    @Override
+    public void render(float delta) {
+        Gdx.gl.glClearColor(0,0,0,1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        stage.act(delta);
+        stage.draw();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
+    public void dispose() {
+        batch.dispose();
+    }
+}
