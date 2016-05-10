@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="GGServer-1.0-SNAPSHOT">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../GGServer" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../GGServer/src/main/java" />
+    </SOURCES>
+  </library>
+</component>
