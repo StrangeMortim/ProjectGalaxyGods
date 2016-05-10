@@ -11,5 +11,19 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-libGdx/GGBaseProject/workspace.xml
-libGdx/GGBaseProject/tasks.xml
+GGBaseProject/workspace.xml
+GGBaseProject/tasks.xml
+.gradle
+/build
+/.idea/workspace.xml
+/.idea/libraries
+/local.properties
+*.iml
+/captures
+/.gradle/2.10/
+/GGBaseProject/.gradle/2.10/taskArtifacts/fileSnapshots.bin
+/GGBaseProject/.gradle/2.10/taskArtifacts/outputFileStates.bin
+/GGBaseProject/.gradle/2.10/taskArtifacts/taskArtifacts.bin
+/GGBaseProject/.gradle/2.10/taskArtifacts/cache.properties
+/GGBaseProject/.gradle/2.10/taskArtifacts/cache.properties.lock
+/GGBaseProject/.gradle/2.10/taskArtifacts/fileHashes.bin
