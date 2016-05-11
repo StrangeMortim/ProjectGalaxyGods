@@ -8,8 +8,9 @@ public class Main {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "Galaxy Gods";
-        cfg.width = 480;
-        cfg.height = 320;
+		cfg.width = 1024;
+		cfg.height = 768;
+
 		new LwjglApplication(new GalaxyGods(), cfg);
 	}
 }

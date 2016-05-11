@@ -10,5 +10,5 @@ public interface ServerInterface extends Remote{
 
     public String sayHello() throws RemoteException;
 
-    public void shutdown() throws RemoteException;
+    public void createChat() throws RemoteException;
 }

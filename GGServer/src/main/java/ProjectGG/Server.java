@@ -12,6 +12,7 @@ public class Server implements ServerInterface {
 
     static Registry reg;
 
+
     public  Server(){}
 
     public String sayHello(){
@@ -19,9 +20,15 @@ public class Server implements ServerInterface {
         return "Hello World!";
     }
 
-    public void shutdown() throws RemoteException {
-        System.out.println("Server: Shutting down server...");
-        reg = null;
+    //returns null if something went wrong
+    public void createChat() throws RemoteException {
+        try {
+            ChatObject chat = new ChatObject();
+            ChatInterface stub = (ChatInterface) UnicastRemoteObject.exportObject(chat, 0);
+            Server.reg.rebind("Chat", stub);
+        } catch (RemoteException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public static void main(String[] args )
