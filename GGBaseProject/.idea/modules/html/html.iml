@@ -53,8 +53,8 @@
           <root url="file://$MODULE_DIR$/../../../html/webapp" relative="/" />
         </webroots>
         <sourceRoots>
-          <root url="file://$MODULE_DIR$/../../../html/src" />
           <root url="file://$MODULE_DIR$/../../../html/src/main/resources" />
+          <root url="file://$MODULE_DIR$/../../../html/src" />
         </sourceRoots>
       </configuration>
     </facet>

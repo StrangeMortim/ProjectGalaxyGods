@@ -1,4 +1,5 @@
 *.class
+.gradle
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
@@ -11,19 +12,27 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-GGBaseProject/workspace.xml
-GGBaseProject/tasks.xml
-.gradle
-/build
-/.idea/workspace.xml
-/.idea/libraries
-/local.properties
-*.iml
-/captures
-/.gradle/2.10/
-/GGBaseProject/.gradle/2.10/taskArtifacts/fileSnapshots.bin
-/GGBaseProject/.gradle/2.10/taskArtifacts/outputFileStates.bin
-/GGBaseProject/.gradle/2.10/taskArtifacts/taskArtifacts.bin
-/GGBaseProject/.gradle/2.10/taskArtifacts/cache.properties
-/GGBaseProject/.gradle/2.10/taskArtifacts/cache.properties.lock
-/GGBaseProject/.gradle/2.10/taskArtifacts/fileHashes.bin
+#intellij
+workspace.xml
+tasks.xml
+
+#gradle
+build/
+libraries/
+taskArtifacts/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+
+#maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+*.db
