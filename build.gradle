@@ -2,6 +2,7 @@ buildscript {
     repositories {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+
     }
     dependencies {
     }
@@ -25,6 +26,7 @@ allprojects {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        flatDir (name: 'derby lib', dirs: System.env['JAVA_HOME']+ '\\db\\lib')
     }
 }
 
@@ -38,6 +40,10 @@ project(":desktop") {
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+        compile ':derby'
+        compile ':derbyclient'
+        compile ':derbynet'
+        compile ':derbytools'
     }
 }
 

@@ -1,3 +1,6 @@
+##DB
+.CoffeeDB
+
 ## Java
 
 *.class
@@ -62,3 +65,5 @@ build/
 
 ## OS Specific
 .DS_Store
+CoffeeDB
+/*.log

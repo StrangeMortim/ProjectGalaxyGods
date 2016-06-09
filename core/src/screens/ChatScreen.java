@@ -128,7 +128,7 @@ public class ChatScreen implements Screen{
         table.setBounds(0,0,Gdx.graphics.getWidth()/3,Gdx.graphics.getHeight()/3);
         table.debug();
         chatMessagesList = new List(skin);
-        chatMessagesList.setItems(new String[]{"1"});
+        chatMessagesList.setItems((Object[]) new String[]{"1"});
         scroll=new ScrollPane(chatMessagesList);
         //scroll.setForceScroll(true,false);
         table.add(scroll).expandY();
