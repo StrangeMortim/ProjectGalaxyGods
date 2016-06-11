@@ -2,14 +2,12 @@ package projectgg.gag;
 
 import com.badlogic.gdx.Game;
 import screens.MenuScreen;
-import server.RMIsecurityManager;
 import server.ServerInterface;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.security.AccessControlException;
 
 public class GoldAndGreed extends Game {
 
