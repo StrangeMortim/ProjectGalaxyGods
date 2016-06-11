@@ -48,6 +48,7 @@ project(":desktop") {
         compile ':derbyclient'
         compile ':derbynet'
         compile ':derbytools'
+        compile 'org.apache.derby:derby:10.12.1.1'
     }
 }
 
