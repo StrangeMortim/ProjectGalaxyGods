@@ -274,6 +274,25 @@ public class DBManager
         }
     }
 
+
+    public static void buildGameSessionTable(Connection conn)
+    {
+        try
+        {
+            // Get a Statement object.
+            Statement stmt = conn.createStatement();
+            s.executeUpdate("CREATE TABLE GameSessions (id INT, session blob(16M))");
+            conn.commit();
+
+
+            System.out.println("Customer table created.");
+        } catch (SQLException ex)
+        {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+    }
+
+
     /**
      * The buildUnpaidOrderTable method creates
      * the UnpaidOrder table.
@@ -300,4 +319,6 @@ public class DBManager
             System.out.println("ERROR: " + ex.getMessage());
         }
     }
+
+
 }
