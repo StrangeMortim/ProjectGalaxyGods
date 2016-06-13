@@ -1,17 +1,40 @@
 package GameObject;
 
+import Action.*;
+import Player.*;
+import chat.Message;
+
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by benja_000 on 10.06.2016.
  */
 public class GameSession implements IGameSession{
-    //private List<Team> teams;
-   // private Map level;
-    //private Player active;
-    //private List<Buff>buffs;
-    //private HashMap<Account,Player> identities
-    //private ActionProcessor currentTurn
+    /**
+     *
+     */
+    private List<Team> teams;
+    /**
+     *
+     */
+    private Map level;
+    /**
+     *
+     */
+    private Player active;
+    /**
+     *
+     */
+    private List<Buff>buffs;
+    /**
+     *
+     */
+    private HashMap<Account,Player> identities;
+    /**
+     *
+     */
+    private ActionProcessor currentTurn;
     /**
      *
      */
@@ -29,15 +52,44 @@ public class GameSession implements IGameSession{
      */
     private boolean hasStarted;
 
-    public void update(){};
+    public void update(){}
 
-    //public void addBuffs(List<Buff> b){}
+    @Override
+    public void sendMessage(Message m) {
 
-    //public void removeBuff(Buff b){}
+    }
+
+    @Override
+    public void removeTeam(Team t) {
+
+    }
+
+    @Override
+    public void addTeam(Team t) {
+
+    }
+
+    ;
+
+    public void addBuffs(List<Buff> b){}
+
+    public void removeBuff(Buff b){}
 
     public void startTurn(){};
 
-    public void finishTurn(){};
+    public void finishTurn(){}
+
+    @Override
+    public void playerLeave(Player p) {
+
+    }
+
+    @Override
+    public boolean playerJoin(Account a, Player p, Team t) {
+        return false;
+    }
+
+    ;
 
     @Override
     public boolean save() {
@@ -49,6 +101,9 @@ public class GameSession implements IGameSession{
         return false;
     }
 
+
+
+    //Getter Setter
     public int getSessionChat() {
         return sessionChat;
     }
@@ -79,5 +134,53 @@ public class GameSession implements IGameSession{
 
     public void setMaxPlayersPerTeam(int maxPlayersPerTeam) {
         this.maxPlayersPerTeam = maxPlayersPerTeam;
+    }
+
+    public List<Team> getTeams() {
+        return teams;
+    }
+
+    public void setTeams(List<Team> teams) {
+        this.teams = teams;
+    }
+
+    public Map getLevel() {
+        return level;
+    }
+
+    public void setLevel(Map level) {
+        this.level = level;
+    }
+
+    public Player getActive() {
+        return active;
+    }
+
+    public void setActive(Player active) {
+        this.active = active;
+    }
+
+    public List<Buff> getBuffs() {
+        return buffs;
+    }
+
+    public void setBuffs(List<Buff> buffs) {
+        this.buffs = buffs;
+    }
+
+    public HashMap<Account, Player> getIdentities() {
+        return identities;
+    }
+
+    public void setIdentities(HashMap<Account, Player> identities) {
+        this.identities = identities;
+    }
+
+    public ActionProcessor getCurrentTurn() {
+        return currentTurn;
+    }
+
+    public void setCurrentTurn(ActionProcessor currentTurn) {
+        this.currentTurn = currentTurn;
     }
 }

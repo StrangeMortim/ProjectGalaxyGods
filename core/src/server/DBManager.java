@@ -1,5 +1,7 @@
 package server;
 
+import GameObject.GameSession;
+
 import java.sql.*;
 
 /**
@@ -13,6 +15,55 @@ import java.sql.*;
  */
 public class DBManager
 {
+    /**
+     * Laedt die GameSession mit spezifischem Namen.
+     * @param sessionName Name der GameSession
+     * @return GameSession mit dem jeweiligen Namen, sonst null.
+     */
+    public GameSession loadSession(String sessionName){
+        return null;
+    }
+
+    /**
+     *Speichert die uebergebene GameSession.
+     * @param session zu speichernde GameSession
+     * @return true, falls Speichern erfolgreich, sonst false.
+     */
+    public boolean saveSession(GameSession session){
+        return false;
+    }
+
+    /**
+     * Diese Methode realisiert die Registration eines neuen Accounts.
+     *
+     * @param name     Name vom Account
+     * @param password Passwort vom Account
+     * @return true, wenn Registration geklappt hat, sonst false
+     */
+    public boolean registerAccount(String name, String password){
+        return false;
+    }
+
+    /**
+     * Prueft, ob Eingaben zum Account korrekt sind.
+     *
+     * @param name     Name des Accounts
+     * @param password Passwort des Accounts
+     * @return true, wenn Pruefung erfolgreich, sonst false.
+     */
+    public boolean checkAccount(String name, String password){
+        return false;
+    }
+
+    /**
+     * Gibt alle GameSession-Namen zurueck, die auf dem Server gespeichert sind.
+     *
+     * @return Namen der GameSession-Objekte
+     */
+    public String getSessionList(){
+        return "";
+    }
+
     public DBManager()
     {
 
@@ -281,7 +332,7 @@ public class DBManager
         {
             // Get a Statement object.
             Statement stmt = conn.createStatement();
-            s.executeUpdate("CREATE TABLE GameSessions (id INT, session blob(16M))");
+            stmt.executeUpdate("CREATE TABLE GameSessions (id INT, session blob(16M))");
             conn.commit();
 
 
