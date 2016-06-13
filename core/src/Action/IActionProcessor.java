@@ -1,6 +1,8 @@
 package Action;
 
 
+import GameObject.GameSession;
+
 import java.util.List;
 
 public interface IActionProcessor {

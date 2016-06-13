@@ -166,7 +166,7 @@ public class DBManager
             stmt.execute("CREATE TABLE Coffee (" +
                     "Description CHAR(25), " +
                     "ProdNum CHAR(10) NOT NULL PRIMARY KEY, " +
-                    "Price DOUBLE " +
+                    "Price DOUBLE PRECISION" +
                     ")");
 
             // Insert row #1.
@@ -332,7 +332,7 @@ public class DBManager
         {
             // Get a Statement object.
             Statement stmt = conn.createStatement();
-            stmt.executeUpdate("CREATE TABLE GameSessions (id INT, session blob(16M))");
+            stmt.executeUpdate("CREATE TABLE GameSessions (id INT, session Blob)");
             conn.commit();
 
 
@@ -361,8 +361,8 @@ public class DBManager
                     "( CustomerNumber CHAR(10) NOT NULL REFERENCES Customer(CustomerNumber), " +
                     "  ProdNum CHAR(10) NOT NULL REFERENCES Coffee(ProdNum)," +
                     "  OrderDate CHAR(10)," +
-                    "  Quantity DOUBLE," +
-                    "  Cost DOUBLE )");
+                    "  Quantity DOUBLE PRECISION," +
+                    "  Cost DOUBLE PRECISION)");
 
             System.out.println("UnpaidOrder table created.");
         } catch (SQLException ex)

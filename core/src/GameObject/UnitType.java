@@ -11,7 +11,6 @@ public enum UnitType implements IUnitType {
      * @param name der Name des gesuchten Typs
      * @return der zugehoerige Typ
      */
-    @Override
     public UnitType getTypeByName(String name) {
         /*TODO implement*/
         return null;

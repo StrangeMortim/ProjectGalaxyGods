@@ -4,13 +4,14 @@ import Action.*;
 import Player.*;
 import chat.Message;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by benja_000 on 10.06.2016.
  */
-public class GameSession implements IGameSession{
+public class GameSession implements IGameSession, Serializable{
     /**
      *
      */

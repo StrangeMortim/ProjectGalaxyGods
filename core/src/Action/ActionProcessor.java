@@ -1,5 +1,7 @@
 package Action;
 
+import GameObject.GameSession;
+
 import java.util.List;
 
 public class ActionProcessor implements IActionProcessor {
@@ -18,7 +20,6 @@ public class ActionProcessor implements IActionProcessor {
      *
      * @param session
      */
-    @Override
     public void setSession(GameSession session) {
         this.session = session;
     }
