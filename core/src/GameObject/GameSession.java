@@ -52,6 +52,10 @@ public class GameSession implements IGameSession, Serializable{
      *
      */
     private boolean hasStarted;
+    /**
+     *
+     */
+    private Market market;
 
     public void update(){}
 
@@ -183,5 +187,13 @@ public class GameSession implements IGameSession, Serializable{
 
     public void setCurrentTurn(ActionProcessor currentTurn) {
         this.currentTurn = currentTurn;
+    }
+
+    public Market getMarket() {
+        return market;
+    }
+
+    public void setMarket(Market market) {
+        this.market = market;
     }
 }

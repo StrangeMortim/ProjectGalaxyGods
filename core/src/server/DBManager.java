@@ -1,7 +1,9 @@
 package server;
 
 import GameObject.GameSession;
+import GameObject.Market;
 
+import java.io.*;
 import java.sql.*;
 
 /**
@@ -89,6 +91,9 @@ public class DBManager
             // Build the UnpaidInvoice table.
             buildUnpaidOrderTable(conn);
 
+            buildGameSessionTable(conn);
+
+
             // Close the connection.
             conn.close();
         } catch (Exception e)
@@ -116,6 +121,7 @@ public class DBManager
             {
                 // Drop the UnpaidOrder table.
                 stmt.execute("DROP TABLE Unpaidorder");
+                stmt.execute("DROP TABLE GameSessions");
                 System.out.println("UnpaidOrder table dropped.");
             } catch (SQLException ex)
             {
@@ -336,10 +342,62 @@ public class DBManager
             conn.commit();
 
 
-            System.out.println("Customer table created.");
+            try {
+
+                GameSession gs = new GameSession();
+                gs.setRound(2);
+                gs.setHasStarted(false);
+                gs.setMaxPlayersPerTeam(2);
+                Market m = new Market();
+                m.setIron(1000);
+                m.setWood(2000);
+                gs.setMarket(m);
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(baos);
+                oos.writeObject(gs);
+                byte[] employeeAsBytes = baos.toByteArray();
+                PreparedStatement pstmt = conn
+                        .prepareStatement("INSERT INTO GameSessions (session) VALUES(?)");
+                ByteArrayInputStream bais = new ByteArrayInputStream(employeeAsBytes);
+                pstmt.setBinaryStream(1, bais, employeeAsBytes.length);
+                pstmt.executeUpdate();
+                pstmt.close();
+
+                System.out.println("GameSessionTable created.");
+
+            }catch(Exception e){
+                System.out.println("ERROR1: " + e.getMessage());
+            }
+
+
+
+
+           try{
+               Statement stmt2 = conn.createStatement();
+               ResultSet rs = stmt2.executeQuery("SELECT session FROM GameSessions");
+               while (rs.next()) {
+                   byte[] st =  rs.getBytes(1);
+
+                   ByteArrayInputStream baip = new ByteArrayInputStream(st);
+
+                   ObjectInputStream ois = new ObjectInputStream(baip);
+
+                   GameSession emp = (GameSession) ois.readObject();
+
+                   System.out.println(emp.getMarket().woodPrice());
+               }
+               stmt2.close();
+               rs.close();
+               conn.close();
+
+            }catch(Exception e){
+               System.out.println("ERROR2: " + e.getMessage());
+           }
+
         } catch (SQLException ex)
         {
-            System.out.println("ERROR: " + ex.getMessage());
+            System.out.println("ERROR3: " + ex.getMessage());
         }
     }
 
