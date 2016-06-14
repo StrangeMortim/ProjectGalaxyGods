@@ -1,9 +1,11 @@
 package Player;
 
+import java.io.Serializable;
+
 /**
  * Created by Fabi on 11.06.2016.
  */
-public class Player implements IPlayer{
+public class Player implements IPlayer,Serializable {
 
     private int[] ressources = new int[4];
     private TechnologyTree tree = new TechnologyTree();

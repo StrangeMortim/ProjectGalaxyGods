@@ -3,9 +3,10 @@ package GameObject;
 
 import Action.Buff;
 
+import java.rmi.Remote;
 import java.util.List;
 
-public interface IMap {
+public interface IMap extends Remote {
 
     /**
      * Initialisiert die Map, d.h. platziert alle Felder, Basen und Standardobjekte

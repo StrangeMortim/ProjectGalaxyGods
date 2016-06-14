@@ -1,12 +1,14 @@
 package Player;
 
 import chat.Chat;
+
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Fabi on 11.06.2016.
  */
-public class Team implements ITeam {
+public class Team implements ITeam,Serializable {
     private List<Player> players;
     private Chat chat = new Chat();
     private String color;

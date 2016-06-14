@@ -2,6 +2,7 @@ package chat;
 
 import Player.Player;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
  * Diese Klasse realisert das Message-Objekt, dass die Eigenschaften
  * einer Nachricht im Chat verkörpert.
  */
-public class Message implements IMessage {
+public class Message implements IMessage,Serializable {
     /**
      * Inhalt der Nachricht.
      */

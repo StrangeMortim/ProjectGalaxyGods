@@ -1,7 +1,9 @@
 package GameObject;
 
 
-public interface IUnitType {
+import java.rmi.Remote;
+
+public interface IUnitType extends Remote {
 
     /**
      * Ermöglicht Zugriff auf die verschiedenen UnitTypes ueber einen String

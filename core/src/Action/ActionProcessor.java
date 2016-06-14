@@ -2,9 +2,10 @@ package Action;
 
 import GameObject.GameSession;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ActionProcessor implements IActionProcessor {
+public class ActionProcessor implements IActionProcessor,Serializable {
 
     private List<Action> toProcess;
     private List<Buff> toReturn;

@@ -3,10 +3,11 @@ package GameObject;
 import Action.Buff;
 import Player.Player;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Unit implements IUnit {
+public class Unit implements IUnit,Serializable {
 
     protected UnitType type;
     protected int maxHp;

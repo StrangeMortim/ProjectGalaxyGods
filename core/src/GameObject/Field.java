@@ -3,10 +3,11 @@ package GameObject;
 import Action.Buff;
 import Player.Player;
 
+import java.io.Serializable;
 import java.util.List;
 
 
-public class Field implements IField {
+public class Field implements IField,Serializable {
 
     private int resType = -1;
     private int resValue = 0;

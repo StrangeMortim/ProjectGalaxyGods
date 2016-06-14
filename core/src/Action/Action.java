@@ -3,7 +3,9 @@ package Action;
 import GameObject.Unit;
 import Player.Player;
 
-public abstract class Action implements IAction{
+import java.io.Serializable;
+
+public abstract class Action implements IAction,Serializable {
 
     protected Unit origin;
     protected Unit target;

@@ -1,9 +1,10 @@
 package GameObject;
 
 
+import java.io.Serializable;
 import java.util.List;
 
-public enum Research implements IResearch {
+public enum Research implements IResearch,Serializable {
     ;
     /*TODO*/
 

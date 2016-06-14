@@ -2,9 +2,11 @@ package Player;
 
 
 import chat.Chat;
+
+import java.rmi.Remote;
 import java.util.List;
 
-public interface ITeam {
+public interface ITeam extends Remote {
 
     /*
     Getter und Setter fuer die Attribute

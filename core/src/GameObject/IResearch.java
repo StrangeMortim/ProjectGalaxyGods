@@ -1,9 +1,10 @@
 package GameObject;
 
 
+import java.rmi.Remote;
 import java.util.List;
 
-public interface IResearch {
+public interface IResearch extends Remote{
 
     /**
      * Ermoeglicht Zugriffe ueber einen String

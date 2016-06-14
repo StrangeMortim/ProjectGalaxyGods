@@ -6,7 +6,9 @@ import GameObject.Research;
 import GameObject.Unit;
 import GameObject.UnitType;
 
-public interface IBuff {
+import java.rmi.Remote;
+
+public interface IBuff extends Remote {
 
     /**
      * Getter und Setter

@@ -3,9 +3,10 @@ package Action;
 
 import GameObject.GameSession;
 
+import java.rmi.Remote;
 import java.util.List;
 
-public interface IActionProcessor {
+public interface IActionProcessor extends Remote {
 
     /**
      * Getter und setter

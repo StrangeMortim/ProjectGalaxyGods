@@ -1,7 +1,9 @@
 package Player;
 
 
-public class TechnologyTree implements ITechnologyTree {
+import java.io.Serializable;
+
+public class TechnologyTree implements ITechnologyTree,Serializable {
 
     private Boolean[] steel = new Boolean[5];
     private Boolean[] magic = new Boolean[5];

@@ -2,8 +2,10 @@ package GameObject;
 
 import Action.Action;
 
+import java.rmi.Remote;
 
-public interface IHero {
+
+public interface IHero extends Remote {
 
     /**
      * Getter und Setter

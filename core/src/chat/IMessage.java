@@ -2,6 +2,7 @@ package chat;
 
 import Player.Player;
 
+import java.rmi.Remote;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ import java.util.List;
  * Dieses Interface ist fuer die Klasse: Message.
  * Es realisiert die noetigen Eigenschaften von Nachrichten im Chat.
  */
-public interface IMessage {
+public interface IMessage extends Remote {
     /**
      * Macht die Nachricht sichtbar fuer ausgewaehlte Spieler.
      * @param p der ausgewaehlte Spieler

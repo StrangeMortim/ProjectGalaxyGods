@@ -1,9 +1,11 @@
 package GameObject;
 
+import java.io.Serializable;
+
 /**
  * Created by Fabi on 14.06.2016.
  */
-public enum Building implements IBuilding{
+public enum Building implements IBuilding,Serializable {
     LABOR, CASERNE;
 
 

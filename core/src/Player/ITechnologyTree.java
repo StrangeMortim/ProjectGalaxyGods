@@ -1,7 +1,9 @@
 package Player;
 
 
-public interface ITechnologyTree {
+import java.rmi.Remote;
+
+public interface ITechnologyTree extends Remote {
 
     /*
     Getter und Setter

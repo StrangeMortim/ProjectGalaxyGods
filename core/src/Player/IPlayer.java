@@ -1,7 +1,9 @@
 package Player;
 
 
-public interface IPlayer {
+import java.rmi.Remote;
+
+public interface IPlayer extends Remote {
 
     /**
     Getter und Setter fuer die Attribute

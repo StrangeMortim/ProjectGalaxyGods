@@ -3,6 +3,7 @@ package chat;
 import Player.Player;
 import projectgg.gag.GoldAndGreed;
 
+import java.io.Serializable;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -13,7 +14,7 @@ import java.util.List;
  * Created by Fabi on 11.05.2016. (mod. 12.06)
  * Die Chat-Klasse ermoeglicht den Nachrichtenaustausch zwischen den Spielern.
  */
-public class Chat implements ChatInterface {
+public class Chat implements ChatInterface,Serializable {
     /**
      * Nachrichtenverlauf dieses Chats.
      */

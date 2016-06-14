@@ -3,9 +3,10 @@ package GameObject;
 import Action.Buff;
 import Player.Player;
 
+import java.rmi.Remote;
 import java.util.List;
 
-public interface IField {
+public interface IField extends Remote {
 
     /**
      * Aktualisiert das Objekt auf dem Feld

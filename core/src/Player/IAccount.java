@@ -1,7 +1,9 @@
 package Player;
 
 
-public interface IAccount {
+import java.rmi.Remote;
+
+public interface IAccount extends Remote {
 
     /**
     Getter und Setter

@@ -3,10 +3,12 @@ package GameObject;
 import Action.Action;
 import Player.Player;
 
+import java.io.Serializable;
+
 /**
  * Created by Fabi on 11.06.2016.
  */
-public class Hero extends Unit implements IHero {
+public class Hero extends Unit implements IHero,Serializable {
 
     private Action leftHand;
     private Action rightHand;

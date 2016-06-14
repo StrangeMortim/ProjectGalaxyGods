@@ -1,7 +1,9 @@
 package Player;
 
 
-public class Account implements IAccount {
+import java.io.Serializable;
+
+public class Account implements IAccount,Serializable {
 
     private String name;
     private String password;

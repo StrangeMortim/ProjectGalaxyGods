@@ -3,9 +3,10 @@ package GameObject;
 import Action.Buff;
 import Player.Player;
 
+import java.rmi.Remote;
 import java.util.List;
 
-public interface IUnit {
+public interface IUnit extends Remote {
 
     /**
      * Aktualisiert alle Werte der Einheit die nicht direkt bearbeitet werden

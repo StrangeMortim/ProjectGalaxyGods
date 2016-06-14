@@ -2,10 +2,11 @@ package GameObject;
 
 import Action.Buff;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Map implements IMap {
+public class Map implements IMap,Serializable {
 
     private Field[][] fields = new Field[8][8];
     private int maxPlayers = 4;

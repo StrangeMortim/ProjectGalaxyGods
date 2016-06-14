@@ -3,9 +3,10 @@ package GameObject;
 
 import Action.Action;
 
+import java.rmi.Remote;
 import java.util.List;
 
-public interface IBase {
+public interface IBase extends Remote {
 
     /**
      * Erstellt eine neue Unit vom uebergebenen Typ

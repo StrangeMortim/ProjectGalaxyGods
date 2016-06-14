@@ -4,10 +4,11 @@ package GameObject;
 import Action.Buff;
 import Player.Player;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.Map;
 
-public class Base extends Unit implements IBase {
+public class Base extends Unit implements IBase,Serializable {
 
     private int labRoundsRemaining=-1;
     private int caserneRoundsRemaining=-1;
