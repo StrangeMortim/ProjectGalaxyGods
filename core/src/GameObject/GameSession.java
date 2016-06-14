@@ -13,7 +13,11 @@ import java.util.List;
  */
 public class GameSession implements IGameSession, Serializable{
     /**
-     *
+     * Name der GameSession
+     */
+    private String name;
+    /**
+     * 
      */
     private List<Team> teams;
     /**
@@ -195,5 +199,13 @@ public class GameSession implements IGameSession, Serializable{
 
     public void setMarket(Market market) {
         this.market = market;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
