@@ -10,7 +10,7 @@ public class Movement extends Action implements IMovement{
     private int yAmount = 0;
 
     public Movement(Unit origin, Unit target, Player player, ActionProcessor processor) {
-        super(origin, target, player, processor);
+        super(origin, target, player);
     }
 
     @Override
