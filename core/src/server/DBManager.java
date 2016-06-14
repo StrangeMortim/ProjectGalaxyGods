@@ -132,7 +132,7 @@ public class DBManager
         {
             // Get a Statement object.
             Statement stmt = conn.createStatement();
-            stmt.executeUpdate("CREATE TABLE GameSessions (id VARCHAR(MAX), session Blob)");
+            stmt.executeUpdate("CREATE TABLE GameSessions (id VARCHAR(15), session Blob)");
             conn.commit();
 
 
