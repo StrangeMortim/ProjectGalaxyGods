@@ -1,6 +1,8 @@
 package Action;
 
 
+import GameObject.GameSession;
+
 public interface IBuff {
 
     /**
@@ -33,4 +35,8 @@ public interface IBuff {
     public void setMovePoints(int movePoints);
 
     public int getMovePoints();
+
+    public void setGameSession(GameSession session);
+
+    public GameSession getGameSession();
 }

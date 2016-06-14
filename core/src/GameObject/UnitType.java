@@ -48,4 +48,12 @@ public enum UnitType implements IUnitType {
     public String getSpriteName() {
         return null;
     }
+
+    @Override
+    public int getRecruitingTime(){ return 0;}
+
+    @Override
+    public int[] getRessourceCost() {
+        return new int[4];
+    }
 }
