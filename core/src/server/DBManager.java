@@ -152,9 +152,10 @@ public class DBManager
                 oos.writeObject(gs);
                 byte[] employeeAsBytes = baos.toByteArray();
                 PreparedStatement pstmt = conn
-                        .prepareStatement("INSERT INTO GameSessions (session) VALUES(?)");
+                        .prepareStatement("INSERT INTO GameSessions (id, session) VALUES(?,?)");
                 ByteArrayInputStream bais = new ByteArrayInputStream(employeeAsBytes);
-                pstmt.setBinaryStream(1, bais, employeeAsBytes.length);
+                pstmt.setBinaryStream(2, bais, employeeAsBytes.length);
+                pstmt.setString(1,"jo");
                 pstmt.executeUpdate();
                 pstmt.close();
 
@@ -182,9 +183,20 @@ public class DBManager
                    System.out.println(emp.getMarket().woodPrice());
                }
                stmt2.close();
-               rs.close();
-               conn.close();
 
+
+
+               Statement test = conn.createStatement();
+               rs=test.executeQuery("SELECT id From GameSessions");
+               while (rs.next()) {
+                   String emp = rs.getString(1);
+
+                   System.out.println(emp);
+               }
+               test.close();
+               rs.close();
+
+               conn.close();
             }catch(Exception e){
                System.out.println("ERROR2: " + e.getMessage());
            }
