@@ -1,10 +1,12 @@
 package Action;
 
+import GameObject.GameSession;
 import GameObject.Unit;
 import Player.Player;
 
 public class Buff extends Action implements IBuff{
 
+    private GameSession buffParent = null;
     private boolean permanent;
     private int roundsLeft;
     private int atk;
@@ -14,8 +16,8 @@ public class Buff extends Action implements IBuff{
     private int movePoints;
 
 
-    public Buff(Unit origin, Unit target, Player player, ActionProcessor processor) {
-        super(origin, target, player, processor);
+    public Buff(Unit origin, Unit target, Player player) {
+        super(origin, target, player);
     }
 
     @Override
@@ -96,5 +98,15 @@ public class Buff extends Action implements IBuff{
     @Override
     public int getMovePoints() {
         return movePoints;
+    }
+
+    @Override
+    public void setGameSession(GameSession session) {
+        this.buffParent = session;
+    }
+
+    @Override
+    public GameSession getGameSession() {
+        return buffParent;
     }
 }

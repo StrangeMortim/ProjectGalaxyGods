@@ -4,16 +4,16 @@ import Player.Player;
 
 public class Unit implements IUnit {
 
-    private UnitType type;
-    private int maxHp;
-    private int currentHp;
-    private int atk;
-    private int def;
-    private int movePoints;
-    private int range;
-    private String spriteName = "";
-    private Player owner;
-    private int[] ressources = new int[2];
+    protected UnitType type;
+    protected int maxHp;
+    protected int currentHp;
+    protected int atk;
+    protected int def;
+    protected int movePoints;
+    protected int range;
+    protected String spriteName = "";
+    protected Player owner;
+    protected int[] ressources = new int[2];
 
     public Unit(UnitType type, Player owner){
         if(type == null || owner == null)

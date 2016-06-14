@@ -1,7 +1,9 @@
 package GameObject;
 
 
+import Action.Action;
 import Action.Buff;
+import Action.UnitCreationAction;
 import Player.Player;
 
 import java.util.ArrayList;
@@ -35,12 +37,32 @@ public class Base extends Unit implements IBase {
      * @return ob der Vorgang moeglich ist(und dementsprechend ausgefuehrt wird)
      */
     @Override
-    public boolean createUnit(UnitType type) {
-                /*TODO implement*/
-        return false;
+    public Action createUnit(UnitType type) {
+        UnitCreationAction result = null;
+        if(avaibleUnits.contains(type))
+        {
+            int[] cost = type.getRessourceCost();
+            int[] ressourcesAvailable = owner.getRessources();
+
+            if(cost[0] < ressourcesAvailable[0]
+            && cost[1] < ressourcesAvailable[1]
+            && cost[2] < ressourcesAvailable[2]
+            && cost[3] < ressourcesAvailable[3])
+            {
+                for(int i = 0; i < 4; ++i)
+                owner.getRessources()[i] -= cost[i];
+
+                result = new UnitCreationAction(this,null,owner);
+                result.setType(type);
+            }
+        }
+        /*TODO check*/
+        return result;
     }
 
     /**
+     * Wird direkt ausgefuehrt nicht erst am Ende der Runde
+     *
      * Bricht das Erstellen der uebergebenen Einheit ab,
      * wenn diese Einheit bereits fertig erstellt ist oder nicht existiert(null) passiert nichts)
      *
@@ -48,7 +70,18 @@ public class Base extends Unit implements IBase {
      */
     @Override
     public void abortCreation(Unit which) {
-                    /*TODO implement*/
+        if(recruiting.containsKey(which))
+        {
+            UnitType whichType = which.getType();
+            int[] originalCost = whichType.getRessourceCost();
+            float ressourcesRemaining = recruiting.get(which) / whichType.getRecruitingTime();
+
+            for(int i = 0; i<4; ++i)
+            owner.getRessources()[i] += (ressourcesRemaining* originalCost[i]);
+
+            recruiting.remove(which);
+        }
+                    /*TODO check*/
     }
 
     /**
@@ -162,5 +195,9 @@ public class Base extends Unit implements IBase {
     @Override
     public List<Research> getResearched() {
         return researched;
+    }
+
+    public HashMap<Unit, Integer> getRecruiting(){
+        return recruiting;
     }
 }

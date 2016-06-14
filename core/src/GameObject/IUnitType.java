@@ -22,4 +22,6 @@ public interface IUnitType {
     public int getMovePoints();
     public int getRange();
     public String getSpriteName();
+    public int getRecruitingTime();
+    public int[] getRessourceCost();
 }
