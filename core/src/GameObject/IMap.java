@@ -1,6 +1,10 @@
 package GameObject;
 
 
+import Action.Buff;
+
+import java.util.List;
+
 public interface IMap {
 
     /**
@@ -22,7 +26,7 @@ public interface IMap {
     /**
      * Aktualisiert alle Felder der Karte ueber ihre update-Methode
      */
-    public void update();
+    public List<Buff> update();
 
     /**
      * Gibt ein spezielles Feld zurueck

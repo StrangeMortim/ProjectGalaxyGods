@@ -1,6 +1,9 @@
 package GameObject;
 
+import Action.Buff;
 import Player.Player;
+
+import java.util.List;
 
 
 public class Field implements IField {
@@ -14,6 +17,7 @@ public class Field implements IField {
     private int roundsRemain = -1;
     private String spriteName = "";
     private boolean hasMine = false;
+    private Map map = null;
 
     public Field(int resType, int resValue, int xPos, int yPos){
         if(resType < -1 || resType > 4 || xPos < 0 || xPos > 8 || yPos < 0 || yPos >8)
@@ -29,8 +33,8 @@ public class Field implements IField {
      * Aktualisiert das Objekt auf dem Feld
      */
     @Override
-    public void update() {
-        current.update();
+    public List<Buff> update() {
+        return current.update();
     }
 
     /**
@@ -128,6 +132,7 @@ public class Field implements IField {
     @Override
     public void setCurrent(IUnit current) {
         this.current = current;
+        current.setField(this);
     }
 
     @Override
@@ -179,6 +184,16 @@ public class Field implements IField {
     @Override
     public boolean getHasMine() {
         return hasMine;
+    }
+
+    @Override
+    public void setMap(Map map) {
+        this.map = map;
+    }
+
+    @Override
+    public Map getMap() {
+        return map;
     }
 
 

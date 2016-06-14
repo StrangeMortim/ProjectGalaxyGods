@@ -1,13 +1,16 @@
 package GameObject;
 
+import Action.Buff;
 import Player.Player;
+
+import java.util.List;
 
 public interface IUnit {
 
     /**
      * Aktualisiert alle Werte der Einheit die nicht direkt bearbeitet werden
      */
-    public void update();
+    public List<Buff> update();
 
     /**
      * getter und setter
@@ -51,4 +54,8 @@ public interface IUnit {
     public void setRessources(int ressources[]);
 
     public int[] getRessources();
+
+    public void setField(Field field);
+
+    public Field getField();
 }

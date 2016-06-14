@@ -57,7 +57,15 @@ public class GameSession implements IGameSession, Serializable{
      */
     private Market market;
 
+    @Override
     public void update(){}
+
+    @Override
+    public void registerUnit(Unit u) {
+        for(Buff b: buffs)
+            if(b.getPlayer() == u.getOwner() && b.appliesForUnit(u.getType()))
+                buffs.add(b.getPersonalCopy(u));
+    }
 
     @Override
     public void sendMessage(Message m) {

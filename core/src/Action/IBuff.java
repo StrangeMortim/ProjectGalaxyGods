@@ -2,6 +2,9 @@ package Action;
 
 
 import GameObject.GameSession;
+import GameObject.Research;
+import GameObject.Unit;
+import GameObject.UnitType;
 
 public interface IBuff {
 
@@ -39,4 +42,12 @@ public interface IBuff {
     public void setGameSession(GameSession session);
 
     public GameSession getGameSession();
+
+    public void setSource(Research source);
+
+    public Research getSource();
+
+    public boolean appliesForUnit(UnitType unit);
+
+    public Buff getPersonalCopy(Unit u);
 }

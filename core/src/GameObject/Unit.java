@@ -1,6 +1,10 @@
 package GameObject;
 
+import Action.Buff;
 import Player.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Unit implements IUnit {
 
@@ -13,6 +17,7 @@ public class Unit implements IUnit {
     protected int range;
     protected String spriteName = "";
     protected Player owner;
+    protected Field currentField = null;
     protected int[] ressources = new int[2];
 
     public Unit(UnitType type, Player owner){
@@ -29,8 +34,8 @@ public class Unit implements IUnit {
      * Aktualisiert alle Werte der Einheit die nicht direkt bearbeitet werden
      */
     @Override
-    public void update() {
-        /*TODO override in base*/
+    public List<Buff> update() {
+        return new ArrayList<Buff>();        /*TODO override in base*/
     }
 
     /**
@@ -154,5 +159,15 @@ public class Unit implements IUnit {
     @Override
     public int[] getRessources() {
         return ressources;
+    }
+
+    @Override
+    public void setField(Field field) {
+        this.currentField = field;
+    }
+
+    @Override
+    public Field getField() {
+        return currentField;
     }
 }

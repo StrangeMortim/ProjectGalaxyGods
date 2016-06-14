@@ -1,13 +1,18 @@
 package GameObject;
 
+import Action.Buff;
 import Player.Player;
+
+import java.util.List;
 
 public interface IField {
 
     /**
      * Aktualisiert das Objekt auf dem Feld
+     *
+     * @return gibt eine Liste mit allen beim update generierten Buffs zurück
      */
-    public void update();
+    public List<Buff> update();
 
     /**
      * Faengt an eine Basis auf dem Feld zu bauen
@@ -71,4 +76,8 @@ public interface IField {
     public void setHasMine(boolean hasMine);
 
     public boolean getHasMine();
+
+    public void setMap(Map map);
+
+    public Map getMap();
 }

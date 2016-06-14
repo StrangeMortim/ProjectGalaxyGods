@@ -1,5 +1,10 @@
 package GameObject;
 
+import Action.Buff;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Map implements IMap {
 
     private Field[][] fields = new Field[8][8];
@@ -37,10 +42,14 @@ public class Map implements IMap {
      * Aktualisiert alle Felder der Karte ueber ihre update-Methode
      */
     @Override
-    public void update() {
+    public List<Buff> update() {
+        List<Buff> result = new ArrayList<Buff>();
+
         for(Field[] f: fields)
             for(Field f2: f)
-                f2.update();
+                result.addAll(f2.update());
+
+        return result;
     }
 
     /**
@@ -51,8 +60,9 @@ public class Map implements IMap {
      */
     @Override
     public Field getField(int x, int y) {
-        if(x < 0 || y < 0)
-            throw new IllegalArgumentException("Coordinates must not be negative");
+        if(x < 0 || y < 0 || x > fields.length || y > fields[0].length)
+           return null;
+
 
         return fields[x][y];
     }

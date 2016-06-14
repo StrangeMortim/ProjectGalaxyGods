@@ -34,7 +34,8 @@ public class Movement extends Action implements IMovement{
     }
 
     @Override
-    public void execute(){
+    public boolean execute(){
+        return true;
         /* TODO*/
     }
 }

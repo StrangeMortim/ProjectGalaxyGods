@@ -11,7 +11,8 @@ public class Fight extends Action {
     }
 
     @Override
-    public void execute(){
+    public boolean execute(){
+        return true;
         /* TODO; */
     }
 }

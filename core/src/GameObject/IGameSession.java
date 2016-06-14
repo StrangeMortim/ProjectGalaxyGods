@@ -15,6 +15,12 @@ public interface IGameSession {
      *
      */
     public void update();
+
+    /**
+     * Registriert eine neue Einheit und gibt ihr alle Buffs
+     */
+    public void registerUnit(Unit u);
+
     /**
      *
      * @param t

@@ -1,6 +1,8 @@
 package GameObject;
 
 
+import java.util.List;
+
 public interface IResearch {
 
     /**
@@ -12,4 +14,18 @@ public interface IResearch {
         /*TODO*/
         return null;
     };
+
+    public int[] getRessourceCost();
+
+    public int[] getValues();
+
+    /**
+     * @return  Entweder alle Unit für die die Werte gelten oder die Unit die durch diese Forschung freigeschaltet wird
+     * letzteres gekennzeichnet durch nur 0 in getValues
+     */
+    public List<UnitType> getTargets();
+
+    public int getResearchTime();
+
+    public boolean isPermanet();
 }

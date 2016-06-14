@@ -25,7 +25,14 @@ public abstract class Action implements IAction{
      * Fuehrt die Action aus, die jeweiligen Implementationen bestimmen den Inhalt dieser Methode
      */
     @Override
-    public void execute() {
+    public boolean execute() {
+        return true;
+    }
 
+    /**
+     * Getter/setter
+     */
+    public Player getPlayer(){
+        return player;
     }
 }
