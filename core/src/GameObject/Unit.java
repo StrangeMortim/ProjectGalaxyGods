@@ -27,7 +27,14 @@ public class Unit implements IUnit,Serializable {
 
         this.type = type;
         this.owner = owner;
-        /*TODO speccific values*/
+        this.maxHp = type.getMaxHp();
+        this.currentHp = this.maxHp;
+        this.atk = type.getAtk();
+        this.def = type.getDef();
+        this.movePoints = type.getMovePoints();
+        this.range = type.getRange();
+        this.spriteName = type.getSpriteName();
+        /*TODO check*/
     }
 
 

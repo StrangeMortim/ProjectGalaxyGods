@@ -31,8 +31,11 @@ public class Chat implements ChatInterface,Serializable {
     public Chat(){  }
 
     public void addMessage(String player, String msg) {
+        if(player == null)
+            throw new IllegalArgumentException("addMessage: Player is null");
+
         Message m = new Message();
-        m.SetContent(player +" . "+ msg);
+        m.SetContent(player +": "+ msg);
         backLog.add(m);
     }
 
@@ -45,7 +48,7 @@ public class Chat implements ChatInterface,Serializable {
      */
     @Override
     public void deleteMessage(Message m) {
-        getBacklog().remove(m);
+        backLog.remove(m);
     }
 
     /**
@@ -55,7 +58,13 @@ public class Chat implements ChatInterface,Serializable {
      */
     @Override
     public void addParticipant(Player p) {
-     this.getParticipants().add(p);
+     if(p == null)
+         throw new IllegalArgumentException("addParticipant: player is null");
+
+     if(readOnly.contains(p))
+         throw  new IllegalArgumentException("The Player is blocked from writing!");
+
+        this.getParticipants().add(p);
     }
 
     /**
@@ -63,7 +72,7 @@ public class Chat implements ChatInterface,Serializable {
      */
     @Override
     public void clear() {
-     getBacklog().clear();
+     backLog.clear();
     }
 
     /**
@@ -74,7 +83,10 @@ public class Chat implements ChatInterface,Serializable {
      */
     @Override
     public void blockPlayer(Player p) {
-     getReadOnly().add(p);
+     if(p == null)
+         throw new IllegalArgumentException("blockPlayer: player is null");
+
+        readOnly.add(p);
     }
 
     /**
@@ -84,7 +96,11 @@ public class Chat implements ChatInterface,Serializable {
      */
     @Override
     public void removeParticipant(Player p) {
-     participants.remove(p);
+     if(p == null)
+         throw new IllegalArgumentException("removeParticipant: player is null");
+
+        readOnly.remove(p);
+        participants.remove(p);
     }
 
 

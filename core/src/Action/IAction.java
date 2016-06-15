@@ -18,4 +18,6 @@ public interface IAction extends Remote {
      * Getter/setter
      */
     public Player getPlayer();
+
+    public void setParent(ActionProcessor processor);
 }

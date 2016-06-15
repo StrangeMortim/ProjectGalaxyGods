@@ -34,7 +34,13 @@ public abstract class Action implements IAction,Serializable {
     /**
      * Getter/setter
      */
+    @Override
     public Player getPlayer(){
         return player;
+    }
+
+    @Override
+    public void setParent(ActionProcessor processor){
+        this.parent = processor;
     }
 }

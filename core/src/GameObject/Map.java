@@ -14,6 +14,15 @@ public class Map implements IMap,Serializable {
     private String levelName = "";
 
 
+    public Map(String levelName, int maxPlayers, int minPlayers){
+        if (levelName.equals("") || maxPlayers > 4 || minPlayers < 2 || maxPlayers < minPlayers)
+            throw new IllegalArgumentException("Map: Constructor invalid values");
+
+        this.levelName = levelName;
+        this.maxPlayers = maxPlayers;
+        this.minPlayers = minPlayers;
+    }
+
     /**
      * Initialisiert die Map, d.h. platziert alle Felder, Basen und Standardobjekte
      */

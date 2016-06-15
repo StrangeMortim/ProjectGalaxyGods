@@ -30,7 +30,11 @@ public class Message implements IMessage,Serializable {
      * @param p der ausgewaehlte Spieler
      */
     public void makeVisibleFor(Player p) {
+        if(p == null)
+            throw new IllegalArgumentException("MakeVisibleFor: the Player is null");
 
+            if(!visibleFor.contains(p))
+                visibleFor.add(p);
     }
 
 
