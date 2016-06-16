@@ -27,6 +27,14 @@ public class Base extends Unit implements IBase,Serializable {
     public List<Buff> update(){
         List<Buff> result = new ArrayList<Buff>();
 
+        //receive ressources from near units
+        currentField.getNearUnits().stream().filter(u -> u.getOwner() == this.owner).forEach(u -> {
+            owner.getRessources()[0] += u.getRessources()[0];
+            u.getRessources()[0] = 0;
+            owner.getRessources()[1] += u.getRessources()[1];
+            u.getRessources()[1] = 0;
+        });
+
         //count down if lab is in building state
         if(labRoundsRemaining > 0)
             labRoundsRemaining--;

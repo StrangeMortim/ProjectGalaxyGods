@@ -40,6 +40,11 @@ public abstract class Action implements IAction,Serializable {
     }
 
     @Override
+    public Unit getOrigin(){
+        return origin;
+    }
+
+    @Override
     public void setParent(ActionProcessor processor){
         this.parent = processor;
     }

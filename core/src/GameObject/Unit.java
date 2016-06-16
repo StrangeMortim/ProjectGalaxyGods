@@ -19,7 +19,7 @@ public class Unit implements IUnit,Serializable {
     protected String spriteName = "";
     protected Player owner;
     protected Field currentField = null;
-    protected int[] ressources = new int[2];
+    protected int[] ressources = new int[4];
 
     public Unit(UnitType type, Player owner){
         if(type == null || owner == null)

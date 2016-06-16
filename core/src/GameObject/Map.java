@@ -62,6 +62,12 @@ public class Map implements IMap,Serializable {
         return result;
     }
 
+    @Override
+    public boolean checkMovement(int xPos, int yPos) {
+        Field toCheck = fields[xPos][yPos];
+        return (toCheck.getCurrent() == null && toCheck.getHasMine());
+    }
+
     /**
      * Gibt ein spezielles Feld zurueck
      *

@@ -24,6 +24,12 @@ public interface IField extends Remote {
     public boolean buildBase(Player player);
 
     /**
+     * Searches all Unit in the direct environment to the Field(the (max) 8 surrounding Fields
+     * @return the found Units
+     */
+    public List<Unit> getNearUnits();
+
+    /**
      * Bricht den Bau der Basis ab, findet keiner statt passiert nichts
      *
      * @param player der Spieler der versucht den Bau abzubrechen
@@ -36,7 +42,7 @@ public interface IField extends Remote {
      *
      * @return gibt an ob das Starten erfolgreich war
      */
-    public boolean buildMine();
+    public boolean buildMine(Player player);
 
 
     /**
@@ -58,9 +64,9 @@ public interface IField extends Remote {
 
     public int getYPos();
 
-    public void setCurrent(IUnit current);
+    public void setCurrent(Unit current);
 
-    public IUnit getCurrent();
+    public Unit getCurrent();
 
     public void setWalkable(boolean walkable);
 

@@ -29,6 +29,8 @@ public interface IMap extends Remote {
      */
     public List<Buff> update();
 
+    public boolean checkMovement(int xPos, int yPos);
+
     /**
      * Gibt ein spezielles Feld zurueck
      */

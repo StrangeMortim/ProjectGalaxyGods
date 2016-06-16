@@ -8,6 +8,7 @@ import java.io.Serializable;
 public class Player implements IPlayer,Serializable {
 
     private int[] ressources = new int[4];
+    private int[] ressourcesBoni = new int[4];
     private TechnologyTree tree = new TechnologyTree();
     private Boolean turn = false;
     private Account account;
@@ -28,6 +29,11 @@ public class Player implements IPlayer,Serializable {
     @Override
     public int[] getRessources() {
         return ressources;
+    }
+
+    @Override
+    public int[] getRessourceBoni() {
+        return ressourcesBoni;
     }
 
     @Override

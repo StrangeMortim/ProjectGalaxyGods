@@ -23,6 +23,11 @@ public interface IGameSession extends Remote {
     public void registerUnit(Unit u);
 
     /**
+     * Entfernt alle Buffs für die übergebene Einheit
+     */
+    public void removeUnit(Unit u);
+
+    /**
      *
      * @param t
      */
@@ -78,5 +83,10 @@ public interface IGameSession extends Remote {
      * @return
      */
     public boolean finish();
+
+    /**
+     * Getter für die Map
+     */
+    public Map getMap();
 
 }

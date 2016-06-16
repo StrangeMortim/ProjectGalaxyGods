@@ -1,5 +1,6 @@
 package Action;
 
+import GameObject.Unit;
 import Player.Player;
 
 import java.rmi.Remote;
@@ -18,6 +19,8 @@ public interface IAction extends Remote {
      * Getter/setter
      */
     public Player getPlayer();
+
+    public Unit getOrigin();
 
     public void setParent(ActionProcessor processor);
 }

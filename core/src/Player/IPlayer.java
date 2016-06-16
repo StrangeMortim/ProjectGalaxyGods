@@ -12,6 +12,8 @@ public interface IPlayer extends Remote {
 
     public int[] getRessources();
 
+    public int[] getRessourceBoni();
+
     public void setTechTree(TechnologyTree tree);
 
     public TechnologyTree getTechTree();
