@@ -17,7 +17,7 @@ public class GameSession implements IGameSession, Serializable{
      */
     private String name;
     /**
-     * 
+     *
      */
     private List<Team> teams;
     /**
@@ -206,6 +206,10 @@ public class GameSession implements IGameSession, Serializable{
     }
 
     public void setName(String name) {
+        if(name.length()>100){
+            this.name=name.substring(0,99);
+        }else{
         this.name = name;
+        }
     }
 }
