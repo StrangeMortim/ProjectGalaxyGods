@@ -1,12 +1,15 @@
 package Action;
 
-import GameObject.GameSession;
-import GameObject.Unit;
+import GameObject.*;
 import Player.Player;
+
+import java.util.List;
 
 public class Buff extends Action implements IBuff{
 
-    private GameSession buffParent = null;
+    private GameSession buffParent = null;      //the game session where this buff belongs to
+    private Research source;                   //the research which this buff realizes
+    private List<UnitType> appliesFor = null; //contains all unit types which get a bonus, null equals 'ALL'
     private boolean permanent;
     private int roundsLeft;
     private int atk;
@@ -14,15 +17,75 @@ public class Buff extends Action implements IBuff{
     private int hp;
     private int range;
     private int movePoints;
-
+    private boolean firstTime = true;
 
     public Buff(Unit origin, Unit target, Player player) {
         super(origin, target, player);
     }
 
     @Override
-    public void execute(){
-        /*TODO*/
+    public boolean execute(){
+        //if first time executed, do stuff
+        if(firstTime){
+
+            /*
+            special case, buff only adds a new avaible unit
+            returns true after that because once it's done, the buff can be removed
+             */
+            if(atk == 0 && def == 0 && hp == 0 && range == 0 && movePoints == 0){
+                if(origin != null && origin instanceof Base) {
+                    ((Base) origin).getAvaibleUnits().add(appliesFor.get(0));
+                    return true;
+                }else
+                    throw new IllegalArgumentException("A research buff must be create from a not null Base");
+            } else {
+               //usual case, buff applies it's values
+                if(origin != null){
+                    origin.setAtk(origin.getAtk()+this.atk);
+                    origin.setDef(origin.getDef()+this.def);
+                    origin.setMaxHp(origin.getMaxHp()+this.hp);
+                    origin.setRange(origin.getRange()+this.range);
+                    origin.setMovePoints(origin.getMovePoints()+this.movePoints);
+                    firstTime = false;   //set to false so it's not done again
+                } else {
+                    throw new IllegalArgumentException("Origin is null");
+                }
+            }
+        }
+
+        /*
+        if the buff is not permanent, count down the remaining rounds
+        and if they reach 0, remove all the values an return true, so it can be removed
+         */
+        if(!permanent) {
+            roundsLeft--;
+            if(roundsLeft <= 0){
+                if(origin != null){
+                    origin.setAtk(origin.getAtk()-this.atk);
+                    origin.setDef(origin.getDef()-this.def);
+                    origin.setMaxHp(origin.getMaxHp()-this.hp);
+                    origin.setRange(origin.getRange()-this.range);
+                    origin.setMovePoints(origin.getMovePoints()-this.movePoints);
+                    return true;
+                } else {
+                    throw new IllegalArgumentException("Origin is null");
+                }
+            }
+        }
+
+        //permanent or rounds remain-> return false for not finished
+        return false;
+        /*TODO check*/
+    }
+
+    @Override
+    public Buff getPersonalCopy(Unit u){
+        Buff result = new Buff(u, null, this.player);
+        result.setSource(this.source);
+        result.setRoundsLeft(this.roundsLeft);
+        result.setGameSession(this.buffParent);
+
+        return result;
     }
 
     /**
@@ -108,5 +171,37 @@ public class Buff extends Action implements IBuff{
     @Override
     public GameSession getGameSession() {
         return buffParent;
+    }
+
+    //sets all the values according to the given research
+    @Override
+    public void setSource(Research source) {
+            this.source = source;
+            this.permanent = source.isPermanet();
+
+            int[] modifier = source.getValues();
+            this.atk = modifier[0];
+            this.def = modifier[1];
+            this.hp = modifier[2];
+            this.range = modifier[3];
+            this.movePoints = modifier[4];
+            this.roundsLeft = modifier[5];
+
+            this.appliesFor = source.getTargets();
+        /*TODO absolut und relativ werte verarbeiten?*/
+    }
+
+    @Override
+    public Research getSource(){
+        return source;
+    }
+
+    //checks if this buff applies for a unit
+    @Override
+    public boolean appliesForUnit(UnitType unit){
+        if(this.appliesFor == null)
+            return true;
+        else
+            return this.appliesFor.contains(unit);
     }
 }

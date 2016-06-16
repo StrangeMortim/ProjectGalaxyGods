@@ -1,12 +1,27 @@
 package GameObject;
 
-public class Map implements IMap {
+import Action.Buff;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Map implements IMap,Serializable {
 
     private Field[][] fields = new Field[8][8];
     private int maxPlayers = 4;
     private int minPlayers = 2;
     private String levelName = "";
 
+
+    public Map(String levelName, int maxPlayers, int minPlayers){
+        if (levelName.equals("") || maxPlayers > 4 || minPlayers < 2 || maxPlayers < minPlayers)
+            throw new IllegalArgumentException("Map: Constructor invalid values");
+
+        this.levelName = levelName;
+        this.maxPlayers = maxPlayers;
+        this.minPlayers = minPlayers;
+    }
 
     /**
      * Initialisiert die Map, d.h. platziert alle Felder, Basen und Standardobjekte
@@ -37,10 +52,20 @@ public class Map implements IMap {
      * Aktualisiert alle Felder der Karte ueber ihre update-Methode
      */
     @Override
-    public void update() {
+    public List<Buff> update() {
+        List<Buff> result = new ArrayList<Buff>();
+
         for(Field[] f: fields)
             for(Field f2: f)
-                f2.update();
+                result.addAll(f2.update());
+
+        return result;
+    }
+
+    @Override
+    public boolean checkMovement(int xPos, int yPos) {
+        Field toCheck = fields[xPos][yPos];
+        return (toCheck.getCurrent() == null && toCheck.getHasMine());
     }
 
     /**
@@ -51,8 +76,9 @@ public class Map implements IMap {
      */
     @Override
     public Field getField(int x, int y) {
-        if(x < 0 || y < 0)
-            throw new IllegalArgumentException("Coordinates must not be negative");
+        if(x < 0 || y < 0 || x > fields.length || y > fields[0].length)
+           return null;
+
 
         return fields[x][y];
     }

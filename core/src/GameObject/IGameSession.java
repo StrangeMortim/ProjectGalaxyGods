@@ -4,17 +4,29 @@ import Action.*;
 import Player.*;
 import chat.*;
 
+import java.rmi.Remote;
 import java.util.List;
 
 
 /**
  * Created by benja_000 on 10.06.2016.
  */
-public interface IGameSession {
+public interface IGameSession extends Remote {
     /**
      *
      */
     public void update();
+
+    /**
+     * Registriert eine neue Einheit und gibt ihr alle Buffs
+     */
+    public void registerUnit(Unit u);
+
+    /**
+     * Entfernt alle Buffs für die übergebene Einheit
+     */
+    public void removeUnit(Unit u);
+
     /**
      *
      * @param t
@@ -71,5 +83,10 @@ public interface IGameSession {
      * @return
      */
     public boolean finish();
+
+    /**
+     * Getter für die Map
+     */
+    public Map getMap();
 
 }

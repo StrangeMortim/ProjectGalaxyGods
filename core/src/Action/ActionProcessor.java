@@ -2,16 +2,21 @@ package Action;
 
 import GameObject.GameSession;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-public class ActionProcessor implements IActionProcessor {
+public class ActionProcessor implements IActionProcessor,Serializable {
 
-    private List<Action> toProcess;
-    private List<Buff> toReturn;
-    private GameSession session;
+    private List<Action> toProcess = new ArrayList<Action>();
+    private List<Buff> toReturn = new ArrayList<Buff>();
+    private GameSession session = null;
 
 
     public ActionProcessor(GameSession session){
+        if(session == null)
+            throw new IllegalArgumentException("ActionProcessor: session is null");
+
         this.session = session;
     }
 
@@ -36,6 +41,10 @@ public class ActionProcessor implements IActionProcessor {
      */
     @Override
     public void addAction(Action toAdd) {
+        if(toAdd == null)
+            throw new IllegalArgumentException("addAction: Action is null");
+
+        toAdd.setParent(this);
         toProcess.add(toAdd);
     }
 
@@ -47,18 +56,27 @@ public class ActionProcessor implements IActionProcessor {
      */
     @Override
     public void removeAction(Action toRemove) {
+        if(toRemove == null)
+            throw new IllegalArgumentException("removeAction: Action is null");
+
+        toRemove.setParent(null);
         toProcess.remove(toRemove);
     }
 
     /**
      * Verarbeitet alle Actions in toProcess ueber ihre execute-Methode,
-     * nach jeder Action wird dabei ueberprueft ob sich fuer target oder origin der Action
-     * neue Actions oder Buffs ergeben, diese werden dann generiert und hinzu gefuegt
+     * die Actions fügen ggf. über ihr Parent Attribut selbst neue Buffs
+     * hinzu falls sich welche ergeben
      *
      * @return toReturn mit allen in diesem Zug generierten Buffs
      */
     @Override
     public List<Buff> execute() {
+        for(Action a: toProcess){
+            a.execute();
+            a.setParent(null);
+        }
+
         return toReturn;
     }
 }

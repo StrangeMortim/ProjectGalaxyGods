@@ -1,16 +1,14 @@
 package GameObject;
 
 
-import Action.Action;
 import Action.Buff;
-import Action.UnitCreationAction;
 import Player.Player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.io.Serializable;
+import java.util.*;
+import java.util.Map;
 
-public class Base extends Unit implements IBase {
+public class Base extends Unit implements IBase,Serializable {
 
     private int labRoundsRemaining=-1;
     private int caserneRoundsRemaining=-1;
@@ -26,8 +24,84 @@ public class Base extends Unit implements IBase {
     }
 
     @Override
-    public void update(){
-        /*TODO implement*/
+    public List<Buff> update(){
+        List<Buff> result = new ArrayList<Buff>();
+
+        //receive ressources from near units
+        currentField.getNearUnits().stream().filter(u -> u.getOwner() == this.owner).forEach(u -> {
+            owner.getRessources()[0] += u.getRessources()[0];
+            u.getRessources()[0] = 0;
+            owner.getRessources()[1] += u.getRessources()[1];
+            u.getRessources()[1] = 0;
+        });
+
+        //count down if lab is in building state
+        if(labRoundsRemaining > 0)
+            labRoundsRemaining--;
+
+        //count down if caserne is in building state
+        if(caserneRoundsRemaining > 0)
+            caserneRoundsRemaining--;
+
+        //count all recruiting states down and if finished, spawn them
+        Iterator it = recruiting.entrySet().iterator();
+        while (it.hasNext()){
+            Map.Entry<Unit,Integer> entry = (Map.Entry)it.next();
+            entry.setValue(entry.getValue()-1);
+            if(entry.getValue() <= 0){
+                if(this.spawnUnit(entry.getKey()))
+                    it.remove(); //remove if spawn was successfull
+            }
+        }
+
+        //count all researches down and if finished add them to the return list
+        it = researching.entrySet().iterator();
+        while (it.hasNext()){
+            Map.Entry<Buff,Integer> entry = (Map.Entry)it.next();
+            entry.setValue(entry.getValue()-1);
+            if(entry.getValue() <= 0){
+                result.add(entry.getKey());
+                it.remove();  //remove if finished
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Hilfsmethode zum spawnen von einheiten, iteriert solange durch bis ein freies feld gefunden wurde
+     * und platziert dann die einheit, wird kein feld gefunden und der such bereich( startpunkt +- 7) überschritte
+     * beendet die methode ohne die einheit zu platzieren und gibt false zurück
+     *
+     * @param u die zu platzierende Einheit
+     * @return gibt an ob ein feld gefunden wurde
+     */
+    private boolean spawnUnit(Unit u){
+        int xPos = currentField.getXPos();
+        int yPos = currentField.getYPos();
+
+        int range = 1;
+
+        Field current = null;
+
+        //iterate as long as the range does not exceed the map bounds in every way TODO from hardcoded to dynamic bounds
+        while (range < 7) {
+            //iterate on column level
+            for (int i = yPos - range; i <= yPos + range; ++i) {
+
+                //iterate on row level
+                for (int k = xPos - range; k <= xPos + range; ++k)
+                    current = currentField.getMap().getField(k, i);
+                //if field found and free, place unit
+                if (current != null && current.getCurrent() == null) {
+                    current.setCurrent(u);
+                    return true;
+                }
+            }
+            range++;
+        }
+
+        return false;
     }
 
     /**
@@ -37,27 +111,27 @@ public class Base extends Unit implements IBase {
      * @return ob der Vorgang moeglich ist(und dementsprechend ausgefuehrt wird)
      */
     @Override
-    public Action createUnit(UnitType type) {
-        UnitCreationAction result = null;
+    public boolean createUnit(UnitType type) {
         if(avaibleUnits.contains(type))
         {
+
             int[] cost = type.getRessourceCost();
             int[] ressourcesAvailable = owner.getRessources();
 
-            if(cost[0] < ressourcesAvailable[0]
-            && cost[1] < ressourcesAvailable[1]
-            && cost[2] < ressourcesAvailable[2]
-            && cost[3] < ressourcesAvailable[3])
-            {
+            //Check if enough ressources, if not return result(null)
+            for (int j = 0; j<4; ++j)
+                if(cost[j] > ressourcesAvailable[j])
+                   return  false;
+
+
                 for(int i = 0; i < 4; ++i)
                 owner.getRessources()[i] -= cost[i];
 
-                result = new UnitCreationAction(this,null,owner);
-                result.setType(type);
-            }
+                recruiting.put(new Unit(type, owner), type.getRecruitingTime());
+
         }
         /*TODO check*/
-        return result;
+        return true;
     }
 
     /**
@@ -91,7 +165,21 @@ public class Base extends Unit implements IBase {
      */
     @Override
     public boolean buildLab() {
-                /*TODO implement*/
+        if(labRoundsRemaining == -1){
+            int[] ressourceCost = Building.LABOR.getRessourceCost();
+            int[] avaibleRessources = owner.getRessources();
+
+            //check if enough ressources, if not return false
+            for(int i=0; i<4; ++i)
+                if (ressourceCost[i] > avaibleRessources[i])
+                    return false;
+
+            for(int j=0; j<4; ++j)
+                owner.getRessources()[j] -= ressourceCost[j];
+
+            labRoundsRemaining = Building.LABOR.getBuildTime();
+        }
+                /*TODO check*/
         return false;
     }
 
@@ -101,7 +189,16 @@ public class Base extends Unit implements IBase {
      */
     @Override
     public void abortLab() {
-        /*TODO implement*/
+        if(labRoundsRemaining > 0){
+            float ressourcesLeft = labRoundsRemaining / Building.LABOR.getBuildTime();
+            labRoundsRemaining = -1;
+
+            int[] originalCost = Building.LABOR.getRessourceCost();
+
+            for(int i=0; i<4;++i)
+                owner.getRessources()[i] += (ressourcesLeft*originalCost[i]);
+        }
+        /*TODO check*/
     }
 
     /**
@@ -109,7 +206,21 @@ public class Base extends Unit implements IBase {
      */
     @Override
     public boolean buildCaserne() {
-                /*TODO implement*/
+        if(caserneRoundsRemaining == -1){
+            int[] ressourceCost = Building.CASERNE.getRessourceCost();
+            int[] avaibleRessources = owner.getRessources();
+
+            //check if enough ressources, if not return false
+            for(int i=0; i<4; ++i)
+                if (ressourceCost[i] > avaibleRessources[i])
+                    return false;
+
+            for(int j=0; j<4; ++j)
+                owner.getRessources()[j] -= ressourceCost[j];
+
+            caserneRoundsRemaining = Building.CASERNE.getBuildTime();
+        }
+                /*TODO check*/
         return false;
     }
 
@@ -118,7 +229,16 @@ public class Base extends Unit implements IBase {
      */
     @Override
     public void abortCaserne() {
-        /*TODO implement*/
+        if(caserneRoundsRemaining > 0){
+            float ressourcesLeft = caserneRoundsRemaining / Building.CASERNE.getBuildTime();
+            caserneRoundsRemaining = -1;
+
+            int[] originalCost = Building.CASERNE.getRessourceCost();
+
+            for(int i=0; i<4;++i)
+                owner.getRessources()[i] += (ressourcesLeft*originalCost[i]);
+        }
+        /*TODO check*/
     }
 
     /**
@@ -129,7 +249,25 @@ public class Base extends Unit implements IBase {
      */
     @Override
     public boolean research(Research research) {
-                /*TODO implement*/
+        if(!researched.contains(research)) {
+            int[] ressourceCost = research.getRessourceCost();
+            int[] avaibleRessources = owner.getRessources();
+
+            //check if enough ressources, if not return false
+            for (int i = 0; i < 4; ++i)
+                if (ressourceCost[i] > avaibleRessources[i])
+                    return false;
+
+            for (int j = 0; j < 4; ++j)
+                owner.getRessources()[j] -= ressourceCost[j];
+
+            Buff researchGoal = new Buff(this, null, owner);
+            researchGoal.setSource(research);
+            researching.put(researchGoal, research.getResearchTime());
+            researched.add(research);
+            return true;
+        }
+                /*TODO check*/
         return false;
     }
 
@@ -141,7 +279,32 @@ public class Base extends Unit implements IBase {
      */
     @Override
     public void abortResearch(Research research) {
-        /*TODO implement*/
+        //if never researched, nothing to abort
+        if(researched.contains(research)){
+            //iterate to find the buff
+            for(Iterator<java.util.Map.Entry<Buff,Integer>> it = researching.entrySet().iterator(); it.hasNext();){
+                java.util.Map.Entry<Buff,Integer> entry = it.next();
+
+                //case buff found
+                if(entry.getKey().getSource() == research)
+                {
+                    //calc returning ressources and give them back
+                    int[] originalCost = research.getRessourceCost();
+                    float ressourcesLeft = entry.getValue() / research.getResearchTime();
+
+                    for(int i=0; i<4;++i)
+                        owner.getRessources()[i] += (ressourcesLeft * originalCost[i]);
+
+                    //remove buff and research
+                    it.remove();
+                    researched.remove(research);
+                    break;      //finish method
+                }
+            }
+
+
+        }
+        /*TODO check*/
     }
 
     /**

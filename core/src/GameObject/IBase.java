@@ -3,16 +3,17 @@ package GameObject;
 
 import Action.Action;
 
+import java.rmi.Remote;
 import java.util.List;
 
-public interface IBase {
+public interface IBase extends Remote {
 
     /**
      * Erstellt eine neue Unit vom uebergebenen Typ
      * @param type der Typ der gewuenschten Unit
      * @return ob der Vorgang moeglich ist(und dementsprechend ausgefuehrt wird)
      */
-    public Action createUnit(UnitType type);
+    public boolean createUnit(UnitType type);
 
     /**
      * Bricht das Erstellen der uebergebenen Einheit ab,

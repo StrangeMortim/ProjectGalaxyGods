@@ -1,7 +1,12 @@
 package GameObject;
 
 
-public interface IMap {
+import Action.Buff;
+
+import java.rmi.Remote;
+import java.util.List;
+
+public interface IMap extends Remote {
 
     /**
      * Initialisiert die Map, d.h. platziert alle Felder, Basen und Standardobjekte
@@ -22,7 +27,9 @@ public interface IMap {
     /**
      * Aktualisiert alle Felder der Karte ueber ihre update-Methode
      */
-    public void update();
+    public List<Buff> update();
+
+    public boolean checkMovement(int xPos, int yPos);
 
     /**
      * Gibt ein spezielles Feld zurueck

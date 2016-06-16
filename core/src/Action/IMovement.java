@@ -1,7 +1,9 @@
 package Action;
 
 
-public interface IMovement {
+import java.rmi.Remote;
+
+public interface IMovement extends Remote {
 
     /**
      * Getter und setter

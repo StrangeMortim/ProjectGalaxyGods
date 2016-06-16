@@ -1,36 +1,164 @@
 package GameObject;
 
+import Action.Buff;
 import Player.Player;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Field implements IField {
+
+public class Field implements IField,Serializable {
 
     private int resType = -1;
     private int resValue = 0;
     private int xPos = -1;
     private int yPos = -1;
-    private IUnit current;
+    private Unit current;
     private boolean walkable=true;
     private int roundsRemain = -1;
     private String spriteName = "";
+    private boolean baseBuilding = false;
+    private Player builder = null;
+    private boolean mineBuilding = false;
     private boolean hasMine = false;
+    private Map map = null;
 
-    public Field(int resType, int resValue, int xPos, int yPos){
-        if(resType < -1 || resType > 4 || xPos < 0 || xPos > 8 || yPos < 0 || yPos >8)
+    public Field(int resType, int resValue, int xPos, int yPos, Map map){
+        if(resType < -1 || resType > 4 || xPos < 0 || xPos > 8 || yPos < 0 || yPos >8 || map == null)
             throw new IllegalArgumentException("Invalid Values");
 
         this.resType = resType;
         this.resValue = resValue;
         this.xPos = xPos;
         this.yPos = yPos;
+        this.map = map;
     }
 
     /**
      * Aktualisiert das Objekt auf dem Feld
+     * Und die bestehenden Bauprozesse
+     * Außerdem werden Ressourcen verteilt
      */
     @Override
-    public void update() {
-        current.update();
+    public List<Buff> update() {
+
+        this.updateBuildingProcesses();
+        this.distributeRessources();
+
+        return current.update();
+        /*TODO check*/
+    }
+
+    /**
+     * Verteilt Ressourcen an alle umstehenden Einheiten, falls das Feld ressourcen besitzt
+     */
+    private void distributeRessources(){
+        /*TODO specify how ressources are distributed*/
+        //if field has ressources
+        if(resType != -1) {
+            List<Unit> nearUnits = null;
+            nearUnits = this.getNearUnits();
+
+            Player tmp = null;
+
+            //add ressources to all near units depending on the fields ressource
+            switch (resType) {
+                case 0:
+                    for (Unit u : nearUnits) {
+                        tmp = u.getOwner();
+                        u.getRessources()[0] += 10 + tmp.getRessourceBoni()[0];
+                        resValue -= (10 + tmp.getRessourceBoni()[0]);
+                    }
+                    break;
+                case 1:
+                    if(hasMine) {
+                        for (Unit u : nearUnits) {
+                            tmp = u.getOwner();
+                            u.getRessources()[1] += 10 + tmp.getRessourceBoni()[1];
+                            resValue -= (10 + tmp.getRessourceBoni()[1]);
+                        }
+                    }
+                    break;
+                case 3:
+                    for (Unit u : nearUnits) {
+                        tmp = u.getOwner();
+                        u.getRessources()[3] += 10 + tmp.getRessourceBoni()[3];
+                        resValue -= (10 + tmp.getRessourceBoni()[3]);
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            //if no more ressources left after  dispersal, set no-ressource values
+            if(resValue <= 0){
+                resType = -1;
+                resValue = 0;
+            }
+        }
+    }
+
+    /**
+     * Aktualisiert die Bauprozesse
+     */
+    private void updateBuildingProcesses(){
+        /*TODO check*/
+        if(roundsRemain > 0){ //there is something to build
+
+            List<Unit> nearUnits = this.getNearUnits();
+            if (baseBuilding) {
+                for(Unit u: nearUnits)
+                    if(u.getOwner() == builder) {       //if it's a base and owner units are near, count down the rounds, -1 for every unit near
+                        roundsRemain--;
+                        if (roundsRemain == 0) {        //if the rounds reach zero, build the base and stop
+                            current = new Base(UnitType.BASE, builder);
+                            builder = null;
+                            baseBuilding = false;
+                            break;
+                        }
+                    }
+                    /*
+                    if it's a mine check all near units and reduce the rounds for each, as long as the owner has enough wood,
+                    also reduce the owners wood by 5
+                     */
+            } else if(mineBuilding){
+                if(!nearUnits.isEmpty())
+                    nearUnits.stream().filter(u -> u.getOwner().getRessources()[0] >= 5).forEach(u -> {
+                        u.getOwner().getRessources()[0] -= 5;
+                        roundsRemain--;
+                    });
+
+                if(roundsRemain <= 0) {
+                    hasMine = true;
+                    mineBuilding = false;
+                }
+            }
+        }
+    }
+
+    /**
+     * Searches all Unit in the direct environment to the Field(the (max) 8 surrounding Fields
+     * @return the found Units
+     */
+    @Override
+    public List<Unit> getNearUnits(){
+        List<Unit> result = new ArrayList<>();
+        for(int i=yPos-1; i<=yPos+1; ++i){
+            for(int k=xPos-1; k<=xPos+1; ++k){
+                try {
+                    Unit tmp = map.getField(k,i).getCurrent();
+                    if(tmp != null){
+                       result.add(tmp);
+                    }
+                } catch (NullPointerException e){
+                    continue;
+                }
+            }
+        }
+
+        return result;
+        /*TODO check*/
     }
 
     /**
@@ -41,7 +169,28 @@ public class Field implements IField {
      */
     @Override
     public boolean buildBase(Player player) {
-        /*TODO*/
+        if(current == null && !hasMine){
+            int[] baseCost = UnitType.BASE.getRessourceCost();
+            int[] availableRessources = player.getRessources();
+            for(int j=0; j<4; ++j)
+                if (baseCost[j] > availableRessources[j])
+                    return false;
+
+            List<Unit> nearUnits = this.getNearUnits();
+            for(Unit u: nearUnits){
+                if(u.getOwner() == player){
+                    baseBuilding = true;
+                    roundsRemain = UnitType.BASE.getRecruitingTime();
+                    for(int j2=0; j2<4; ++j2)
+                        player.getRessources()[j2] -= baseCost[j2];
+
+                    builder = player;
+                    walkable = false;
+                    return true;
+                }
+            }
+        }
+        /*TODO check*/
         return false;
     }
 
@@ -53,18 +202,46 @@ public class Field implements IField {
      */
     @Override
     public boolean abortBuild(Player player) {
-                /*TODO*/
+        List<Unit> nearUnits = this.getNearUnits();
+        for(Unit u: nearUnits){
+            if(u.getOwner() == player){
+                int[] originalCost = UnitType.BASE.getRessourceCost();
+                float ressourcesLeft = roundsRemain / UnitType.BASE.getRecruitingTime();
+                for(int i=0; i<4; ++i)
+                    player.getRessources()[i] = (int)(ressourcesLeft*originalCost[i]);
+
+                roundsRemain = -1;
+                walkable = true;
+                baseBuilding = false;
+                return true;
+            }
+        }
+                /*TODO check*/
         return false;
     }
 
     /**
      * Startet den Bau einer Mine, der Bau kann nicht abgebrochen werden
      *
+     * @param player der Spieler der den Bau starten will
      * @return gibt an ob das Starten erfolgreich war
      */
     @Override
-    public boolean buildMine() {
-                /*TODO*/
+    public boolean buildMine(Player player) {
+        if(roundsRemain == -1 && current == null && resType == 1){
+            List<Unit> nearUnits = this.getNearUnits();
+            //check near units if one of them belongs to player, player may start building
+            for(Unit u: nearUnits)
+                if(u.getOwner() == player){
+                    roundsRemain = 8;
+                    mineBuilding = true;
+                    walkable = false;
+                    player.getRessources()[0] -= 10;  //initial starting cost
+                    return true;
+                }
+        }
+
+        /*TODO check*/
         return false;
     }
 
@@ -126,12 +303,13 @@ public class Field implements IField {
     }
 
     @Override
-    public void setCurrent(IUnit current) {
+    public void setCurrent(Unit current) {
         this.current = current;
+        current.setField(this);
     }
 
     @Override
-    public IUnit getCurrent() {
+    public Unit getCurrent() {
         return current;
     }
 
@@ -179,6 +357,16 @@ public class Field implements IField {
     @Override
     public boolean getHasMine() {
         return hasMine;
+    }
+
+    @Override
+    public void setMap(Map map) {
+        this.map = map;
+    }
+
+    @Override
+    public Map getMap() {
+        return map;
     }
 
 

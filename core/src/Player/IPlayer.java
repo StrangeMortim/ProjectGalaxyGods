@@ -1,7 +1,9 @@
 package Player;
 
 
-public interface IPlayer {
+import java.rmi.Remote;
+
+public interface IPlayer extends Remote {
 
     /**
     Getter und Setter fuer die Attribute
@@ -9,6 +11,8 @@ public interface IPlayer {
     public void setRessources(int ressources[]);
 
     public int[] getRessources();
+
+    public int[] getRessourceBoni();
 
     public void setTechTree(TechnologyTree tree);
 

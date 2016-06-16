@@ -1,13 +1,19 @@
 package GameObject;
 
+import Action.Buff;
 import Player.Player;
 
-public interface IField {
+import java.rmi.Remote;
+import java.util.List;
+
+public interface IField extends Remote {
 
     /**
      * Aktualisiert das Objekt auf dem Feld
+     *
+     * @return gibt eine Liste mit allen beim update generierten Buffs zurück
      */
-    public void update();
+    public List<Buff> update();
 
     /**
      * Faengt an eine Basis auf dem Feld zu bauen
@@ -16,6 +22,12 @@ public interface IField {
      * @return gibt an ob der Spieler die Basis bauen kann oder nicht
      */
     public boolean buildBase(Player player);
+
+    /**
+     * Searches all Unit in the direct environment to the Field(the (max) 8 surrounding Fields
+     * @return the found Units
+     */
+    public List<Unit> getNearUnits();
 
     /**
      * Bricht den Bau der Basis ab, findet keiner statt passiert nichts
@@ -30,7 +42,7 @@ public interface IField {
      *
      * @return gibt an ob das Starten erfolgreich war
      */
-    public boolean buildMine();
+    public boolean buildMine(Player player);
 
 
     /**
@@ -52,9 +64,9 @@ public interface IField {
 
     public int getYPos();
 
-    public void setCurrent(IUnit current);
+    public void setCurrent(Unit current);
 
-    public IUnit getCurrent();
+    public Unit getCurrent();
 
     public void setWalkable(boolean walkable);
 
@@ -71,4 +83,8 @@ public interface IField {
     public void setHasMine(boolean hasMine);
 
     public boolean getHasMine();
+
+    public void setMap(Map map);
+
+    public Map getMap();
 }

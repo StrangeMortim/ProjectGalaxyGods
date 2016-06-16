@@ -1,8 +1,10 @@
 package GameObject;
 
 
-public enum UnitType implements IUnitType {
-    /*TODO Add Types*/
+import java.io.Serializable;
+
+public enum UnitType implements IUnitType,Serializable {
+    BASE/*TODO Add Types*/
     ;
 
     /**

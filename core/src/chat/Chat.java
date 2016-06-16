@@ -3,6 +3,7 @@ package chat;
 import Player.Player;
 import projectgg.gag.GoldAndGreed;
 
+import java.io.Serializable;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -13,7 +14,7 @@ import java.util.List;
  * Created by Fabi on 11.05.2016. (mod. 12.06)
  * Die Chat-Klasse ermoeglicht den Nachrichtenaustausch zwischen den Spielern.
  */
-public class Chat implements ChatInterface {
+public class Chat implements ChatInterface,Serializable {
     /**
      * Nachrichtenverlauf dieses Chats.
      */
@@ -30,8 +31,11 @@ public class Chat implements ChatInterface {
     public Chat(){  }
 
     public void addMessage(String player, String msg) {
+        if(player == null)
+            throw new IllegalArgumentException("addMessage: Player is null");
+
         Message m = new Message();
-        m.SetContent(player +" . "+ msg);
+        m.SetContent(player +": "+ msg);
         backLog.add(m);
     }
 
@@ -44,7 +48,7 @@ public class Chat implements ChatInterface {
      */
     @Override
     public void deleteMessage(Message m) {
-        getBacklog().remove(m);
+        backLog.remove(m);
     }
 
     /**
@@ -54,7 +58,13 @@ public class Chat implements ChatInterface {
      */
     @Override
     public void addParticipant(Player p) {
-     this.getParticipants().add(p);
+     if(p == null)
+         throw new IllegalArgumentException("addParticipant: player is null");
+
+     if(readOnly.contains(p))
+         throw  new IllegalArgumentException("The Player is blocked from writing!");
+
+        this.getParticipants().add(p);
     }
 
     /**
@@ -62,7 +72,7 @@ public class Chat implements ChatInterface {
      */
     @Override
     public void clear() {
-     getBacklog().clear();
+     backLog.clear();
     }
 
     /**
@@ -73,7 +83,10 @@ public class Chat implements ChatInterface {
      */
     @Override
     public void blockPlayer(Player p) {
-     getReadOnly().add(p);
+     if(p == null)
+         throw new IllegalArgumentException("blockPlayer: player is null");
+
+        readOnly.add(p);
     }
 
     /**
@@ -83,7 +96,11 @@ public class Chat implements ChatInterface {
      */
     @Override
     public void removeParticipant(Player p) {
-     participants.remove(p);
+     if(p == null)
+         throw new IllegalArgumentException("removeParticipant: player is null");
+
+        readOnly.remove(p);
+        participants.remove(p);
     }
 
 

@@ -1,7 +1,10 @@
 package GameObject;
 
 
-public interface IResearch {
+import java.rmi.Remote;
+import java.util.List;
+
+public interface IResearch extends Remote{
 
     /**
      * Ermoeglicht Zugriffe ueber einen String
@@ -12,4 +15,18 @@ public interface IResearch {
         /*TODO*/
         return null;
     };
+
+    public int[] getRessourceCost();
+
+    public int[] getValues();
+
+    /**
+     * @return  Entweder alle Unit für die die Werte gelten oder die Unit die durch diese Forschung freigeschaltet wird
+     * letzteres gekennzeichnet durch nur 0 in getValues
+     */
+    public List<UnitType> getTargets();
+
+    public int getResearchTime();
+
+    public boolean isPermanet();
 }

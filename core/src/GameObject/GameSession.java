@@ -6,6 +6,7 @@ import chat.Message;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -61,7 +62,29 @@ public class GameSession implements IGameSession, Serializable{
      */
     private Market market;
 
+    @Override
     public void update(){}
+
+    @Override
+    public void registerUnit(Unit u) {
+        for(Buff b: buffs)
+            if(b.getPlayer() == u.getOwner() && b.appliesForUnit(u.getType()))
+                buffs.add(b.getPersonalCopy(u));
+    }
+
+    /**
+     * Entfernt alle Buffs für die übergebene Einheit
+     *
+     * @param u
+     */
+    @Override
+    public void removeUnit(Unit u) {
+        Iterator it = buffs.iterator();
+        while (it.hasNext()){
+            if(((Action)it.next()).getOrigin() == u)
+                it.remove();
+        }
+    }
 
     @Override
     public void sendMessage(Message m) {
@@ -110,6 +133,13 @@ public class GameSession implements IGameSession, Serializable{
         return false;
     }
 
+    /**
+     * Getter für die Map
+     */
+    @Override
+    public Map getMap() {
+        return level;
+    }
 
 
     //Getter Setter
