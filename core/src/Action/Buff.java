@@ -26,7 +26,7 @@ public class Buff extends Action implements IBuff{
     @Override
     public boolean execute(){
         //if first time executed, do stuff
-        if(firstTime){
+        if(firstTime){//TODO: check Null
 
             /*
             special case, buff only adds a new avaible unit

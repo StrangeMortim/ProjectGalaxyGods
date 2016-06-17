@@ -45,7 +45,7 @@ public class Unit implements IUnit,Serializable {
     public List<Buff> update() {
         return new ArrayList<Buff>();        /*TODO override in base*/
     }
-
+//TODO: Check ob Spieler dranne is und Einheit vom Spieler, jo und swag
     /**
      * getter und setter
      *
