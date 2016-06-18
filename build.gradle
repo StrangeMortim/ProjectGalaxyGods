@@ -9,12 +9,14 @@ buildscript {
         classpath ':derbyclient'
         classpath ':derbynet'
         classpath ':derbytools'
+
     }
 }
 
 allprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
+
 
     version = '1.0'
     ext {
@@ -49,6 +51,7 @@ project(":desktop") {
         compile ':derbynet'
         compile ':derbytools'
         compile 'org.apache.derby:derby:10.12.1.1'
+
     }
 }
 
@@ -65,9 +68,13 @@ project(":core") {
         compile ':derbyclient'
         compile ':derbynet'
         compile ':derbytools'
+
     }
 }
 
 tasks.eclipse.doLast {
     delete ".project"
 }
+
+
+
