@@ -84,7 +84,7 @@ public class GameSession implements IGameSession, Serializable{
     }
 
     /**
-     * Entfernt alle Buffs für die übergebene Einheit
+     * Entfernt alle Buffs für die uebergebene Einheit
      *
      * @param u
      */
@@ -112,7 +112,7 @@ public class GameSession implements IGameSession, Serializable{
      */
     @Override
     public void removeTeam(Team t) {
-
+      teams.remove(t);
     }
 
     /**
@@ -121,7 +121,7 @@ public class GameSession implements IGameSession, Serializable{
      */
     @Override
     public void addTeam(Team t) {
-
+     teams.add(t);
     }
 
 
@@ -129,29 +129,60 @@ public class GameSession implements IGameSession, Serializable{
      * Fuegt dem Spiel eine Liste von Buffs hinzu.
      * @param b Liste von Buffs, die hinzugefuegt werden sollen.
      */
-    public void addBuffs(List<Buff> b){}
+    public void addBuffs(List<Buff> b){
+        buffs.addAll(b);
+    }
 
     /**
      * Entfernt Buff aus der Liste von Buffs.
      * @param b Buff der entfernt werden soll.
      */
-    public void removeBuff(Buff b){}
+    public void removeBuff(Buff b){
+        buffs.remove(b);
+    }
 
     /**
      * Leitet alle noetigen Schritte fuer den Beginn eines Zuges ein.
      */
-    public void startTurn(){};
+    public void startTurn(){
+    
+    };
 
     /**
      * Leitet alle noetigen Schritte fuer das Beenden eines Zuges ein.
      */
-    public void finishTurn(){}
-
-    @Override
-    public void playerLeave(Player p) {
-
+    public void finishTurn(){
+        update();
+        save();
     }
 
+    /**
+     * Entfernt Spieler aus dem Spiel und alle seine Einheiten.
+     * @param p
+     */
+    @Override
+    public void playerLeave(Player p) {
+        for(Team t : teams){
+            if(t.getPlayers().contains(p)){
+                t.getPlayers().remove(p);
+            }
+        }
+        for(Field[] f:level.getFields()){
+            for(Field f2 :f){
+                if(f2.getCurrent().getOwner()==p){
+                    f2.setCurrent(null);
+                }
+            }
+        }
+    }
+
+    /**
+     * Fuegt Spieler dem Spiel hinzu.
+     * @param a Account des Spielers.
+     * @param p Spieler selbst.
+     * @param t und das Team zu dem er gehoert.
+     * @return true, wenn er hinzugefuegt werden konnte, sonst false.
+     */
     @Override
     public boolean playerJoin(Account a, Player p, Team t) {
         return false;
@@ -168,15 +199,14 @@ public class GameSession implements IGameSession, Serializable{
     }
 
     /**
-     * 
-     * @return
+     * Prueft, ob ein Team oder ein Spieler das Spiel gewonnen hat.
+     * @return true, wenn jemand gewonnen hat.
      */
     @Override
     public boolean finish() {
+
         return false;
     }
-
-
 
 
     //Getter Setter
