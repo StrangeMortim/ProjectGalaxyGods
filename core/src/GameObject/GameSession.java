@@ -3,6 +3,7 @@ package GameObject;
 import Action.*;
 import Player.*;
 import chat.Message;
+import server.DBManager;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -10,61 +11,71 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by benja_000 on 10.06.2016.
+ * Diese Klasse umfasst alle Daten und Relationen, die fuer das Spiel relevant sind. Sie realisiert
+ * damit die Speicherung und Verwaltung des gesamten Spielzustandes.
  */
 public class GameSession implements IGameSession, Serializable{
     /**
-     * Name der GameSession
+     * Name der GameSession.
      */
     private String name;
     /**
-     *
+     * Liste mit den verbuendeten Spielern.
      */
     private List<Team> teams;
     /**
-     *
+     * Realisiert das Spielfeld.
      */
     private Map level;
     /**
-     *
+     * Spieler der am Zug ist.
      */
     private Player active;
     /**
-     *
+     * Liste mit Buffs, die aktiv sind.
      */
     private List<Buff>buffs;
     /**
-     *
+     * Liste mit den Accounts und zugehoerigen Spielern.
      */
     private HashMap<Account,Player> identities;
     /**
-     *
+     * Der Actionprocessor der derzeitigen Runde.
      */
     private ActionProcessor currentTurn;
     /**
-     *
+     * Der Chat des Spiels.
      */
     private int sessionChat;
     /**
-     *
+     * Die Spielrunde in der sich die Spieler befinden.
      */
     private int round;
     /**
-     *
+     * Die Anzahl der maximalen Spieler pro Team.
      */
     private int maxPlayersPerTeam;
     /**
-     *
+     * Gibt an, ob die Runde gestartet ist.
      */
     private boolean hasStarted;
     /**
-     *
+     * Der Marktplatz des Spiels.
      */
     private Market market;
 
+    /**
+     * Ruft bei allen Klassen, die von der GameSession verwaltet werden, die Update-Methode auf.
+     */
     @Override
-    public void update(){}
+    public void update(){
 
+    }
+
+    /**
+     *
+     * @param u
+     */
     @Override
     public void registerUnit(Unit u) {
         for(Buff b: buffs)
@@ -86,29 +97,54 @@ public class GameSession implements IGameSession, Serializable{
         }
     }
 
+    /**
+     * Erstellt eine Nachricht, die ausgewaehlte Spieler sehen koennen.
+     * @param m Nachricht die versendet werden soll.
+     */
     @Override
     public void sendMessage(Message m) {
 
     }
 
+    /**
+     * Entfernt ein Team aus dem Spiel.
+     * @param t Team das entfernt werden soll.
+     */
     @Override
     public void removeTeam(Team t) {
 
     }
 
+    /**
+     * Fuegt ein Team dem Spiel hinzu.
+     * @param t Team das hinzugefuegt werden soll.
+     */
     @Override
     public void addTeam(Team t) {
 
     }
 
-    ;
 
+    /**
+     * Fuegt dem Spiel eine Liste von Buffs hinzu.
+     * @param b Liste von Buffs, die hinzugefuegt werden sollen.
+     */
     public void addBuffs(List<Buff> b){}
 
+    /**
+     * Entfernt Buff aus der Liste von Buffs.
+     * @param b Buff der entfernt werden soll.
+     */
     public void removeBuff(Buff b){}
 
+    /**
+     * Leitet alle noetigen Schritte fuer den Beginn eines Zuges ein.
+     */
     public void startTurn(){};
 
+    /**
+     * Leitet alle noetigen Schritte fuer das Beenden eines Zuges ein.
+     */
     public void finishTurn(){}
 
     @Override
@@ -121,28 +157,34 @@ public class GameSession implements IGameSession, Serializable{
         return false;
     }
 
-    ;
 
+    /**
+     * Speichert dieses Objekt in der Datenbank.
+     * @return true, wenn es geklappt hat, sonst false
+     */
     @Override
     public boolean save() {
-        return false;
+        return new DBManager().saveSession(this);
     }
 
+    /**
+     * 
+     * @return
+     */
     @Override
     public boolean finish() {
         return false;
     }
 
-    /**
-     * Getter für die Map
-     */
+
+
+
+    //Getter Setter
     @Override
     public Map getMap() {
         return level;
     }
 
-
-    //Getter Setter
     public int getSessionChat() {
         return sessionChat;
     }
