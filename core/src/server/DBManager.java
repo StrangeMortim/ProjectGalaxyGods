@@ -125,6 +125,10 @@ public class DBManager
      */
     public static boolean registerAccount(String name, String password){
 try {
+    if(getAccountList().matches("(.*)"+name+"(.*)")) {
+        System.out.println("Account mit Namen: '"+name+"' existiert bereits.");
+        return false;
+    }
     Connection conn = DriverManager.getConnection(DB_URL);
     PreparedStatement pstmt = conn
             .prepareStatement("INSERT INTO Accounts (id, password) VALUES(?,?)");
@@ -133,6 +137,7 @@ try {
     pstmt.executeUpdate();
     pstmt.close();
     conn.close();
+    System.out.println("Account mit Namen: '"+name+"' wurde erstellt.");
     return true;
 }catch(Exception e){return false;}
     }
@@ -159,6 +164,7 @@ try {
     res.close();
     conn.close();
     if(pw.equals(password)){
+        System.out.println("Account mit Namen: '"+name+"' existiert!");
         return true;}
 }catch(Exception e){return false;}}
         return false;
