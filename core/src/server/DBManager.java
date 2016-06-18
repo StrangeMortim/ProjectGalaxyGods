@@ -56,6 +56,7 @@ public class DBManager
                 session = (GameSession) ois.readObject();
             }
             conn.close();
+            res.close();
             sta.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
