@@ -54,6 +54,7 @@ public class Base extends Unit implements IBase,Serializable {
             }
         }
 
+        /*TODO add research*/
         //count all researches down and if finished add them to the return list
         it = researching.entrySet().iterator();
         while (it.hasNext()){

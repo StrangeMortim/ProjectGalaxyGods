@@ -54,6 +54,7 @@ public class Field implements IField,Serializable {
      * Verteilt Ressourcen an alle umstehenden Einheiten, falls das Feld ressourcen besitzt
      */
     private void distributeRessources(){
+        /*TODO check player*/
         /*TODO specify how ressources are distributed*/
         //if field has ressources
         if(resType != -1) {
