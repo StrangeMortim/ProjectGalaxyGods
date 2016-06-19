@@ -52,4 +52,6 @@ public interface IBuff extends Remote {
     public boolean appliesForUnit(UnitType unit);
 
     public Buff getPersonalCopy(Unit u);
+
+    public void setFirstTime(boolean firstTime);
 }

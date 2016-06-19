@@ -14,7 +14,7 @@ public class Base extends Unit implements IBase,Serializable {
     private int caserneRoundsRemaining=-1;
     private HashMap<Unit, Integer> recruiting = new HashMap<Unit, Integer>();
     private List<UnitType> avaibleUnits = new ArrayList<UnitType>();
-    private HashMap<Buff, Integer> researching = new HashMap<Buff,Integer>();
+    private HashMap<Research, Integer> researching = new HashMap<Research,Integer>();
     private List<Research> researched = new ArrayList<Research>();
 
 
@@ -57,16 +57,59 @@ public class Base extends Unit implements IBase,Serializable {
         /*TODO add research*/
         //count all researches down and if finished add them to the return list
         it = researching.entrySet().iterator();
+        Research current = null;
         while (it.hasNext()){
-            Map.Entry<Buff,Integer> entry = (Map.Entry)it.next();
+            Map.Entry<Research,Integer> entry = (Map.Entry)it.next();
             entry.setValue(entry.getValue()-1);
             if(entry.getValue() <= 0){
-                result.add(entry.getKey());
+                current = entry.getKey();
+                if(current.isPermanet()) {
+                    owner.getPermaBuffs().add(current);
+                } else {
+                    owner.getTemporaryBuffs().add(current);
+                }
+                result.addAll(this.registerNewBuff(current));
+                //result.add(entry.getKey());
                 it.remove();  //remove if finished
             }
         }
 
         return result;
+    }
+
+    private List<Buff> registerNewBuff(Research toRegister){
+        Field tmp[][] = currentField.getMap().getFields();
+        List<Buff> result = new ArrayList<>();
+
+        Buff current = null;
+        Unit currentUnit = null;
+                if(toRegister.isPermanet()){
+                    current = new Buff(null, null, owner);
+                    current.setSource(toRegister);
+                    for(Field[] fArray: tmp){
+                        for(Field f: fArray){
+                            currentUnit = f.getCurrent();
+                            if(currentUnit != null){
+                                current.setOrigin(currentUnit);
+                                current.execute();
+                                current.setFirstTime(false);
+                            }
+                        }
+                    }
+                } else {
+                    for(Field[] fArray: tmp){
+                        for(Field f: fArray){
+                            currentUnit = f.getCurrent();
+                            if(currentUnit != null){
+                                current = new Buff(currentUnit,null,owner);
+                                current.setSource(toRegister);
+                                result.add(current);
+                            }
+                        }
+                    }
+                }
+        return result;
+
     }
 
     /**
@@ -96,6 +139,7 @@ public class Base extends Unit implements IBase,Serializable {
                 //if field found and free, place unit
                 if (current != null && current.getCurrent() == null) {
                     current.setCurrent(u);
+                    currentField.getMap().getSession().registerUnit(u);
                     return true;
                 }
             }
@@ -262,9 +306,7 @@ public class Base extends Unit implements IBase,Serializable {
             for (int j = 0; j < 4; ++j)
                 owner.getRessources()[j] -= ressourceCost[j];
 
-            Buff researchGoal = new Buff(this, null, owner);
-            researchGoal.setSource(research);
-            researching.put(researchGoal, research.getResearchTime());
+            researching.put(research, research.getResearchTime());
             researched.add(research);
             return true;
         }
@@ -283,11 +325,11 @@ public class Base extends Unit implements IBase,Serializable {
         //if never researched, nothing to abort
         if(researched.contains(research)){
             //iterate to find the buff
-            for(Iterator<java.util.Map.Entry<Buff,Integer>> it = researching.entrySet().iterator(); it.hasNext();){
-                java.util.Map.Entry<Buff,Integer> entry = it.next();
+            for(Iterator<java.util.Map.Entry<Research,Integer>> it = researching.entrySet().iterator(); it.hasNext();){
+                java.util.Map.Entry<Research,Integer> entry = it.next();
 
                 //case buff found
-                if(entry.getKey().getSource() == research)
+                if(entry.getKey() == research)
                 {
                     //calc returning ressources and give them back
                     int[] originalCost = research.getRessourceCost();

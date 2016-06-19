@@ -31,12 +31,18 @@ public abstract class Action implements IAction,Serializable {
         return true;
     }
 
+
     /**
      * Getter/setter
      */
     @Override
     public Player getPlayer(){
         return player;
+    }
+
+    @Override
+    public  void setOrigin(Unit origin){
+        this.origin = origin;
     }
 
     @Override

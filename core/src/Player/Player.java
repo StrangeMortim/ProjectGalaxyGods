@@ -1,6 +1,11 @@
 package Player;
 
+import Action.Buff;
+import GameObject.Research;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Fabi on 11.06.2016.
@@ -13,6 +18,8 @@ public class Player implements IPlayer,Serializable {
     private Boolean turn = false;
     private Account account;
     private Boolean market = false;
+    private List<Research> permaBuffs = new ArrayList<>();
+    private List<Research> avaibleTemporaryBuffs = new ArrayList<>();
 
     public Player(Account acc){
         if(acc == null)
@@ -75,4 +82,26 @@ public class Player implements IPlayer,Serializable {
     public Boolean getMarket() {
         return market;
     }
+
+    @Override
+    public void setPermaBuffs(List<Research> permaBuffs) {
+        this.permaBuffs = permaBuffs;
+    }
+
+    @Override
+    public List<Research> getPermaBuffs() {
+        return permaBuffs;
+    }
+
+    @Override
+    public void setTemporaryBuffs(List<Research> temporaryBuffs) {
+        this.avaibleTemporaryBuffs = temporaryBuffs;
+    }
+
+    @Override
+    public List<Research> getTemporaryBuffs() {
+        return avaibleTemporaryBuffs;
+    }
+
+
 }

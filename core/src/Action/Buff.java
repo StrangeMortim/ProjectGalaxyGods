@@ -204,4 +204,9 @@ public class Buff extends Action implements IBuff{
         else
             return this.appliesFor.contains(unit);
     }
+
+    @Override
+    public void setFirstTime(boolean firstTime){
+        this.firstTime = firstTime;
+    }
 }

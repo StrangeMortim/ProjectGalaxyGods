@@ -78,9 +78,19 @@ public class GameSession implements IGameSession, Serializable{
      */
     @Override
     public void registerUnit(Unit u) {
-        for(Buff b: buffs)
-            if(b.getPlayer() == u.getOwner() && b.appliesForUnit(u.getType()))
-                buffs.add(b.getPersonalCopy(u));
+        Buff tmp = null;
+        for(Research r: u.getOwner().getPermaBuffs()){
+            tmp = new Buff(u, null, u.getOwner());
+            tmp.setSource(r);
+            tmp.execute();
+        }
+
+        for(Research r2: u.getOwner().getTemporaryBuffs()){
+            tmp = new Buff(u, null, u.getOwner());
+            tmp.setSource(r2);
+            buffs.add(tmp);
+            /*TODO use global round counter?*/
+        }
     }
 
     /**

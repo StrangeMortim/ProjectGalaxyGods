@@ -55,4 +55,6 @@ public interface IMap extends Remote {
 
     public String getLevelName();
 
+    public GameSession getSession();
+
 }
