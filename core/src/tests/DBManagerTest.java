@@ -8,6 +8,8 @@ import org.junit.Before;
 import org.junit.Test;
 import server.DBManager;
 
+import java.rmi.RemoteException;
+
 /**
  * Testklasse fuer den DBManager.
  */
@@ -17,13 +19,13 @@ public class DBManagerTest {
     GameSession gameSession;
 
     @Before
-    public void createDB(){
+    public void createDB()throws RemoteException {
         dbManager=new DBManager();
         gameSession=new GameSession();
     }
 
     @After
-    public void dropTables(){
+    public void dropTables()throws RemoteException{
         dbManager.dropTables();
     }
 
@@ -32,7 +34,7 @@ public class DBManagerTest {
      * Testet das Registrieren und Checken eines Accounts.
      */
     @Test
-    public void RegisterAndCheckAccountTest(){
+    public void RegisterAndCheckAccountTest()throws RemoteException{
         Assert.assertTrue(dbManager.registerAccount("test","1234"));
         Assert.assertTrue(dbManager.checkAccount("test","1234"));
         Assert.assertFalse(dbManager.registerAccount("test","1234"));
@@ -43,7 +45,7 @@ public class DBManagerTest {
      * Testet das Speichern und Laden eines neuen simplen GameSession-Objektes
      */
     @Test
-    public void saveAndLoadGameSessionTest(){
+    public void saveAndLoadGameSessionTest()throws RemoteException{
         gameSession.setName("test1");
         gameSession.setHasStarted(true);
         dbManager.saveSession(gameSession);
@@ -55,7 +57,7 @@ public class DBManagerTest {
      * Testet das Speichern und Updaten eines simplen GameSession-Objektes
      */
     @Test
-    public void updateAndLoadGameSessionTest(){
+    public void updateAndLoadGameSessionTest()throws RemoteException{
         gameSession.setName("test2");
         gameSession.setHasStarted(true);
         dbManager.saveSession(gameSession);

@@ -4,6 +4,7 @@ import Action.Buff;
 import Player.Player;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.List;
 
 public interface IField extends Remote {
@@ -13,7 +14,7 @@ public interface IField extends Remote {
      *
      * @return gibt eine Liste mit allen beim update generierten Buffs zurück
      */
-    public List<Buff> update();
+    public List<Buff> update()throws RemoteException;
 
     /**
      * Faengt an eine Basis auf dem Feld zu bauen
@@ -21,13 +22,13 @@ public interface IField extends Remote {
      * @param player der Spieler der die Basis baut
      * @return gibt an ob der Spieler die Basis bauen kann oder nicht
      */
-    public boolean buildBase(Player player);
+    public boolean buildBase(Player player)throws RemoteException;
 
     /**
      * Searches all Unit in the direct environment to the Field(the (max) 8 surrounding Fields
      * @return the found Units
      */
-    public List<Unit> getNearUnits();
+    public List<Unit> getNearUnits()throws RemoteException;
 
     /**
      * Bricht den Bau der Basis ab, findet keiner statt passiert nichts
@@ -35,26 +36,26 @@ public interface IField extends Remote {
      * @param player der Spieler der versucht den Bau abzubrechen
      * @return Ob der Vorgang erfolgreich war oder nicht(ob nach dem Methodenaufruf kein Bau mehr stattfindet oder nicht)
      */
-    public boolean abortBuild(Player player);
+    public boolean abortBuild(Player player)throws RemoteException;
 
     /**
      * Startet den Bau einer Mine, der Bau kann nicht abgebrochen werden
      *
      * @return gibt an ob das Starten erfolgreich war
      */
-    public boolean buildMine(Player player);
+    public boolean buildMine(Player player)throws RemoteException;
 
 
     /**
      * Getter und setter
      */
-    public void setResType(int resType);
+    public void setResType(int resType)throws RemoteException;
 
-    public int getResType();
+    public int getResType()throws RemoteException;
 
-    public void setResValue(int resValue);
+    public void setResValue(int resValue)throws RemoteException;
 
-    public int getResValue();
+    public int getResValue()throws RemoteException;
 
     public void setXPos(int xPos);
 

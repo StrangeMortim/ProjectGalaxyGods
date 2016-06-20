@@ -2,22 +2,23 @@ package Player;
 
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 public interface ITechnologyTree extends Remote {
 
     /*
     Getter und Setter
      */
-    public void setSteel(Boolean achieved[]);
+    public void setSteel(Boolean achieved[])throws RemoteException;
 
-    public Boolean[] getSteel();
+    public Boolean[] getSteel()throws RemoteException;
 
-    public void setMagic(Boolean achieved[]);
+    public void setMagic(Boolean achieved[])throws RemoteException;
 
-    public Boolean[] getMagic();
+    public Boolean[] getMagic()throws RemoteException;
 
-    public void setCulture(Boolean achieved[]);
+    public void setCulture(Boolean achieved[])throws RemoteException;
 
-    public Boolean[] getCulture();
+    public Boolean[] getCulture()throws RemoteException;
 
 }

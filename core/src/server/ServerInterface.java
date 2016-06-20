@@ -18,21 +18,21 @@ public interface ServerInterface extends Remote{
      * Startet den Server.
      * @param args
      */
-    public void main(String args);
+   // public void main(String args);
 
     /**
      * Gibt die Session mit jeweiligen Namen zurueck.
      * @param sessionName Name der GameSession
      * @return
      */
-    public GameSession loadSession(String sessionName);
+    public GameSession loadSession(String sessionName) throws RemoteException;
 
     /**
      * Speichert eine GameSession.
      * @param session GameSession die gespeichert werdenn soll
      * @return true ,wenn das Speichern funktioniert hat, sonst false.
      */
-    public boolean saveSession(GameSession session);
+    public boolean saveSession(GameSession session) throws RemoteException;
 
     /**
      * Diese Methode realisiert die Registration eines neuen Accounts.
@@ -40,7 +40,7 @@ public interface ServerInterface extends Remote{
      * @param password Passwort vom Account
      * @return true, wenn Registration geklappt hat, sonst false
      */
-    public boolean registerAccount(String name, String password);
+    public boolean registerAccount(String name, String password) throws RemoteException;
 
     /**
      * Prueft, ob Eingaben zum Account korrekt sind.
@@ -48,16 +48,16 @@ public interface ServerInterface extends Remote{
      * @param password Passwort des Accounts
      * @return true, wenn Pruefung erfolgreich, sonst false.
      */
-    public boolean checkAccount(String name, String password);
+    public boolean checkAccount(String name, String password) throws RemoteException;
 
     /**
      * Beendet die Laufzeit des Servers.
      */
-    public void shutdown();
+   // public void shutdown();
 
     /**
      * Gibt alle GameSession-Namen zurueck, die auf dem Server gespeichert sind.
      * @return Namen der GameSession-Objekte
      */
-    public String getSessionList();
+    public String getSessionList() throws RemoteException;
 }

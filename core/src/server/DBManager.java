@@ -4,21 +4,22 @@ import GameObject.GameSession;
 import GameObject.Market;
 
 import java.io.*;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.sql.*;
 
 /**
  * Diese Klasse realisiert das Speichern,Erstellen sowie Laden von GameSession- und Account-Objekten.
  * Sie nutzt dazu eine Derby Datenbank mit der sie ueber JDBC kommuniziert.
  */
-public class DBManager
-{
+public class DBManager implements Remote {
     //Verbindungsadresse der Datenbank.
     final static String DB_URL = "jdbc:derby:DerbyDB;create=true";
 
     /**
      * Dieser Konstruktor erstellt, bei Bedarf, fehlende Bereiche der Datenbank.
      */
-    public DBManager()
+    public DBManager()throws RemoteException
     {
         try
         {
@@ -42,7 +43,7 @@ public class DBManager
      * @param sessionName Name der GameSession
      * @return GameSession mit dem jeweiligen Namen, sonst null.
      */
-    public static GameSession loadSession(String sessionName){
+    public static GameSession loadSession(String sessionName)throws RemoteException{
         GameSession session=null;
         try {
             Connection conn = DriverManager.getConnection(DB_URL);
@@ -70,7 +71,7 @@ public class DBManager
      * @param gs zu speichernde GameSession
      * @return true, falls Speichern erfolgreich, sonst false.
      */
-    public boolean saveSession(GameSession gs){
+    public boolean saveSession(GameSession gs)throws RemoteException{
 
   if(getSessionList().matches("(.*)"+gs.getName()+"(.*)")){
       try{
@@ -123,7 +124,7 @@ public class DBManager
      * @param password Passwort vom Account
      * @return true, wenn Registration geklappt hat, sonst false
      */
-    public static boolean registerAccount(String name, String password){
+    public static boolean registerAccount(String name, String password)throws RemoteException{
 try {
     if(getAccountList().matches("(.*)"+name+"(.*)")) {
         System.out.println("Account mit Namen: '"+name+"' existiert bereits.");
@@ -149,7 +150,7 @@ try {
      * @param password Passwort des Accounts
      * @return true, wenn Pruefung erfolgreich, sonst false.
      */
-    public static boolean checkAccount(String name, String password){
+    public static boolean checkAccount(String name, String password)throws RemoteException{
         if(getAccountList().matches("(.*)"+name+"(.*)")) {
 try {
     Connection conn = DriverManager.getConnection(DB_URL);
@@ -174,7 +175,7 @@ try {
      * Gibt alle GameSession-Namen zurueck, die auf dem Server gespeichert sind.
      * @return Namen der GameSession-Objekte
      */
-    public static String getSessionList(){
+    public static String getSessionList()throws RemoteException{
         String list="";
         try {
             Connection conn = DriverManager.getConnection(DB_URL);
@@ -198,7 +199,7 @@ try {
      * Gibt alle Accountnamen zurueck, die auf dem Server gespeichert sind.
      * @return Namen der Accounts
      */
-    public static String getAccountList(){
+    public static String getAccountList()throws RemoteException{
         String list="";
         try {
             Connection conn = DriverManager.getConnection(DB_URL);
@@ -221,7 +222,7 @@ try {
     /**
      * Loescht alle Datenbankeintraege der GameSessions und Accounts
      */
-    public static void dropTables()
+    public static void dropTables()throws RemoteException
     {
         try
         {
@@ -244,7 +245,7 @@ try {
      * @param name Name des GameSession-Objektes
      * @return true, falls es geklappt hat, sonst false
      */
-    public static Boolean deleteGameSession(String name){
+    public static Boolean deleteGameSession(String name)throws RemoteException{
         try{
             Connection conn = DriverManager.getConnection(DB_URL);
             PreparedStatement pstmt = conn
@@ -266,7 +267,7 @@ try {
      * gespeichert werden sollen.
      * @param conn Verbindung zu der Datenbank
      */
-    public static void buildGameSessionTable(Connection conn)
+    public static void buildGameSessionTable(Connection conn)throws RemoteException
     {
         try
         {
@@ -281,7 +282,7 @@ try {
      * Erstellt die Tabelle in der die Account-Daten gespeichert werden.
      * @param conn
      */
-    public static void buildAccountTable(Connection conn) {
+    public static void buildAccountTable(Connection conn)throws RemoteException {
         try{
             Statement stmt = conn.createStatement();
             stmt.executeUpdate("CREATE TABLE Accounts (id VARCHAR(100), password VARCHAR(100))");

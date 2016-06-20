@@ -2,17 +2,18 @@ package Player;
 
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 public interface IAccount extends Remote {
 
     /**
     Getter und Setter
      */
-    public void setName(String name);
+    public void setName(String name)throws RemoteException;
 
-    public String getName();
+    public String getName()throws RemoteException;
 
-    public void setPassword(String pw);
+    public void setPassword(String pw)throws RemoteException;
 
-    public String getPassword();
+    public String getPassword()throws RemoteException;
 }

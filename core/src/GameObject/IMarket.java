@@ -1,6 +1,8 @@
 package GameObject;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
+
 import Player.Player;
 
 /**
@@ -16,7 +18,7 @@ public interface IMarket extends Remote {
      * @param amount    Gibt die Menge an die gekauft werden soll
      * @return ob der vorgang erfolgreich war oder nicht
      */
-    public boolean buy(Player p, int type, int amount);
+    public boolean buy(Player p, int type, int amount)throws RemoteException;
 
     /**
      * Ermöglicht einem Spieler eine Ressource zu verkaufen
@@ -25,12 +27,12 @@ public interface IMarket extends Remote {
      * @param amount    Gibt die Menge an die verkauft werden soll
      * @return ob der vorgang erfolgreich war oder nicht
      */
-    public boolean sell(Player p, int type, int amount);
+    public boolean sell(Player p, int type, int amount)throws RemoteException;
 
     //Getter Setter
-    public void setIron(int price);
-    public void setWood(int price);
-    public int ironPrice();
-    public int woodPrice();
+    public void setIron(int price)throws RemoteException;
+    public void setWood(int price)throws RemoteException;
+    public int ironPrice()throws RemoteException;
+    public int woodPrice()throws RemoteException;
 
 }

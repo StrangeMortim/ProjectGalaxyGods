@@ -19,7 +19,7 @@ public class Server implements ServerInterface {
 
     public  Server(){}
 
-    public String sayHello(){
+    public String sayHello() throws RemoteException{
         System.out.println("Recieving Invocation");
         return "Hello World!";
     }
@@ -40,10 +40,10 @@ public class Server implements ServerInterface {
      *
      * @param args
      */
-    @Override
-    public void main(String args) {
+    //@Override
+   // public void main(String args) {
 
-    }
+    //}
 
     /**
      * Gibt die Session mit jeweiligen Namen zurueck.
@@ -52,7 +52,7 @@ public class Server implements ServerInterface {
      * @return
      */
     @Override
-    public GameSession loadSession(String sessionName) {
+    public GameSession loadSession(String sessionName) throws RemoteException {
         return new DBManager().loadSession(sessionName);
     }
 
@@ -63,7 +63,7 @@ public class Server implements ServerInterface {
      * @return true ,wenn das Speichern funktioniert hat, sonst false.
      */
     @Override
-    public boolean saveSession(GameSession session) {
+    public boolean saveSession(GameSession session) throws RemoteException {
         return new DBManager().saveSession(session);
     }
 
@@ -75,7 +75,7 @@ public class Server implements ServerInterface {
      * @return true, wenn Registration geklappt hat, sonst false
      */
     @Override
-    public boolean registerAccount(String name, String password) {
+    public boolean registerAccount(String name, String password) throws RemoteException {
         return new DBManager().registerAccount(name,password);
     }
 
@@ -87,16 +87,14 @@ public class Server implements ServerInterface {
      * @return true, wenn Pruefung erfolgreich, sonst false.
      */
     @Override
-    public boolean checkAccount(String name, String password) {
+    public boolean checkAccount(String name, String password) throws RemoteException {
         return new DBManager().checkAccount(name,password);
     }
 
     /**
      * Beendet die Laufzeit des Servers.
      */
-    @Override
-    public void shutdown() {
-    }
+
 
     /**
      * Gibt alle GameSession-Namen zurueck, die auf dem Server gespeichert sind.
@@ -104,11 +102,11 @@ public class Server implements ServerInterface {
      * @return Namen der GameSession-Objekte
      */
     @Override
-    public String getSessionList() {
+    public String getSessionList() throws RemoteException {
         return new DBManager().getSessionList();
     }
 
-    public static void init()
+    public static void init() throws RemoteException
     {
         try{
             Server serv = new Server();

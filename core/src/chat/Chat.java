@@ -30,7 +30,7 @@ public class Chat implements ChatInterface,Serializable {
 
     public Chat(){  }
 
-    public void addMessage(String player, String msg) {
+    public void addMessage(String player, String msg) throws RemoteException{
         if(player == null)
             throw new IllegalArgumentException("addMessage: Player is null");
 

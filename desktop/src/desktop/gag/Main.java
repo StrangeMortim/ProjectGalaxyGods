@@ -6,16 +6,17 @@ import projectgg.gag.GoldAndGreed;
 import server.DBManager;
 import server.Server;
 
+import java.rmi.RemoteException;
 import java.util.Properties;
 
 public class Main {
-	public static void main (String[] arg) {
+	public static void main (String[] arg)throws RemoteException {
 		DBManager man = new DBManager();
-		/*LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "Gold and Greed";
 		cfg.width = 1024;
 		cfg.height = 768;
-		server.Server.init();
-		new LwjglApplication(new GoldAndGreed(), cfg);*/
+		try{server.Server.init();}catch(Exception e){}
+		new LwjglApplication(new GoldAndGreed(), cfg);
 	}
 }

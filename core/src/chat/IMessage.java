@@ -3,6 +3,7 @@ package chat;
 import Player.Player;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.List;
 
 /**
@@ -18,10 +19,10 @@ public interface IMessage extends Remote {
     public void makeVisibleFor(Player p);
 
     //Getter Setter
-    public String getContent();
-    public void SetContent(String s);
-    public boolean getVisibleForAll();
-    public void setVisibleForAll(boolean b);
-    public List<Player>getVisibleFor();
-    public void setVisibleFor(List<Player> p);
+    public String getContent()throws RemoteException;
+    public void SetContent(String s)throws RemoteException;
+    public boolean getVisibleForAll()throws RemoteException;
+    public void setVisibleForAll(boolean b)throws RemoteException;
+    public List<Player>getVisibleFor()throws RemoteException;
+    public void setVisibleFor(List<Player> p)throws RemoteException;
 }

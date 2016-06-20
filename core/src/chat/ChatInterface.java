@@ -23,33 +23,33 @@ public interface ChatInterface extends Remote{
      * Diese Methode ermoeglicht das Loeschen einer Nachricht.
      * @param m zu loeschende Message
      */
-    public void deleteMessage(Message m);
+    public void deleteMessage(Message m) throws RemoteException;
     /**
      * Diese Methode fuegt einen Spieler dem Chat hinzu.
      * @param p Player (Spieler) der hinzugefuegt werden soll.
      */
-    public void addParticipant(Player p);
+    public void addParticipant(Player p) throws RemoteException;
     /**
      * Diese Methode entfernt einen Spieler aus dem Chat.
      * @param p Spieler der entfernt werden soll
      */
-    public void removeParticipant(Player p);
+    public void removeParticipant(Player p)throws RemoteException;
     /**
      * Diese Methode blockiert einen Spieler, wodurch er keine Nachrichten
      * im Chat schreiben kann.
      * @param p zu blockierender Spieler
      */
-    public void blockPlayer(Player p);
+    public void blockPlayer(Player p)throws RemoteException;
     /**
      * Loescht den Chat.
      */
-    public void clear();
+    public void clear()throws RemoteException;
 
 
     //Getter Setter
     public List getBacklog() throws RemoteException;
-    public List<Player> getParticipants();
-    public void setParticipants(List<Player> p);
-    public List<Player> getReadOnly();
-    public void setReadOnly(List<Player>p);
+    public List<Player> getParticipants()throws RemoteException;
+    public void setParticipants(List<Player> p)throws RemoteException;
+    public List<Player> getReadOnly()throws RemoteException;
+    public void setReadOnly(List<Player>p)throws RemoteException;
 }

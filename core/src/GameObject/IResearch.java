@@ -2,6 +2,7 @@ package GameObject;
 
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.List;
 
 public interface IResearch extends Remote{
@@ -11,22 +12,22 @@ public interface IResearch extends Remote{
      * @param name der Name der gesuchten Forschung
      * @return die zugehoerige Forschung
      */
-    public static Research getResearchByName(String name){
+    public static Research getResearchByName(String name)throws RemoteException {
         /*TODO*/
         return null;
     };
 
-    public int[] getRessourceCost();
+    public int[] getRessourceCost()throws RemoteException;
 
-    public int[] getValues();
+    public int[] getValues()throws RemoteException;
 
     /**
      * @return  Entweder alle Unit für die die Werte gelten oder die Unit die durch diese Forschung freigeschaltet wird
      * letzteres gekennzeichnet durch nur 0 in getValues
      */
-    public List<UnitType> getTargets();
+    public List<UnitType> getTargets()throws RemoteException;
 
-    public int getResearchTime();
+    public int getResearchTime()throws RemoteException;
 
-    public boolean isPermanet();
+    public boolean isPermanet()throws RemoteException;
 }

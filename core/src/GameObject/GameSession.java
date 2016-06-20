@@ -7,6 +7,7 @@ import chat.Message;
 import server.DBManager;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -162,7 +163,7 @@ public class GameSession implements IGameSession, Serializable{
     /**
      * Leitet alle noetigen Schritte fuer das Beenden eines Zuges ein.
      */
-    public void finishTurn(){
+    public void finishTurn()throws RemoteException{
         update();
         finish();
         save();
@@ -206,7 +207,7 @@ public class GameSession implements IGameSession, Serializable{
      * @return true, wenn es geklappt hat, sonst false
      */
     @Override
-    public boolean save() {
+    public boolean save() throws RemoteException{
         return new DBManager().saveSession(this);
     }
 
@@ -215,7 +216,7 @@ public class GameSession implements IGameSession, Serializable{
      * @return true, wenn jemand gewonnen hat.
      */
     @Override
-    public boolean finish() {
+    public boolean finish()throws RemoteException {
     if(teams.size()==1){
         return true;
     }
@@ -229,99 +230,99 @@ public class GameSession implements IGameSession, Serializable{
         return level;
     }
 
-    public Chat getSessionChat() {
+    public Chat getSessionChat()throws RemoteException {
         return sessionChat;
     }
 
-    public void setSessionChat(Chat sessionChat) {
+    public void setSessionChat(Chat sessionChat)throws RemoteException {
         this.sessionChat = sessionChat;
     }
 
-    public int getRound() {
+    public int getRound()throws RemoteException {
         return round;
     }
 
-    public void setRound(int round) {
+    public void setRound(int round)throws RemoteException {
         this.round = round;
     }
 
-    public boolean isHasStarted() {
+    public boolean isHasStarted()throws RemoteException {
         return hasStarted;
     }
 
-    public void setHasStarted(boolean hasStarted) {
+    public void setHasStarted(boolean hasStarted)throws RemoteException {
         this.hasStarted = hasStarted;
     }
 
-    public int getMaxPlayersPerTeam() {
+    public int getMaxPlayersPerTeam()throws RemoteException {
         return maxPlayersPerTeam;
     }
 
-    public void setMaxPlayersPerTeam(int maxPlayersPerTeam) {
+    public void setMaxPlayersPerTeam(int maxPlayersPerTeam)throws RemoteException {
         this.maxPlayersPerTeam = maxPlayersPerTeam;
     }
 
-    public List<Team> getTeams() {
+    public List<Team> getTeams()throws RemoteException {
         return teams;
     }
 
-    public void setTeams(List<Team> teams) {
+    public void setTeams(List<Team> teams)throws RemoteException {
         this.teams = teams;
     }
 
-    public Map getLevel() {
+    public Map getLevel()throws RemoteException {
         return level;
     }
 
-    public void setLevel(Map level) {
+    public void setLevel(Map level)throws RemoteException {
         this.level = level;
     }
 
-    public Player getActive() {
+    public Player getActive()throws RemoteException {
         return active;
     }
 
-    public void setActive(Player active) {
+    public void setActive(Player active)throws RemoteException {
         this.active = active;
     }
 
-    public List<Buff> getBuffs() {
+    public List<Buff> getBuffs()throws RemoteException {
         return buffs;
     }
 
-    public void setBuffs(List<Buff> buffs) {
+    public void setBuffs(List<Buff> buffs)throws RemoteException {
         this.buffs = buffs;
     }
 
-    public HashMap<Account, Player> getIdentities() {
+    public HashMap<Account, Player> getIdentities()throws RemoteException {
         return identities;
     }
 
-    public void setIdentities(HashMap<Account, Player> identities) {
+    public void setIdentities(HashMap<Account, Player> identities)throws RemoteException {
         this.identities = identities;
     }
 
-    public ActionProcessor getCurrentTurn() {
+    public ActionProcessor getCurrentTurn()throws RemoteException {
         return currentTurn;
     }
 
-    public void setCurrentTurn(ActionProcessor currentTurn) {
+    public void setCurrentTurn(ActionProcessor currentTurn)throws RemoteException {
         this.currentTurn = currentTurn;
     }
 
-    public Market getMarket() {
+    public Market getMarket()throws RemoteException {
         return market;
     }
 
-    public void setMarket(Market market) {
+    public void setMarket(Market market)throws RemoteException {
         this.market = market;
     }
 
-    public String getName() {
+    public String getName()throws RemoteException {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(String name)throws RemoteException {
         if(name.length()>100){
             this.name=name.substring(0,99);
         }else{
