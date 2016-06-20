@@ -12,12 +12,14 @@ public class Map implements IMap,Serializable {
     private int maxPlayers = 4;
     private int minPlayers = 2;
     private String levelName = "";
+    private GameSession session = null;
 
 
-    public Map(String levelName, int maxPlayers, int minPlayers){
-        if (levelName.equals("") || maxPlayers > 4 || minPlayers < 2 || maxPlayers < minPlayers)
+    public Map(String levelName, int maxPlayers, int minPlayers, GameSession session){
+        if (levelName.equals("") || maxPlayers > 4 || minPlayers < 2 || maxPlayers < minPlayers ||session == null)
             throw new IllegalArgumentException("Map: Constructor invalid values");
 
+        this.session = session;
         this.levelName = levelName;
         this.maxPlayers = maxPlayers;
         this.minPlayers = minPlayers;
@@ -139,5 +141,10 @@ public class Map implements IMap,Serializable {
     @Override
     public String getLevelName() {
         return levelName;
+    }
+
+    @Override
+    public GameSession getSession(){
+        return this.session;
     }
 }

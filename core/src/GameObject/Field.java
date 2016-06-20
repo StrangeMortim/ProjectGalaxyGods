@@ -67,24 +67,30 @@ public class Field implements IField,Serializable {
                 case 0:
                     for (Unit u : nearUnits) {
                         tmp = u.getOwner();
-                        u.getRessources()[0] += 10 + tmp.getRessourceBoni()[0];
-                        resValue -= (10 + tmp.getRessourceBoni()[0]);
+                        if(tmp.getTurn()) {  //check player
+                            u.getRessources()[0] += 10 + tmp.getRessourceBoni()[0];
+                            resValue -= (10 + tmp.getRessourceBoni()[0]);
+                        }
                     }
                     break;
                 case 1:
                     if(hasMine) {
                         for (Unit u : nearUnits) {
                             tmp = u.getOwner();
-                            u.getRessources()[1] += 10 + tmp.getRessourceBoni()[1];
-                            resValue -= (10 + tmp.getRessourceBoni()[1]);
+                            if(tmp.getTurn()) { //check player
+                                u.getRessources()[1] += 10 + tmp.getRessourceBoni()[1];
+                                resValue -= (10 + tmp.getRessourceBoni()[1]);
+                            }
                         }
                     }
                     break;
                 case 3:
                     for (Unit u : nearUnits) {
                         tmp = u.getOwner();
-                        u.getRessources()[3] += 10 + tmp.getRessourceBoni()[3];
-                        resValue -= (10 + tmp.getRessourceBoni()[3]);
+                        if(tmp.getTurn()) { //check player
+                            u.getRessources()[3] += 10 + tmp.getRessourceBoni()[3];
+                            resValue -= (10 + tmp.getRessourceBoni()[3]);
+                        }
                     }
                     break;
                 default:

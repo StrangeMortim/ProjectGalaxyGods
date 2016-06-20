@@ -1,7 +1,11 @@
 package Player;
 
 
+import Action.Buff;
+import GameObject.Research;
+
 import java.rmi.Remote;
+import java.util.List;
 
 public interface IPlayer extends Remote {
 
@@ -29,4 +33,12 @@ public interface IPlayer extends Remote {
     public void setMarket(Boolean access);
 
     public Boolean getMarket();
+
+    public void setPermaBuffs(List<Research> permaBuffs);
+
+    public List<Research> getPermaBuffs();
+
+    public void setTemporaryBuffs(List<Research> temporaryBuffs);
+
+    public List<Research> getTemporaryBuffs();
 }
