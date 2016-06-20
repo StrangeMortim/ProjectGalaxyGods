@@ -8,7 +8,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.List;
 
 /**
  * Created by Fabi on 07.05.2016.
@@ -54,7 +53,7 @@ public class Server implements ServerInterface {
      */
     @Override
     public GameSession loadSession(String sessionName) {
-        return null;
+        return new DBManager().loadSession(sessionName);
     }
 
     /**
@@ -65,7 +64,7 @@ public class Server implements ServerInterface {
      */
     @Override
     public boolean saveSession(GameSession session) {
-        return false;
+        return new DBManager().saveSession(session);
     }
 
     /**
@@ -77,7 +76,7 @@ public class Server implements ServerInterface {
      */
     @Override
     public boolean registerAccount(String name, String password) {
-        return false;
+        return new DBManager().registerAccount(name,password);
     }
 
     /**
@@ -89,7 +88,7 @@ public class Server implements ServerInterface {
      */
     @Override
     public boolean checkAccount(String name, String password) {
-        return false;
+        return new DBManager().checkAccount(name,password);
     }
 
     /**
@@ -97,7 +96,6 @@ public class Server implements ServerInterface {
      */
     @Override
     public void shutdown() {
-
     }
 
     /**
@@ -106,8 +104,8 @@ public class Server implements ServerInterface {
      * @return Namen der GameSession-Objekte
      */
     @Override
-    public List<String> getSessionList() {
-        return null;
+    public String getSessionList() {
+        return new DBManager().getSessionList();
     }
 
     public static void init()

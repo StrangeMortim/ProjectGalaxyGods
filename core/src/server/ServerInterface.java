@@ -4,7 +4,6 @@ import GameObject.GameSession;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.List;
 
 /**
  * Created by Fabi on 07.05.2016.
@@ -60,5 +59,5 @@ public interface ServerInterface extends Remote{
      * Gibt alle GameSession-Namen zurueck, die auf dem Server gespeichert sind.
      * @return Namen der GameSession-Objekte
      */
-    public List<String> getSessionList();
+    public String getSessionList();
 }

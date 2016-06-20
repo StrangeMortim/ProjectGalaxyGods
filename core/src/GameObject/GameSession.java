@@ -2,6 +2,7 @@ package GameObject;
 
 import Action.*;
 import Player.*;
+import chat.Chat;
 import chat.Message;
 import server.DBManager;
 
@@ -46,7 +47,7 @@ public class GameSession implements IGameSession, Serializable{
     /**
      * Der Chat des Spiels.
      */
-    private int sessionChat;
+    private Chat sessionChat;
     /**
      * Die Spielrunde in der sich die Spieler befinden.
      */
@@ -69,7 +70,7 @@ public class GameSession implements IGameSession, Serializable{
      */
     @Override
     public void update(){
-
+     level.update();
     }
 
     /**
@@ -103,7 +104,7 @@ public class GameSession implements IGameSession, Serializable{
      */
     @Override
     public void sendMessage(Message m) {
-
+        //TODO: unklar
     }
 
     /**
@@ -145,7 +146,7 @@ public class GameSession implements IGameSession, Serializable{
      * Leitet alle noetigen Schritte fuer den Beginn eines Zuges ein.
      */
     public void startTurn(){
-    
+
     };
 
     /**
@@ -153,6 +154,7 @@ public class GameSession implements IGameSession, Serializable{
      */
     public void finishTurn(){
         update();
+        finish();
         save();
     }
 
@@ -204,7 +206,9 @@ public class GameSession implements IGameSession, Serializable{
      */
     @Override
     public boolean finish() {
-
+    if(teams.size()==1){
+        return true;
+    }
         return false;
     }
 
@@ -215,11 +219,11 @@ public class GameSession implements IGameSession, Serializable{
         return level;
     }
 
-    public int getSessionChat() {
+    public Chat getSessionChat() {
         return sessionChat;
     }
 
-    public void setSessionChat(int sessionChat) {
+    public void setSessionChat(Chat sessionChat) {
         this.sessionChat = sessionChat;
     }
 
