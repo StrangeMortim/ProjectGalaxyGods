@@ -11,26 +11,26 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 /**
  * Created by Benjamin Brennecke on 08.05.2016.
  */
 public class MenuScreen implements Screen{
     private Game game;
-    private SpriteBatch batch;
-    private Sprite splash;
     private Stage stage;
-    private TextureAtlas atlas;
-    private Table table;
     private Skin skin;
-    private BitmapFont white,black;
-    private TextButton playB,exitB;
-    private Label header;
+    private Sprite backGround;
+    private SpriteBatch batch;
+
+    private Table table;
+    private TextButton chatButton;
+    private TextButton optionButton;
+    private TextButton exitButton;
+
 
     public MenuScreen(Game pGame){
         game=pGame;
@@ -38,61 +38,62 @@ public class MenuScreen implements Screen{
 
     @Override
     public void show() {
-        stage = new Stage();
-        batch = new SpriteBatch();//
-        System.out.println(System.getProperty("user.dir"));
-        white= new BitmapFont(Gdx.files.internal("assets/fonts/white.fnt"),false);
-        black= new BitmapFont(Gdx.files.internal("assets/fonts/black.fnt"),false);
+        ////////////////////////Attribut inititialisierung und Setup////////////////////
+        skin = new Skin(Gdx.files.internal("assets/uiskin.json"));
+        stage = new Stage(new ScreenViewport());
+        table = new Table();
+        table.setWidth(stage.getWidth());
+        table.align(Align.center|Align.top);
+        table.setPosition(0, Gdx.graphics.getHeight()* 3/4);
 
-        //Create a font
-        BitmapFont font = new BitmapFont();
+        ///////////////////////Button Generierung///////////////////////////////////////
+        chatButton = new TextButton("Chat", skin);
+        optionButton = new TextButton("Optionen", skin);
+        exitButton = new TextButton("Beenden", skin);
 
-        skin = new Skin();
-        skin.add("default", font);
-
-        //Create a texture
-        Pixmap pixmap = new Pixmap((int)Gdx.graphics.getWidth()/4,(int)Gdx.graphics.getHeight()/10, Pixmap.Format.RGB888);
-        pixmap.setColor(Color.WHITE);
-        pixmap.fill();
-        skin.add("background",new Texture(pixmap));
-
-        //Create a button style
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.up = skin.newDrawable("background", Color.GRAY);
-        textButtonStyle.down = skin.newDrawable("background", Color.DARK_GRAY);
-        textButtonStyle.checked = skin.newDrawable("background", Color.DARK_GRAY);
-        textButtonStyle.over = skin.newDrawable("background", Color.LIGHT_GRAY);
-        textButtonStyle.font = skin.getFont("default");
-        skin.add("default", textButtonStyle);
-
-        TextButton playB = new TextButton("Start", skin);
-        playB.addListener(new ClickListener(){
+        //////////////////////Listener Generierung/////////////////////////////////////
+        chatButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y){
-                game.setScreen(new ChatScreen(game));
-            }
+            public void clicked(InputEvent event, float x, float y) { game.setScreen(new ChatScreen(game));}
         });
-        playB.setPosition(Gdx.graphics.getWidth()/2 - Gdx.graphics.getWidth()/8 , 300);
-        stage.addActor(playB);
 
-        TextButton exitB = new TextButton("Exit", skin);
-        exitB.addListener(new ClickListener(){
+        optionButton.addListener(new ClickListener(){
             @Override
-            public void clicked(InputEvent event, float x, float y){
-                Gdx.app.exit();
-            }
+            public void clicked(InputEvent event, float x, float y){ game.setScreen(new OptionScreen(game));}
         });
-        exitB.setPosition(Gdx.graphics.getWidth()/2 - Gdx.graphics.getWidth()/8 , 200);
-        stage.addActor(exitB);
+
+        exitButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){ Gdx.app.exit();}
+        });
+
+
+        /////////////////////Bauen der Tabelle////////////////////////////////////////
+        table.add(chatButton).padBottom(10).padTop(30).fill().width(150).height(50);
+        table.row();
+        table.add(optionButton).padBottom(10).fill().width(150).height(50);
+        table.row();
+        table.add(exitButton).fill().width(150).height(50);
+        stage.addActor(table);
+
+
+        ////////////////////Stage sprites setzen///////////////////////////////////////
+        batch = new SpriteBatch();
+        backGround = new Sprite(new Texture(Gdx.files.internal("assets/splash.jpg")));
+        backGround.setBounds(0, (stage.getHeight()* 3/4), stage.getWidth(), stage.getHeight()/4);
+
+        ////////////////////Input Regeln///////////////////////////////////////////////
         Gdx.input.setInputProcessor(stage);
 
-        Texture splashTexture = new Texture(Gdx.files.internal("assets/splash.jpg"));
+
+        ///////////////////brauchst du das noch?////////////////////////////////////////
+       /* Texture splashTexture = new Texture(Gdx.files.internal("assets/splash.jpg"));
         TextureRegion region = new TextureRegion(splashTexture,0,0,1024,216);
         splash=new Sprite(region);
         splashTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         splash.setSize(1024,216);
         splash.setOrigin(splash.getWidth()/2,splash.getHeight()/2);
-        splash.setPosition(0,552);
+        splash.setPosition(0,552);*/
 
     }
 
@@ -100,11 +101,13 @@ public class MenuScreen implements Screen{
     public void render(float delta) {
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        batch.begin();
+        backGround.draw(batch);
+        batch.end();
+
         stage.act(delta);
         stage.draw();
-        batch.begin();
-        splash.draw(batch);
-        batch.end();
     }
 
     @Override
@@ -130,6 +133,6 @@ public class MenuScreen implements Screen{
     @Override
     public void dispose() {
         batch.dispose();
-        splash.getTexture().dispose();
+        backGround.getTexture().dispose();
     }
 }
