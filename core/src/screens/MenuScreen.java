@@ -69,11 +69,13 @@ public class MenuScreen implements Screen{
 
 
         /////////////////////Bauen der Tabelle////////////////////////////////////////
-        table.add(chatButton).padBottom(10).padTop(30).fill().width(150).height(50);
-        table.row();
-        table.add(optionButton).padBottom(10).fill().width(150).height(50);
-        table.row();
-        table.add(exitButton).fill().width(150).height(50);
+        table.padTop(30);
+        table.row().padBottom(10).fill().width(150).height(50);
+        table.add(chatButton);
+        table.row().padBottom(10).fill().width(150).height(50);
+        table.add(optionButton);
+        table.row().fill().width(150).height(50);
+        table.add(exitButton);
         stage.addActor(table);
 
 

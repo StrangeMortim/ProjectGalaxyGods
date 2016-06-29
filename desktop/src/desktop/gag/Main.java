@@ -1,5 +1,6 @@
 package desktop.gag;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import projectgg.gag.GoldAndGreed;
@@ -16,6 +17,7 @@ public class Main {
 		cfg.title = "Gold and Greed";
 		cfg.width = 1024;
 		cfg.height = 768;
+		cfg.resizable = true;
 		try{server.Server.init();}catch(Exception e){}
 		new LwjglApplication(new GoldAndGreed(), cfg);
 	}
