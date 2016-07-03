@@ -1,25 +1,25 @@
 package screens;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 /**
- * Created by Benjamin Brennecke on 08.05.2016.
+ * Created by benja_000 on 30.06.2016.
  */
-public class MenuScreen implements Screen{
+public class NetworkScreen implements Screen{
     private Game game;
     private Stage stage;
     private Skin skin;
@@ -27,17 +27,13 @@ public class MenuScreen implements Screen{
     private SpriteBatch batch;
 
     private Table table;
-    private TextButton chatButton;
-    private TextButton optionButton;
-    private TextButton exitButton;
-    private TextButton newGameButton;
+    private TextButton[] gameButton;
 
-
-    public MenuScreen(Game pGame){
+    public NetworkScreen(Game pGame){
         game=pGame;
     }
 
-    @Override
+
     public void show() {
         ////////////////////////Attribut inititialisierung und Setup////////////////////
         skin = new Skin(Gdx.files.internal("assets/uiskin.json"));
@@ -48,13 +44,13 @@ public class MenuScreen implements Screen{
         table.setPosition(0, Gdx.graphics.getHeight()* 3/4);
 
         ///////////////////////Button Generierung///////////////////////////////////////
-        chatButton = new TextButton("Chat", skin);
-        optionButton = new TextButton("Optionen", skin);
-        exitButton = new TextButton("Beenden", skin);
-        newGameButton = new TextButton("Neues Spiel", skin);
+
+        //chatButton = new TextButton("Chat", skin);
+        //optionButton = new TextButton("Optionen", skin);
+        //exitButton = new TextButton("Beenden", skin);
 
         //////////////////////Listener Generierung/////////////////////////////////////
-        chatButton.addListener(new ClickListener() {
+/*        chatButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) { game.setScreen(new ChatScreen(game));}
         });
@@ -67,24 +63,15 @@ public class MenuScreen implements Screen{
         exitButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){ Gdx.app.exit();}
-        });
-
-        newGameButton.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y){game.setScreen(new InitScreen(game));}
-        });
+        });*/
 
 
         /////////////////////Bauen der Tabelle////////////////////////////////////////
-        table.padTop(30);
-        table.row().padBottom(10).fill().width(150).height(50);
-        table.add(newGameButton);
-        table.row().padBottom(10).fill().width(150).height(50);
-        table.add(chatButton);
-        table.row().padBottom(10).fill().width(150).height(50);
-        table.add(optionButton);
-        table.row().fill().width(150).height(50);
-        table.add(exitButton);
+        for(TextButton tb :gameButton) {
+            table.padTop(5);
+            table.row().padBottom(10).fill().width(150).height(50);
+            table.add(tb);
+        }
         stage.addActor(table);
 
 
@@ -95,16 +82,6 @@ public class MenuScreen implements Screen{
 
         ////////////////////Input Regeln///////////////////////////////////////////////
         Gdx.input.setInputProcessor(stage);
-
-
-        ///////////////////brauchst du das noch?////////////////////////////////////////
-       /* Texture splashTexture = new Texture(Gdx.files.internal("assets/splash.jpg"));
-        TextureRegion region = new TextureRegion(splashTexture,0,0,1024,216);
-        splash=new Sprite(region);
-        splashTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        splash.setSize(1024,216);
-        splash.setOrigin(splash.getWidth()/2,splash.getHeight()/2);
-        splash.setPosition(0,552);*/
 
     }
 
@@ -145,5 +122,5 @@ public class MenuScreen implements Screen{
     public void dispose() {
         batch.dispose();
         backGround.getTexture().dispose();
-}
+    }
 }

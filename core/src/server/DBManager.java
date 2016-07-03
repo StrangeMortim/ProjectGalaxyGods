@@ -23,6 +23,10 @@ public class DBManager implements Remote {
     {
         try
         {
+            try {
+                DriverManager.getConnection("jdbc:derby:DerbyDB;shutdown=true");
+            }catch(Exception e){}
+
             Connection conn = DriverManager.getConnection(DB_URL);
             try{buildGameSessionTable(conn);
             }catch(Exception e){System.out.println("GameSession-Table ist vorhanden.");}

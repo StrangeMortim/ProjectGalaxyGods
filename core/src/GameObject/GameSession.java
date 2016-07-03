@@ -22,6 +22,10 @@ public class GameSession implements IGameSession, Serializable{
      */
     private String name;
     /**
+     * Passwort der GameSesion.
+     */
+    private String password;
+    /**
      * Liste mit den verbuendeten Spielern.
      */
     private List<Team> teams;
@@ -328,5 +332,13 @@ public class GameSession implements IGameSession, Serializable{
         }else{
         this.name = name;
         }
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
