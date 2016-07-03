@@ -150,7 +150,7 @@ public class OptionScreen implements Screen {
             serverTable.row();
         }
         ScrollPane serverScroller = new ScrollPane(serverTable,skin);
-        serverScroller.setForceScroll(false, false);
+        //serverScroller.setForceScroll(false, false);
 
 
 
