@@ -150,7 +150,7 @@ public class OptionScreen implements Screen {
             serverTable.row();
         }
         ScrollPane serverScroller = new ScrollPane(serverTable,skin);
-        serverScroller.setForceScroll(false, false);
+        //serverScroller.setForceScroll(false, false);
 
 
 
@@ -234,6 +234,7 @@ public class OptionScreen implements Screen {
                 prefs.flush();
                 Gdx.graphics.setWindowedMode(Integer.parseInt(resolution.split("x")[0]),Integer.parseInt(resolution.split("x")[1]));
                 stage.getViewport().update(Integer.parseInt(resolution.split("x")[0]),Integer.parseInt(resolution.split("x")[1]), true);
+                game.setScreen(new OptionScreen(game));
             }
         });
 

@@ -27,6 +27,7 @@ public class MenuScreen implements Screen{
     private SpriteBatch batch;
 
     private Table table;
+    private TextButton networkButton;
     private TextButton chatButton;
     private TextButton optionButton;
     private TextButton exitButton;
@@ -47,11 +48,17 @@ public class MenuScreen implements Screen{
         table.setPosition(0, Gdx.graphics.getHeight()* 3/4);
 
         ///////////////////////Button Generierung///////////////////////////////////////
+        networkButton = new TextButton("Start", skin);
         chatButton = new TextButton("Chat", skin);
         optionButton = new TextButton("Optionen", skin);
         exitButton = new TextButton("Beenden", skin);
 
         //////////////////////Listener Generierung/////////////////////////////////////
+        networkButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) { game.setScreen(new NetworkScreen(game));}
+        });
+
         chatButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) { game.setScreen(new ChatScreen(game));}
@@ -70,6 +77,8 @@ public class MenuScreen implements Screen{
 
         /////////////////////Bauen der Tabelle////////////////////////////////////////
         table.padTop(30);
+        table.row().padBottom(10).fill().width(150).height(50);
+        table.add(networkButton);
         table.row().padBottom(10).fill().width(150).height(50);
         table.add(chatButton);
         table.row().padBottom(10).fill().width(150).height(50);
