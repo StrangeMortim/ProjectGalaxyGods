@@ -169,15 +169,22 @@ public class NetworkScreen implements Screen {
 
     private void connect(){
         try{
+            System.out.println("1");
             Registry reg = (selectedServer.equals("")) ? LocateRegistry.getRegistry() : LocateRegistry.getRegistry(selectedServer);
+            System.out.println("2");
+
             serverObject = (ServerInterface) reg.lookup("ServerInterface");
+            System.out.println("3");
             games = new ArrayList<String>(Arrays.asList(serverObject.getSessionList().split(";")));
+            System.out.println("4");
             serverOffline.setVisible(false);
             if(((String)games.get(0)).equals(""))
                 games.clear();
             if(games.isEmpty())
                 games.add("Currently no Games avaible, create a new one");
         } catch (RemoteException e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
             serverOffline.setText("Server ist nicht erreichbar");
         } catch (NotBoundException e) {
             serverOffline.setText("Server-Programm ist nicht initialisiert");
