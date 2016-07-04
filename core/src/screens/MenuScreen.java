@@ -56,6 +56,7 @@ public class MenuScreen implements Screen{
         newGameButton = new TextButton("Neues Spiel", skin);
 
         //////////////////////Listener Generierung/////////////////////////////////////
+
         networkButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) { game.setScreen(new NetworkScreen(game));}
@@ -78,7 +79,7 @@ public class MenuScreen implements Screen{
 
         newGameButton.addListener(new ClickListener(){
             @Override
-            public void clicked(InputEvent event, float x, float y){game.setScreen(new InitScreen(game));}
+            public void clicked(InputEvent event, float x, float y){game.setScreen(new InitScreen(game,null));}
         });
 
 

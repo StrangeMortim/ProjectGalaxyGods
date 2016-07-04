@@ -41,9 +41,12 @@ public class InitScreen implements Screen {
     private Table tLeft,tRight,tDown;
     private String name="",password="";
     private SpriteBatch batch;
-    private boolean checkSession;
+    private boolean checkSession=true;
+    private boolean checkAccount;
 
-    public InitScreen(Game game){this.game=game;}
+    public InitScreen(Game game, GameSession session){
+        this.session=session;
+        this.game=game;}
 
     @Override
     public void show() {
@@ -54,9 +57,11 @@ public class InitScreen implements Screen {
         backGround = new Sprite(new Texture(Gdx.files.internal("assets/splash.jpg")));
         backGround.setBounds(0, (stage.getHeight()* 3/4), stage.getWidth(), stage.getHeight()/4);
        checkAccount();
+
     }
 
     private void init(){
+
         //instanziiert Labels und Buttons+Listener
         lID=new Label("Spielname:",skin);
         lPW=new Label("Passwort:",skin);
@@ -79,7 +84,7 @@ public class InitScreen implements Screen {
         sSpieler = new SelectBox<>(skin);
         sRunden  = new SelectBox<>(skin);
         sTeam.setItems((Object[]) new String[]{"Rot", "Blau", "Schwarz", "Weiß"});
-        sSpieler.setItems((Object[]) new String[]{"1", "2", "3", "4"});
+        sSpieler.setItems((Object[]) new String[]{"2", "3", "4"});
         sRunden.setItems((Object[]) new String[]{"15", "20", "30", "40", "50", "75", "100", "Endlos"});
         sTeam.setVisible(false);
 
@@ -223,7 +228,6 @@ public class InitScreen implements Screen {
           Input.TextInputListener nameListener = new Input.TextInputListener()
            {   @Override
                public void input(String input) {name=input;
-
                Input.TextInputListener passwordListener = new Input.TextInputListener()
                {   @Override
                public void input(String input) {password=input;
@@ -231,10 +235,10 @@ public class InitScreen implements Screen {
                        Registry reg = LocateRegistry.getRegistry();
                        ServerInterface stub = (ServerInterface) reg.lookup("ServerInterface");
                        if(stub.checkAccount(name,password)){
-                           checkSession=true;
+                           checkAccount=true;
                            init();
                        }else{
-                           checkSession=false;
+                           checkAccount=false;
                            init();
                        }
                    }catch(Exception e){
