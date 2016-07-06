@@ -11,11 +11,27 @@ public enum Building implements IBuilding,Serializable {
 
     @Override
     public int getBuildTime() {
-        return 0;
+        switch (this)
+        {
+            case LABOR:
+                return 3;
+            case CASERNE:
+                return 2;
+            default:
+                return 0;
+        }
     }
 
     @Override
     public int[] getRessourceCost() {
-        return new int[4];
+        switch (this)
+        {
+            case LABOR:
+                return new int[]{20,30,0,0};
+            case CASERNE:
+                return new int[]{40,10,0,0};
+            default:
+                return new int[]{0,0,0,0};
+        }
     }
 }

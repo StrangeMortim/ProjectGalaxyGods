@@ -14,7 +14,19 @@ public enum UnitType implements IUnitType,Serializable {
      * @return der zugehoerige Typ
      */
     public UnitType getTypeByName(String name) {
-        /*TODO implement*/
+        switch (name.toLowerCase())
+        {
+            case "base":
+                return BASE;
+            case "spearfighter":
+                return SPEARFIGHTER;
+            case "archer":
+                return ARCHER;
+            case "swordfighter":
+                return SWORDFIGHTER;
+            default:
+                System.out.println("getTypeByName got non existent unitName: " + name.toLowerCase());
+        }
         return null;
     }
 
@@ -23,39 +35,130 @@ public enum UnitType implements IUnitType,Serializable {
      */
     @Override
     public int getMaxHp() {
-        return 0;
+        switch (this){
+            case BASE:
+                return 1000;
+            case SPEARFIGHTER:
+                return 30;
+            case ARCHER:
+                return 15;
+            case SWORDFIGHTER:
+                return 50;
+            default:
+                return 0;
+        }
     }
 
     @Override
     public int getAtk() {
-        return 0;
+        switch (this){
+            case BASE:
+                return 10;
+            case SPEARFIGHTER:
+                return 15;
+            case ARCHER:
+                return 20;
+            case SWORDFIGHTER:
+                return 25;
+            default:
+                return 0;
+        }
     }
 
     @Override
     public int getDef() {
-        return 0;
+        switch (this){
+            case BASE:
+                return 15;
+            case SPEARFIGHTER:
+                return 10;
+            case ARCHER:
+                return 5;
+            case SWORDFIGHTER:
+                return 10;
+            default:
+                return 0;
+        }
     }
 
     @Override
     public int getMovePoints() {
-        return 0;
+        switch (this){
+            case BASE:
+                return 0;
+            case SPEARFIGHTER:
+                return 8;
+            case ARCHER:
+                return 5;
+            case SWORDFIGHTER:
+                return 3;
+            default:
+                return 0;
+        }
     }
 
     @Override
     public int getRange() {
-        return 0;
+        switch (this){
+            case BASE:
+                return 5;
+            case SPEARFIGHTER:
+                return 3;
+            case ARCHER:
+                return 5;
+            case SWORDFIGHTER:
+                return 1;
+            default:
+                return 0;
+        }
     }
 
     @Override
     public String getSpriteName() {
-        return null;
+        switch (this){
+            case BASE:
+                return "sprites/baseZero.png";
+            case SPEARFIGHTER:
+                return "sprites/spearfighter.png";
+            case ARCHER:
+                return "sprites/archer.png";
+            case SWORDFIGHTER:
+                return "sprites/swordfighter.png";
+            default:
+                return "splash.jpg";
+        }
     }
 
     @Override
-    public int getRecruitingTime(){ return 0;}
+    public int getRecruitingTime(){
+        switch (this){
+            case BASE:
+                return 4;
+            case SPEARFIGHTER:
+                return 2;
+            case ARCHER:
+                return 2;
+            case SWORDFIGHTER:
+                return 3;
+            default:
+                return 0;
+        }
+    }
 
     @Override
     public int[] getRessourceCost() {
-        return new int[4];
+
+        switch (this){
+            case BASE:
+                return new int[]{100,100,50,0};
+            case SPEARFIGHTER:
+                return new int[]{15,5,20,0};
+            case ARCHER:
+                return new int[]{20,0,10,0};
+            case SWORDFIGHTER:
+                return new int[]{5,15,30,0};
+            default:
+                return new int[]{0,0,0,0};
+        }
     }
 }
