@@ -158,8 +158,12 @@ public class NetworkScreen implements Screen {
                     if(selectedGame != null)
                         selectedGame.setColor(selectedGame.getStyle().fontColor);
 
-                    selectedGame = tmp;
-                    selectedGame.setColor(Color.CYAN);
+                    if(selectedGame == tmp)
+                        selectedGame = null;
+                    else {
+                        selectedGame = tmp;
+                        selectedGame.setColor(Color.CYAN);
+                    }
                 }
             });
             gameTable.add(tmp);

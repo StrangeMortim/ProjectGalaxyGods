@@ -4,7 +4,7 @@ package GameObject;
 import java.io.Serializable;
 
 public enum UnitType implements IUnitType,Serializable {
-    BASE/*TODO Add Types*/
+    BASE, SPEARFIGHTER, ARCHER, SWORDFIGHTER,/*TODO Add Types*/
     ;
 
     /**

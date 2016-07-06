@@ -21,6 +21,8 @@ public class GameScreen implements Screen{
     private Sprite field;
     private SpriteBatch batch;
 
+public GameScreen(Game game, GameSession session){ this.game = game; this.session = session;}
+
 
     /**
      * Called when this screen becomes the current screen for a {@link Game}.
