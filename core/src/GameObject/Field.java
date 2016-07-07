@@ -2,10 +2,13 @@ package GameObject;
 
 import Action.Buff;
 import Player.Player;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 public class Field implements IField,Serializable {
@@ -18,6 +21,7 @@ public class Field implements IField,Serializable {
     private boolean walkable=true;
     private int roundsRemain = -1;
     private String spriteName = "";
+    private Texture texture;
     private boolean baseBuilding = false;
     private Player builder = null;
     private boolean mineBuilding = false;
@@ -33,6 +37,13 @@ public class Field implements IField,Serializable {
         this.xPos = xPos;
         this.yPos = yPos;
         this.map = map;
+
+        //Choose random default Fieldsprite, increase number for new sprites,
+        //sprites must be named "normal" + number(next higher int) and be png files
+        //sprites must be located in sprites folder
+        Random r = new Random();
+        this.spriteName = "sprites/normal" + r.nextInt(2) + ".png";
+        this.texture = new Texture(Gdx.files.internal("assets/"+this.spriteName));
     }
 
     /**
@@ -251,6 +262,11 @@ public class Field implements IField,Serializable {
         return false;
     }
 
+    @Override
+    public Object select(){
+        return (current == null) ? this : current;
+    }
+
     /**
      * Getter und setter
      *
@@ -342,17 +358,24 @@ public class Field implements IField,Serializable {
         return roundsRemain;
     }
 
+    //Sprite name must contain sprite folder
     @Override
     public void setSpriteName(String spriteName) {
         if(spriteName.equals(""))
             throw new IllegalArgumentException("SpriteName is empty");
 
         this.spriteName = spriteName;
+        this.texture = new Texture(Gdx.files.internal("assets/"+this.spriteName));
     }
 
     @Override
     public String getSpriteName() {
         return spriteName;
+    }
+
+    @Override
+    public Texture getTexture() {
+        return texture;
     }
 
     @Override

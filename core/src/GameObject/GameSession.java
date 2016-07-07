@@ -70,6 +70,11 @@ public class GameSession implements IGameSession, Serializable{
      */
     private Market market;
 
+
+    public GameSession(){
+        level = new Map("NoName",4, 2, this);
+    }
+
     /**
      * Ruft bei allen Klassen, die von der GameSession verwaltet werden, die Update-Methode auf.
      */

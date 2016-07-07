@@ -2,6 +2,7 @@ package GameObject;
 
 import Action.Buff;
 import Player.Player;
+import com.badlogic.gdx.graphics.Texture;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -46,6 +47,8 @@ public interface IField extends Remote {
     public boolean buildMine(Player player)throws RemoteException;
 
 
+    public Object select() throws  RemoteException;
+
     /**
      * Getter und setter
      */
@@ -80,6 +83,8 @@ public interface IField extends Remote {
     public void setSpriteName(String spriteName);
 
     public String getSpriteName();
+
+    public Texture getTexture();
 
     public void setHasMine(boolean hasMine);
 

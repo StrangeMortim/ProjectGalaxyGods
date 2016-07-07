@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Map implements IMap,Serializable {
 
-    private Field[][] fields = new Field[8][8];
+    private Field[][] fields = new Field[50][50];
     private int maxPlayers = 4;
     private int minPlayers = 2;
     private String levelName = "";
@@ -30,7 +30,17 @@ public class Map implements IMap,Serializable {
      */
     @Override
     public void init() {
-        /* TODO*/
+        int i=0;
+        int j=0;
+
+        for(Field[] f: fields){
+            for(Field f2: f){
+                f2 = new Field(-1,0,i,j,this);
+                j++;
+            }
+            i++;
+        }
+
     }
 
     /**
