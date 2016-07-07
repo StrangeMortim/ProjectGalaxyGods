@@ -4,10 +4,12 @@ import GameObject.Field;
 import GameObject.GameSession;
 import GameObject.Unit;
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -35,6 +37,7 @@ public class GameScreen implements Screen, InputProcessor{
     Texture bg2 = new Texture(Gdx.files.internal("assets/sprites/normal1.png"));
     OrthographicCamera camera;
     int[][] fields = new int[100][100];
+    ShapeRenderer shapeRenderer = new ShapeRenderer();
 
 
     public  GameScreen(Game game, GameSession session){
@@ -81,27 +84,39 @@ public class GameScreen implements Screen, InputProcessor{
         int batchHeight = 5500;
         int i=0;
         int j=0;
+        batch.setProjectionMatrix(camera.combined);
+        shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
+
 
         //Move screen right
         if((Gdx.input.getX()>=(Gdx.graphics.getWidth()* 9/10) || Gdx.input.isKeyPressed(Input.Keys.DPAD_RIGHT))&&camera.position.x<batchWidth)
-        {camera.position.set(camera.position.x+10, camera.position.y, 0);}
+        {camera.position.set(camera.position.x+10, camera.position.y, 0);
+         }
 
         //Move screen left
         if((Gdx.input.getX()<=(Gdx.graphics.getWidth()/10)|| Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT)) &&camera.position.x>0)
-        {camera.position.set(camera.position.x-10, camera.position.y, 0);}
+        {camera.position.set(camera.position.x-10, camera.position.y, 0);
+
+        }
 
         //Move screen down
         if((Gdx.input.getY()>=(Gdx.graphics.getHeight()* 9/10)|| Gdx.input.isKeyPressed(Input.Keys.DPAD_DOWN))&&camera.position.y>0)
-        {camera.position.set(camera.position.x,camera.position.y-10, 0);}
+        {camera.position.set(camera.position.x,camera.position.y-10, 0);
+
+        }
 
         //Move screen up
         if((Gdx.input.getY()<=(Gdx.graphics.getHeight()/10)|| Gdx.input.isKeyPressed(Input.Keys.DPAD_UP))&&camera.position.y<batchHeight)
-        {camera.position.set(camera.position.x,camera.position.y+10, 0);}
-
+        {camera.position.set(camera.position.x,camera.position.y+10, 0);
+           }
         camera.update();
+
+
+
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        batch.setProjectionMatrix(camera.combined);
+
+
         batch.begin();
 
         try{
@@ -125,6 +140,19 @@ public class GameScreen implements Screen, InputProcessor{
         }
 
         batch.end();
+        Vector3 vector=camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+        float x = vector.x > batchWidth ? batchWidth-100 : vector.x < 0 ? 0 : vector.x;
+        float y = vector.y > batchHeight ? batchHeight-100 : vector.y < 0 ? 0 : vector.y;
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.BLUE);
+        shapeRenderer.rect(((int)x/100)*100, ((int)y/100)*100, 100, 100);
+        shapeRenderer.end();
+
+    }
+
+    public boolean showUnitRadius(){
+
+        return false;
     }
 
     /**
