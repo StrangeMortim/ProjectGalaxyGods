@@ -208,7 +208,7 @@ public class GameScreen implements Screen, InputProcessor{
 
         batch.end();
 
-        //showMovementRange();
+        showMovementRange();
 
 
         Vector3 vector=camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
@@ -403,22 +403,21 @@ public class GameScreen implements Screen, InputProcessor{
         testUnit.setOwner(new Player(account));
         map[2][4].setCurrent(testUnit);
         //----------------------------------------------
-
-        if (selected != null && selected instanceof Field && ((Field) selected).getCurrent().getType() != UnitType.BASE
-                && ((Field) selected).getCurrent().getOwner().getAccount() == account) {
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-            shapeRenderer.setColor(Color.GREEN);
-            int radius = ((Field) selected).getCurrent().getMovePointsLeft();
-           for(int x=0-radius;x<radius+1;x++){
-               for(int y=0-radius;y<radius+1;y++){
-                   if(((Field) selected).getXPos()*100+x*100>=0&&((Field) selected).getYPos()*100+y*100>=0
-                           &&((Field) selected).getYPos()*100+y*100<=4900&&((Field) selected).getXPos()*100+x*100<=4900)
-                      // if(map[((Field) selected).getXPos()+x][((Field) selected).getYPos()+y].getWalkable()==true)
-                   shapeRenderer.rect(((Field) selected).getXPos()*100+x*100, ((Field) selected).getYPos()*100+y*100, 100, 100);
-               }
-           }
-            shapeRenderer.end();
+        if (selected != null && selected instanceof Field & ((Field) selected).getCurrent()!= null) {
+            if (((Field) selected).getCurrent().getOwner() != null&&((Field) selected).getCurrent().getType() != UnitType.BASE && ((Field) selected).getCurrent().getOwner().getAccount() == account) {
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+                shapeRenderer.setColor(Color.GREEN);
+                int radius = ((Field) selected).getCurrent().getMovePointsLeft();
+                for (int x = 0 - radius; x < radius + 1; x++) {
+                    for (int y = 0 - radius; y < radius + 1; y++) {
+                        if (((Field) selected).getXPos() * 100 + x * 100 >= 0 && ((Field) selected).getYPos() * 100 + y * 100 >= 0
+                                && ((Field) selected).getYPos() * 100 + y * 100 <= 4900 && ((Field) selected).getXPos() * 100 + x * 100 <= 4900)
+                            // if(map[((Field) selected).getXPos()+x][((Field) selected).getYPos()+y].getWalkable()==true)
+                            shapeRenderer.rect(((Field) selected).getXPos() * 100 + x * 100, ((Field) selected).getYPos() * 100 + y * 100, 100, 100);
+                    }
+                }
+                shapeRenderer.end();
+            }
         }
     }
-
 }
