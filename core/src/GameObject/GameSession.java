@@ -73,6 +73,7 @@ public class GameSession implements IGameSession, Serializable{
 
     public GameSession(){
         level = new Map("NoName",4, 2, this);
+        level.init();
     }
 
     /**
