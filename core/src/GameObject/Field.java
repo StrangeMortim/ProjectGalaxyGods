@@ -42,7 +42,10 @@ public class Field implements IField,Serializable {
         //sprites must be named "normal" + number(next higher int) and be png files
         //sprites must be located in sprites folder
         Random r = new Random();
-        this.spriteName = "sprites/normal" + r.nextInt(2) + ".png";
+
+        
+        this.spriteName = "assets/sprites/normal" + r.nextInt(3) + ".png";
+
         //this.texture = new Texture(Gdx.files.internal("assets/"+this.spriteName));
     }
 

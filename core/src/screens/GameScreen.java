@@ -55,7 +55,9 @@ public class GameScreen implements Screen, InputProcessor{
             new Texture(Gdx.files.internal("assets/sprites/baseDownRightCaserne.png")),
             new Texture(Gdx.files.internal("assets/sprites/baseDownRightEmpty.png")),
             new Texture(Gdx.files.internal("assets/sprites/baseDownLeftCaserne.png")),
-            new Texture(Gdx.files.internal("assets/sprites/baseDownLeftEmpty.png"))};
+            new Texture(Gdx.files.internal("assets/sprites/baseDownLeftEmpty.png")),
+            new Texture(Gdx.files.internal("assets/sprites/normal2.png")),
+    };
 
 
     public  GameScreen(Game game, GameSession session, Account account){
@@ -181,6 +183,9 @@ public class GameScreen implements Screen, InputProcessor{
                         case "assets/sprites/baseDownLeftEmpty.png":
                             textureIndex = 11;
                         break;
+                        case "assets/sprites/normal2.png":
+                            textureIndex = 12;
+                            break;
                         default:
                             textureIndex = 0;
                             break;
@@ -394,8 +399,8 @@ public class GameScreen implements Screen, InputProcessor{
      */
     public void showMovementRange() {
 //Testweise-------------------------------------
-        session = new GameSession();
-        session.getMap().getFields()[2][4] = new Field(1, 1, 2, 4, session.getMap());
+     //   session = new GameSession();
+     //   session.getMap().getFields()[2][4] = new Field(1, 1, 2, 4, session.getMap());
         this.map = session.getMap().getFields();
         Unit testUnit = new Unit(UnitType.SPEARFIGHTER, new Player(account));
         testUnit.setMovePointsLeft(3);
