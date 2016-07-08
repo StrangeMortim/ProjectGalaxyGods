@@ -208,7 +208,7 @@ public class GameScreen implements Screen, InputProcessor{
 
         batch.end();
 
-        showMovementRange();
+        //showMovementRange();
 
 
         Vector3 vector=camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
@@ -316,7 +316,6 @@ public class GameScreen implements Screen, InputProcessor{
             switch (button) {
                 case Input.Buttons.LEFT:
                     selected = map[getFieldXPos(2600)][getFieldYPos(2600)]; //TODO batchBounds->attribute
-
                     break;
                 case Input.Buttons.RIGHT:
                     System.out.println("No action assigned");
