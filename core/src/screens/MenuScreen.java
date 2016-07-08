@@ -1,5 +1,6 @@
 package screens;
 
+import Player.Account;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -79,7 +80,7 @@ public class MenuScreen implements Screen{
 
         newGameButton.addListener(new ClickListener(){
             @Override
-            public void clicked(InputEvent event, float x, float y){game.setScreen(new GameScreen(game, null));}
+            public void clicked(InputEvent event, float x, float y){game.setScreen(new GameScreen(game, null, new Account("test","1234") ));}
         });
 
 

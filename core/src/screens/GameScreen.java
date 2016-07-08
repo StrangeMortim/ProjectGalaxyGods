@@ -3,6 +3,9 @@ package screens;
 import GameObject.Field;
 import GameObject.GameSession;
 import GameObject.Unit;
+import GameObject.UnitType;
+import Player.Account;
+import Player.Player;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -10,6 +13,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -29,7 +33,7 @@ public class GameScreen implements Screen, InputProcessor{
     private GameSession session;
     private Field[][] map = null;
     private Object selected;
-
+    private Account account;
     private Stage stage;
     private Skin skin;
     private SpriteBatch batch;
@@ -40,7 +44,8 @@ public class GameScreen implements Screen, InputProcessor{
     ShapeRenderer shapeRenderer = new ShapeRenderer();
 
 
-    public  GameScreen(Game game, GameSession session){
+    public  GameScreen(Game game, GameSession session, Account account){
+        this.account=account;
         batch=new SpriteBatch();
         this.session = session;
       this.game = game;
@@ -60,6 +65,7 @@ public class GameScreen implements Screen, InputProcessor{
         for(int i=0;i<50;++i)
             for(int j=0;j<50;++j)
                 fields[i][j] = r.nextInt(2);
+
     }
 
     /**
@@ -80,8 +86,8 @@ public class GameScreen implements Screen, InputProcessor{
      */
     @Override
     public void render(float delta) {
-        int batchWidth = 5500;
-        int batchHeight = 5500;
+        int batchWidth = 5000;
+        int batchHeight = 5000;
         int i=0;
         int j=0;
         batch.setProjectionMatrix(camera.combined);
@@ -139,7 +145,14 @@ public class GameScreen implements Screen, InputProcessor{
                 }
         }
 
+//testweise
+        batch.draw(new Texture(Gdx.files.internal("assets/sprites/spearfighter.png")), 500,500,100,100);
+
         batch.end();
+
+        showMovementRange();
+
+
         Vector3 vector=camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         float x = vector.x > batchWidth ? batchWidth-100 : vector.x < 0 ? 0 : vector.x;
         float y = vector.y > batchHeight ? batchHeight-100 : vector.y < 0 ? 0 : vector.y;
@@ -245,6 +258,7 @@ public class GameScreen implements Screen, InputProcessor{
             switch (button) {
                 case Input.Buttons.LEFT:
                     selected = map[getFieldXPos(5000)][getFieldYPos(5000)]; //TODO batchBounds->attribute
+
                     break;
                 case Input.Buttons.RIGHT:
                     System.out.println("No action assigned");
@@ -257,7 +271,7 @@ public class GameScreen implements Screen, InputProcessor{
             System.out.println("Probably everything ok, just dummies missing: GameScreen - touchDown");
             //e.printStackTrace();
         }
-        return true;
+        return false;
     }
 
     private int getFieldXPos(int scrWidth){
@@ -317,4 +331,34 @@ public class GameScreen implements Screen, InputProcessor{
     public boolean scrolled(int amount) {
         return false;
     }
+
+    /**
+     * Zeigt den Bewegungsradius eigener Einheiten an.
+     */
+    public void showMovementRange() {
+//Testweise-------------------------------------
+        session = new GameSession();
+        session.getMap().getFields()[5][5] = new Field(1, 1, 5, 5, session.getMap());
+        this.map = session.getMap().getFields();
+        Unit testUnit = new Unit(UnitType.SPEARFIGHTER, new Player(account));
+        testUnit.setMovePointsLeft(3);
+        testUnit.setSpriteName("sprites/spearfighter.png");
+        testUnit.setOwner(new Player(account));
+        map[5][5].setCurrent(testUnit);
+        //----------------------------------------------
+
+        if (selected != null && selected instanceof Field && ((Field) selected).getCurrent().getType() != UnitType.BASE
+                && ((Field) selected).getCurrent().getOwner().getAccount() == account) {
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.setColor(Color.GREEN);
+            int radius = ((Field) selected).getCurrent().getMovePointsLeft();
+           for(int x=0-radius;x<radius+1;x++){
+               for(int y=0-radius;y<radius+1;y++){
+                   shapeRenderer.rect(((Field) selected).getXPos()*100+x*100, ((Field) selected).getYPos()*100+y*100, 100, 100);
+               }
+           }
+            shapeRenderer.end();
+        }
+    }
+
 }

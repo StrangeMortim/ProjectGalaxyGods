@@ -15,6 +15,7 @@ public class Unit implements IUnit,Serializable {
     protected int atk;
     protected int def;
     protected int movePoints;
+    protected int movePointsLeft;
     protected int range;
     protected String spriteName = "";
     protected Player owner;
@@ -119,6 +120,9 @@ public class Unit implements IUnit,Serializable {
     public int getMovePoints() {
         return movePoints;
     }
+
+    public int getMovePointsLeft(){return movePointsLeft;}
+    public void setMovePointsLeft(int i){movePointsLeft=i;}
 
     @Override
     public void setRange(int range) {
