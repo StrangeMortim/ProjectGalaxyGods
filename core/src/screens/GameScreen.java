@@ -47,7 +47,7 @@ public class GameScreen implements Screen, InputProcessor{
     private Texture[] textures = new Texture[]{new Texture(Gdx.files.internal("assets/sprites/normal0.png")),
             new Texture(Gdx.files.internal("assets/sprites/normal1.png")),
             new Texture(Gdx.files.internal("assets/sprites/forest.png")),
-            new Texture(Gdx.files.internal("assets/sprites/ironNoMine.png")),
+            new Texture(Gdx.files.internal("assets/sprites/ironNoMine0.png")),
             new Texture(Gdx.files.internal("assets/sprites/baseFullRight.png")),
             new Texture(Gdx.files.internal("assets/sprites/baseFullLeft.png")),
             new Texture(Gdx.files.internal("assets/sprites/baseDownRightFull.png")),
@@ -57,6 +57,7 @@ public class GameScreen implements Screen, InputProcessor{
             new Texture(Gdx.files.internal("assets/sprites/baseDownLeftCaserne.png")),
             new Texture(Gdx.files.internal("assets/sprites/baseDownLeftEmpty.png")),
             new Texture(Gdx.files.internal("assets/sprites/normal2.png")),
+            new Texture(Gdx.files.internal("assets/sprites/ironNoMine1.png")),
     };
 
 
@@ -156,7 +157,7 @@ public class GameScreen implements Screen, InputProcessor{
                         case "assets/sprites/forest.png":
                             textureIndex = 2;
                         break;
-                        case "assets/sprites/ironNoMine.png":
+                        case "assets/sprites/ironNoMine0.png":
                             textureIndex = 3;
                         break;
                         case "assets/sprites/baseFullRight.png":
@@ -185,6 +186,9 @@ public class GameScreen implements Screen, InputProcessor{
                         break;
                         case "assets/sprites/normal2.png":
                             textureIndex = 12;
+                            break;
+                        case "assets/sprites/ironNoMine1.png":
+                            textureIndex = 13;
                             break;
                         default:
                             textureIndex = 0;

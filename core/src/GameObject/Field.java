@@ -43,7 +43,7 @@ public class Field implements IField,Serializable {
         //sprites must be located in sprites folder
         Random r = new Random();
 
-        
+
         this.spriteName = "assets/sprites/normal" + r.nextInt(3) + ".png";
 
         //this.texture = new Texture(Gdx.files.internal("assets/"+this.spriteName));
@@ -282,7 +282,7 @@ public class Field implements IField,Serializable {
 
         this.resType = resType;
 
-        this.spriteName = (resType == 0) ? "assets/sprites/forest.png" : (resType == 1) ? "assets/sprites/ironNoMine.png" : this.spriteName;
+        this.spriteName = (resType == 0) ? "assets/sprites/forest.png" : (resType == 1) ? "assets/sprites/ironNoMine"+new Random().nextInt(2)+".png" : this.spriteName;
     }
 
     @Override
