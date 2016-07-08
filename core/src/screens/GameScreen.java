@@ -40,8 +40,22 @@ public class GameScreen implements Screen, InputProcessor{
     Texture bg = new Texture(Gdx.files.internal("assets/sprites/normal0.png"));
     Texture bg2 = new Texture(Gdx.files.internal("assets/sprites/normal1.png"));
     OrthographicCamera camera;
-    int[][] fields = new int[100][100];
+    int[][] fields = new int[26][24];
     ShapeRenderer shapeRenderer = new ShapeRenderer();
+
+    //Prepare Textures
+    private Texture[] textures = new Texture[]{new Texture(Gdx.files.internal("assets/sprites/normal0.png")),
+            new Texture(Gdx.files.internal("assets/sprites/normal1.png")),
+            new Texture(Gdx.files.internal("assets/sprites/forest.png")),
+            new Texture(Gdx.files.internal("assets/sprites/ironNoMine.png")),
+            new Texture(Gdx.files.internal("assets/sprites/baseFullRight.png")),
+            new Texture(Gdx.files.internal("assets/sprites/baseFullLeft.png")),
+            new Texture(Gdx.files.internal("assets/sprites/baseDownRightFull.png")),
+            new Texture(Gdx.files.internal("assets/sprites/baseDownRightLabor.png")),
+            new Texture(Gdx.files.internal("assets/sprites/baseDownRightCaserne.png")),
+            new Texture(Gdx.files.internal("assets/sprites/baseDownRightEmpty.png")),
+            new Texture(Gdx.files.internal("assets/sprites/baseDownLeftCaserne.png")),
+            new Texture(Gdx.files.internal("assets/sprites/baseDownLeftEmpty.png"))};
 
 
     public  GameScreen(Game game, GameSession session, Account account){
@@ -62,8 +76,8 @@ public class GameScreen implements Screen, InputProcessor{
         }
 
         Random r = new Random();
-        for(int i=0;i<50;++i)
-            for(int j=0;j<50;++j)
+        for(int i=0;i<26;++i)
+            for(int j=0;j<24;++j)
                 fields[i][j] = r.nextInt(2);
 
     }
@@ -86,8 +100,8 @@ public class GameScreen implements Screen, InputProcessor{
      */
     @Override
     public void render(float delta) {
-        int batchWidth = 5000;
-        int batchHeight = 5000;
+        int batchWidth = 2600;
+        int batchHeight = 2600;
         int i=0;
         int j=0;
         batch.setProjectionMatrix(camera.combined);
@@ -124,18 +138,62 @@ public class GameScreen implements Screen, InputProcessor{
 
 
         batch.begin();
-
+        String textureName = "";
+        int textureIndex = 0;
         try{
             for(Field[] f: map){
                 for(Field f2: f){
-                    batch.draw(f2.getTexture(), 100*i,100*j,100,100);
+                    textureName = f2.getSpriteName();
+                    switch (textureName){
+                        case "assets/sprites/normal0.png":
+                            textureIndex = 0;
+                        break;
+                        case "assets/sprites/normal1.png":
+                            textureIndex = 1;
+                        break;
+                        case "assets/sprites/forest.png":
+                            textureIndex = 2;
+                        break;
+                        case "assets/sprites/ironNoMine.png":
+                            textureIndex = 3;
+                        break;
+                        case "assets/sprites/baseFullRight.png":
+                            textureIndex = 4;
+                        break;
+                        case "assets/sprites/baseFullLeft.png":
+                            textureIndex = 5;
+                        break;
+                        case "assets/sprites/baseDownRightFull.png":
+                            textureIndex = 6;
+                        break;
+                        case "assets/sprites/baseDownRightLabor.png":
+                            textureIndex = 7;
+                        break;
+                        case "assets/sprites/baseDownRightCaserne.png":
+                            textureIndex = 8;
+                        break;
+                        case "assets/sprites/baseDownRightEmpty.png":
+                            textureIndex = 9;
+                        break;
+                        case "assets/sprites/baseDownLeftCaserne.png":
+                            textureIndex = 10;
+                        break;
+                        case "assets/sprites/baseDownLeftEmpty.png":
+                            textureIndex = 11;
+                        break;
+                        default:
+                            textureIndex = 0;
+                            break;
+                    }
+                    batch.draw(textures[textureIndex], 100*i,100*j,100,100);
                             j++;
                 }
+                j=0;
                 i++;
             }
         }catch (NullPointerException e) {
-            for (i = 0; i < 50; ++i)
-                for (j = 0; j < 50; ++j) {
+            for (i = 0; i < 26; ++i)
+                for (j = 0; j < 24; ++j) {
 
                     if (fields[i][j] == 0)
                         batch.draw(bg, 100 * i, 100 * j, 100, 100);
@@ -150,7 +208,7 @@ public class GameScreen implements Screen, InputProcessor{
 
         batch.end();
 
-        showMovementRange();
+        //showMovementRange();
 
 
         Vector3 vector=camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
@@ -257,8 +315,7 @@ public class GameScreen implements Screen, InputProcessor{
         try {
             switch (button) {
                 case Input.Buttons.LEFT:
-                    selected = map[getFieldXPos(5000)][getFieldYPos(5000)]; //TODO batchBounds->attribute
-
+                    selected = map[getFieldXPos(2600)][getFieldYPos(2600)]; //TODO batchBounds->attribute
                     break;
                 case Input.Buttons.RIGHT:
                     System.out.println("No action assigned");

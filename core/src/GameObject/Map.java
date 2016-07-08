@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Map implements IMap,Serializable {
 
-    private Field[][] fields = new Field[50][50];
+    private Field[][] fields = new Field[26][24];
     private int maxPlayers = 4;
     private int minPlayers = 2;
     private String levelName = "";
@@ -35,11 +35,109 @@ public class Map implements IMap,Serializable {
 
         for(Field[] f: fields){
             for(Field f2: f){
-                f2 = new Field(-1,0,i,j,this);
+                fields[i][j] = new Field(-1,0,i,j,this);
                 j++;
             }
+            j=0;
             i++;
         }
+
+
+        //Forest top
+        for(i=0; i<26; ++i){
+            switch (i){
+                case 0:
+                case 1:
+                case 24:
+                case 25:
+                    for(j=0;j<6;++j){
+                        fields[i][j].setResType(0);
+                        fields[i][j].setResValue(300);
+                    }
+                    for(j=19;j<24;++j){
+                        fields[i][j].setResType(0);
+                        fields[i][j].setResValue(300);
+                    }
+                    break;
+                case 2:
+                case 3:
+                case 22:
+                case 23:
+                    for(j=0;j<4;++j){
+                        fields[i][j].setResType(0);
+                        fields[i][j].setResValue(300);
+                    }
+                    for(j=21;j<24;++j){
+                        fields[i][j].setResType(0);
+                        fields[i][j].setResValue(300);
+                    }
+                    break;
+                case 4:
+                case 5:
+                case 20:
+                case 21:
+                    for(j=0;j<2;++j){
+                        fields[i][j].setResType(0);
+                        fields[i][j].setResValue(300);
+                    }
+                    for(j=22;j<24;++j){
+                        fields[i][j].setResType(0);
+                        fields[i][j].setResValue(300);
+                    }
+            }
+        }
+
+        //Forest middle
+        for(i=12; i<16; ++i)
+            for(j=11;j<14;++j){
+                fields[i][j].setResType(0);
+                fields[i][j].setResValue(300);
+            }
+
+        //Iron
+        fields[7][12].setResType(1);
+        fields[7][12].setResValue(300);
+        fields[7][13].setResType(1);
+        fields[7][13].setResValue(300);
+
+        fields[13][8].setResType(1);
+        fields[13][8].setResValue(300);
+        fields[14][8].setResType(1);
+        fields[14][8].setResValue(300);
+
+        fields[20][12].setResType(1);
+        fields[20][12].setResValue(300);
+        fields[20][13].setResType(1);
+        fields[20][13].setResValue(300);
+
+        fields[13][17].setResType(1);
+        fields[13][17].setResValue(300);
+        fields[14][17].setResType(1);
+        fields[14][17].setResValue(300);
+
+        int k=11;
+        j=14;
+        for(i=9;i<12;++i) {
+            fields[i][k].setResType(1);
+            fields[i][k].setResValue(300);
+            fields[i][j].setResType(1);
+            fields[i][j].setResValue(300);
+            k--;
+            j++;
+        }
+
+        k++;
+        j--;
+        for(i=16;i<19;++i) {
+            fields[i][k].setResType(1);
+            fields[i][k].setResValue(300);
+            fields[i][j].setResType(1);
+            fields[i][j].setResValue(300);
+            k++;
+            j--;
+        }
+
+
 
     }
 
