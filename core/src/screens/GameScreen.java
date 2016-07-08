@@ -338,13 +338,13 @@ public class GameScreen implements Screen, InputProcessor{
     public void showMovementRange() {
 //Testweise-------------------------------------
         session = new GameSession();
-        session.getMap().getFields()[5][5] = new Field(1, 1, 5, 5, session.getMap());
+        session.getMap().getFields()[2][4] = new Field(1, 1, 2, 4, session.getMap());
         this.map = session.getMap().getFields();
         Unit testUnit = new Unit(UnitType.SPEARFIGHTER, new Player(account));
         testUnit.setMovePointsLeft(3);
         testUnit.setSpriteName("sprites/spearfighter.png");
         testUnit.setOwner(new Player(account));
-        map[5][5].setCurrent(testUnit);
+        map[2][4].setCurrent(testUnit);
         //----------------------------------------------
 
         if (selected != null && selected instanceof Field && ((Field) selected).getCurrent().getType() != UnitType.BASE
@@ -354,6 +354,9 @@ public class GameScreen implements Screen, InputProcessor{
             int radius = ((Field) selected).getCurrent().getMovePointsLeft();
            for(int x=0-radius;x<radius+1;x++){
                for(int y=0-radius;y<radius+1;y++){
+                   if(((Field) selected).getXPos()*100+x*100>=0&&((Field) selected).getYPos()*100+y*100>=0
+                           &&((Field) selected).getYPos()*100+y*100<=4900&&((Field) selected).getXPos()*100+x*100<=4900)
+                      // if(map[((Field) selected).getXPos()+x][((Field) selected).getYPos()+y].getWalkable()==true)
                    shapeRenderer.rect(((Field) selected).getXPos()*100+x*100, ((Field) selected).getYPos()*100+y*100, 100, 100);
                }
            }
