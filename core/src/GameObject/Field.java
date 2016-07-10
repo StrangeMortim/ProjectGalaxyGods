@@ -279,7 +279,7 @@ public class Field implements IField,Serializable {
 
         this.resType = resType;
 
-        this.spriteName = (resType == 0) ? "assets/sprites/forest.png" : (resType == 1) ? "assets/sprites/ironNoMine.png" : this.spriteName;
+        this.spriteName = (resType == 0) ? "assets/sprites/forest.png" : (resType == 1) ? "assets/sprites/ironNoMine"+new Random().nextInt(2)+".png" : this.spriteName;
     }
 
     @Override

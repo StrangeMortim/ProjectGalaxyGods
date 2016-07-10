@@ -47,7 +47,7 @@ public class GameScreen implements Screen, InputProcessor{
     private Texture[] textures = new Texture[]{new Texture(Gdx.files.internal("assets/sprites/normal0.png")),
             new Texture(Gdx.files.internal("assets/sprites/normal1.png")),
             new Texture(Gdx.files.internal("assets/sprites/forest.png")),
-            new Texture(Gdx.files.internal("assets/sprites/ironNoMine.png")),
+            new Texture(Gdx.files.internal("assets/sprites/ironNoMine0.png")),
             new Texture(Gdx.files.internal("assets/sprites/baseFullRight.png")),
             new Texture(Gdx.files.internal("assets/sprites/baseFullLeft.png")),
             new Texture(Gdx.files.internal("assets/sprites/baseDownRightFull.png")),
@@ -55,7 +55,10 @@ public class GameScreen implements Screen, InputProcessor{
             new Texture(Gdx.files.internal("assets/sprites/baseDownRightCaserne.png")),
             new Texture(Gdx.files.internal("assets/sprites/baseDownRightEmpty.png")),
             new Texture(Gdx.files.internal("assets/sprites/baseDownLeftCaserne.png")),
-            new Texture(Gdx.files.internal("assets/sprites/baseDownLeftEmpty.png"))};
+            new Texture(Gdx.files.internal("assets/sprites/baseDownLeftEmpty.png")),
+            new Texture(Gdx.files.internal("assets/sprites/normal2.png")),
+            new Texture(Gdx.files.internal("assets/sprites/ironNoMine1.png")),
+    };
 
 
     public  GameScreen(Game game, GameSession session, Account account){
@@ -154,7 +157,7 @@ public class GameScreen implements Screen, InputProcessor{
                         case "assets/sprites/forest.png":
                             textureIndex = 2;
                         break;
-                        case "assets/sprites/ironNoMine.png":
+                        case "assets/sprites/ironNoMine0.png":
                             textureIndex = 3;
                         break;
                         case "assets/sprites/baseFullRight.png":
@@ -181,6 +184,12 @@ public class GameScreen implements Screen, InputProcessor{
                         case "assets/sprites/baseDownLeftEmpty.png":
                             textureIndex = 11;
                         break;
+                        case "assets/sprites/normal2.png":
+                            textureIndex = 12;
+                            break;
+                        case "assets/sprites/ironNoMine1.png":
+                            textureIndex = 13;
+                            break;
                         default:
                             textureIndex = 0;
                             break;
@@ -208,7 +217,7 @@ public class GameScreen implements Screen, InputProcessor{
 
         batch.end();
 
-        //showMovementRange();
+        showMovementRange();
 
 
         Vector3 vector=camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
@@ -394,28 +403,30 @@ public class GameScreen implements Screen, InputProcessor{
      */
     public void showMovementRange() {
 //Testweise-------------------------------------
-        session = new GameSession();
-        session.getMap().getFields()[5][5] = new Field(1, 1, 5, 5, session.getMap());
+     //   session = new GameSession();
+     //   session.getMap().getFields()[2][4] = new Field(1, 1, 2, 4, session.getMap());
         this.map = session.getMap().getFields();
         Unit testUnit = new Unit(UnitType.SPEARFIGHTER, new Player(account));
         testUnit.setMovePointsLeft(3);
         testUnit.setSpriteName("sprites/spearfighter.png");
         testUnit.setOwner(new Player(account));
-        map[5][5].setCurrent(testUnit);
+        map[2][4].setCurrent(testUnit);
         //----------------------------------------------
-
-        if (selected != null && selected instanceof Field && ((Field) selected).getCurrent().getType() != UnitType.BASE
-                && ((Field) selected).getCurrent().getOwner().getAccount() == account) {
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-            shapeRenderer.setColor(Color.GREEN);
-            int radius = ((Field) selected).getCurrent().getMovePointsLeft();
-           for(int x=0-radius;x<radius+1;x++){
-               for(int y=0-radius;y<radius+1;y++){
-                   shapeRenderer.rect(((Field) selected).getXPos()*100+x*100, ((Field) selected).getYPos()*100+y*100, 100, 100);
-               }
-           }
-            shapeRenderer.end();
+        if (selected != null && selected instanceof Field & ((Field) selected).getCurrent()!= null) {
+            if (((Field) selected).getCurrent().getOwner() != null&&((Field) selected).getCurrent().getType() != UnitType.BASE && ((Field) selected).getCurrent().getOwner().getAccount() == account) {
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+                shapeRenderer.setColor(Color.GREEN);
+                int radius = ((Field) selected).getCurrent().getMovePointsLeft();
+                for (int x = 0 - radius; x < radius + 1; x++) {
+                    for (int y = 0 - radius; y < radius + 1; y++) {
+                        if (((Field) selected).getXPos() * 100 + x * 100 >= 0 && ((Field) selected).getYPos() * 100 + y * 100 >= 0
+                                && ((Field) selected).getYPos() * 100 + y * 100 <= 4900 && ((Field) selected).getXPos() * 100 + x * 100 <= 4900)
+                            // if(map[((Field) selected).getXPos()+x][((Field) selected).getYPos()+y].getWalkable()==true)
+                            shapeRenderer.rect(((Field) selected).getXPos() * 100 + x * 100, ((Field) selected).getYPos() * 100 + y * 100, 100, 100);
+                    }
+                }
+                shapeRenderer.end();
+            }
         }
     }
-
 }
