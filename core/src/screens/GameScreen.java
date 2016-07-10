@@ -49,6 +49,7 @@ public class GameScreen implements Screen, InputProcessor{
     OrthographicCamera camera;
     int[][] fields = new int[26][24];
     ShapeRenderer shapeRenderer = new ShapeRenderer();
+    private Table table;
 
     private Table chatTable;
     private TextButton sendMessageButton;
@@ -59,20 +60,25 @@ public class GameScreen implements Screen, InputProcessor{
     private int lastMessageCount;
 
     //Prepare Textures
-    private Texture[] textures = new Texture[]{new Texture(Gdx.files.internal("assets/sprites/normal0.png")),
-            new Texture(Gdx.files.internal("assets/sprites/normal1.png")),
-            new Texture(Gdx.files.internal("assets/sprites/forest.png")),
-            new Texture(Gdx.files.internal("assets/sprites/ironNoMine0.png")),
-            new Texture(Gdx.files.internal("assets/sprites/baseFullRight.png")),
-            new Texture(Gdx.files.internal("assets/sprites/baseFullLeft.png")),
-            new Texture(Gdx.files.internal("assets/sprites/baseDownRightFull.png")),
-            new Texture(Gdx.files.internal("assets/sprites/baseDownRightLabor.png")),
-            new Texture(Gdx.files.internal("assets/sprites/baseDownRightCaserne.png")),
-            new Texture(Gdx.files.internal("assets/sprites/baseDownRightEmpty.png")),
-            new Texture(Gdx.files.internal("assets/sprites/baseDownLeftCaserne.png")),
-            new Texture(Gdx.files.internal("assets/sprites/baseDownLeftEmpty.png")),
-            new Texture(Gdx.files.internal("assets/sprites/normal2.png")),
-            new Texture(Gdx.files.internal("assets/sprites/ironNoMine1.png")),
+    private Texture[] textures = new Texture[]{new Texture(Gdx.files.internal("assets/sprites/normal0.png")),//0
+            new Texture(Gdx.files.internal("assets/sprites/normal1.png")),        //1
+            new Texture(Gdx.files.internal("assets/sprites/forest.png")),      //2
+            new Texture(Gdx.files.internal("assets/sprites/ironNoMine0.png")),//3
+            new Texture(Gdx.files.internal("assets/sprites/baseFullRight.png")),//4
+            new Texture(Gdx.files.internal("assets/sprites/baseFullLeft.png")),//5
+            new Texture(Gdx.files.internal("assets/sprites/baseDownRightFull.png")),//6
+            new Texture(Gdx.files.internal("assets/sprites/baseDownRightLabor.png")),//7
+            new Texture(Gdx.files.internal("assets/sprites/baseDownRightCaserne.png")),//8
+            new Texture(Gdx.files.internal("assets/sprites/baseDownRightEmpty.png")),//9
+            new Texture(Gdx.files.internal("assets/sprites/baseDownLeftCaserne.png")),//10
+            new Texture(Gdx.files.internal("assets/sprites/baseDownLeftEmpty.png")),//11
+            new Texture(Gdx.files.internal("assets/sprites/normal2.png")),//12
+            new Texture(Gdx.files.internal("assets/sprites/ironNoMine1.png")),//13
+            new Texture(Gdx.files.internal("assets/sprites/gold.png")),//14
+            new Texture(Gdx.files.internal("assets/sprites/wood.png")),//15
+            new Texture(Gdx.files.internal("assets/sprites/iron.png")),//16
+            new Texture(Gdx.files.internal("assets/sprites/mana.png")),//17
+            new Texture(Gdx.files.internal("assets/sprites/chest.png"))//18
     };
 
 
@@ -81,6 +87,9 @@ public class GameScreen implements Screen, InputProcessor{
         batch=new SpriteBatch();
         this.session = session;
       this.game = game;
+        stage = new Stage(new ScreenViewport());
+        skin = new Skin(Gdx.files.internal("assets/uiskin.json"));
+
         //bg.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
      int x =Integer.parseInt(Gdx.app.getPreferences("GGConfig").getString("res", "1024x768").split("x")[0]);
      int y =Integer.parseInt(Gdx.app.getPreferences("GGConfig").getString("res", "1024x768").split("x")[1]);
@@ -323,7 +332,9 @@ public class GameScreen implements Screen, InputProcessor{
         shapeRenderer.rect(((int)x/100)*100, ((int)y/100)*100, 100, 100);
         shapeRenderer.end();
 
-        stage.act(delta);
+
+        showTopMenu();
+        stage.act();
         stage.draw();
     }
 
@@ -507,7 +518,7 @@ public class GameScreen implements Screen, InputProcessor{
         testUnit.setMovePointsLeft(3);
         testUnit.setSpriteName("sprites/spearfighter.png");
         testUnit.setOwner(this.player);
-        map[2][4].setCurrent(testUnit);
+        map[2][2].setCurrent(testUnit);
         //----------------------------------------------
         if (selected != null && selected instanceof Field & ((Field) selected).getCurrent()!= null) {
             if (((Field) selected).getCurrent().getOwner() != null&&((Field) selected).getCurrent().getType() != UnitType.BASE
@@ -526,5 +537,42 @@ public class GameScreen implements Screen, InputProcessor{
                 shapeRenderer.end();
             }
         }
+    }
+
+    /**
+     * Zeigt die obere Menuebar an.
+     */
+    public void showTopMenu(){
+    //stage.clear();
+        table = new Table();
+        table.setWidth(stage.getWidth());
+        table.align(Align.left|Align.top);
+        table.setPosition(10, Gdx.graphics.getHeight());
+        HorizontalGroup group = new HorizontalGroup();
+        Image image =new Image(textures[14]);//Gold
+        final Label label1 = new Label("9000", skin);label1.setColor(Color.WHITE);
+        group.addActor(image);
+        group.addActor(label1);
+        Image image2 =new Image(textures[15]);//Holz
+        final Label label2 = new Label("9000", skin);label2.setColor(Color.WHITE);
+        group.addActor(image2);
+        group.addActor(label2);
+        Image image3 =new Image(textures[16]);//Eisen
+        final Label label3 = new Label("9000", skin);label3.setColor(Color.WHITE);
+        group.addActor(image3);
+        group.addActor(label3);
+        Image image4 =new Image(textures[17]);//Mana
+        final Label label4 = new Label("9000", skin);label4.setColor(Color.WHITE);
+        group.addActor(image4);
+        group.addActor(label4);
+        final Label label5 = new Label("9000", skin);label4.setColor(Color.WHITE);
+        Image image5 =new Image(textures[18]);//Teamkasse
+        group.addActor(image5);
+        group.addActor(label5);
+        group.space(10);
+        table.add(group);
+        table.row();
+        stage.addActor(table);
+
     }
 }
