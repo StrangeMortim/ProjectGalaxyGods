@@ -6,6 +6,8 @@ import GameObject.Unit;
 import GameObject.UnitType;
 import Player.Account;
 import Player.Player;
+import chat.Chat;
+import chat.Message;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -15,11 +17,16 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import java.util.Random;
+import java.rmi.RemoteException;
+import java.util.*;
 
 
 /**
@@ -33,7 +40,7 @@ public class GameScreen implements Screen, InputProcessor{
     private GameSession session;
     private Field[][] map = null;
     private Object selected;
-    private Account account;
+    private Player player;
     private Stage stage;
     private Skin skin;
     private SpriteBatch batch;
@@ -42,6 +49,14 @@ public class GameScreen implements Screen, InputProcessor{
     OrthographicCamera camera;
     int[][] fields = new int[26][24];
     ShapeRenderer shapeRenderer = new ShapeRenderer();
+
+    private Table chatTable;
+    private TextButton sendMessageButton;
+    private TextField messageField;
+    private Table backLog;
+    private Label userName;
+    private ScrollPane chatScroller;
+    private int lastMessageCount;
 
     //Prepare Textures
     private Texture[] textures = new Texture[]{new Texture(Gdx.files.internal("assets/sprites/normal0.png")),
@@ -61,8 +76,8 @@ public class GameScreen implements Screen, InputProcessor{
     };
 
 
-    public  GameScreen(Game game, GameSession session, Account account){
-        this.account=account;
+    public  GameScreen(Game game, GameSession session, Player player){
+        this.player=player;
         batch=new SpriteBatch();
         this.session = session;
       this.game = game;
@@ -91,9 +106,88 @@ public class GameScreen implements Screen, InputProcessor{
     @Override
     public void show() {
         stage = new Stage(new ScreenViewport());
+        skin = new Skin(Gdx.files.internal("assets/uiskin.json"));
+
+        chatTable = new Table();
+        chatTable.setBounds(Gdx.graphics.getWidth()*4/5,Gdx.graphics.getHeight()*1/4,Gdx.graphics.getWidth()*1/5,Gdx.graphics.getHeight()*1/4);
+        chatTable.align(Align.bottomLeft);
+        sendMessageButton = new TextButton("Senden",skin);
+        messageField = new TextArea("",skin);
+
+        try {
+            lastMessageCount = session.getSessionChat().getBacklog().size();
+            session.getSessionChat().addParticipant(player); //TODO rausnehmen nicht vergessen
+        } catch (RemoteException e){
+            System.out.println(e.getMessage());
+        }
+
+        //backLog = new List(skin);
+        backLog = new Table();
+        backLog.align(Align.left);
+        backLog.row().fill().expandX().align(Align.left).height(skin.getFont("default-font").getLineHeight());
+        this.buildChatString();
+        chatScroller = new ScrollPane(backLog,skin);
+        chatScroller.setFadeScrollBars(false);
+        chatTable.add(chatScroller).expand().fill().colspan(2);
+        chatTable.row().fill();
+        userName = new Label(player.getAccount().getName(),skin);
+
+        chatTable.add(messageField);
+        chatTable.add(sendMessageButton);
+        stage.addActor(chatTable);
+
+        sendMessageButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                try{
+                    session.getSessionChat().addMessage(player.getAccount().getName() + ": ", messageField.getText());
+                    messageField.setText("");
+                }catch (RemoteException e){
+                    System.out.println(e.getMessage());
+                }
+            }
+        });
+
+        messageField.setTextFieldListener(new TextField.TextFieldListener() {
+            @Override
+            public void keyTyped(TextField textField, char c) {
+                if(c == '\n' || c == '\r'){
+                    try{
+                        session.getSessionChat().addMessage(player.getAccount().getName(), messageField.getText());
+                        messageField.setText("");
+                    }catch (RemoteException e){
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        });
+
 
         InputMultiplexer im = new InputMultiplexer(stage, this);
         Gdx.input.setInputProcessor(im);
+    }
+
+    private void buildChatString(){
+        try {
+            Chat chat = session.getSessionChat();
+            ArrayList<Message> backLogTmp = new ArrayList<>(chat.getBacklog());
+            if(backLogTmp.size() > lastMessageCount && (chat.getParticipants().isEmpty() || chat.getParticipants().contains(player))) {
+                Label tmp;
+                for(int i=lastMessageCount; i<backLogTmp.size(); ++i){
+                    if(backLogTmp.get(i).getVisibleForAll() || backLogTmp.get(i).getVisibleFor().contains(player)){
+                        tmp = new Label(backLogTmp.get(i).getContent(),skin);
+                        tmp.setWrap(true);
+                        backLog.add(tmp);
+                        backLog.row().fill().expandX().align(Align.left).height(tmp.getHeight());
+                        chatScroller.layout();
+                        chatScroller.setScrollPercentY(100);
+                    }
+                }
+                lastMessageCount = backLogTmp.size();
+            }
+        } catch (RemoteException e){
+            System.out.println(e.getMessage());
+        }
     }
 
     /**
@@ -103,6 +197,7 @@ public class GameScreen implements Screen, InputProcessor{
      */
     @Override
     public void render(float delta) {
+        this.buildChatString();
         int batchWidth = 2600;
         int batchHeight = 2600;
         int i=0;
@@ -228,6 +323,8 @@ public class GameScreen implements Screen, InputProcessor{
         shapeRenderer.rect(((int)x/100)*100, ((int)y/100)*100, 100, 100);
         shapeRenderer.end();
 
+        stage.act(delta);
+        stage.draw();
     }
 
     public boolean showUnitRadius(){
@@ -406,14 +503,15 @@ public class GameScreen implements Screen, InputProcessor{
      //   session = new GameSession();
      //   session.getMap().getFields()[2][4] = new Field(1, 1, 2, 4, session.getMap());
         this.map = session.getMap().getFields();
-        Unit testUnit = new Unit(UnitType.SPEARFIGHTER, new Player(account));
+        Unit testUnit = new Unit(UnitType.SPEARFIGHTER, this.player);
         testUnit.setMovePointsLeft(3);
         testUnit.setSpriteName("sprites/spearfighter.png");
-        testUnit.setOwner(new Player(account));
+        testUnit.setOwner(this.player);
         map[2][4].setCurrent(testUnit);
         //----------------------------------------------
         if (selected != null && selected instanceof Field & ((Field) selected).getCurrent()!= null) {
-            if (((Field) selected).getCurrent().getOwner() != null&&((Field) selected).getCurrent().getType() != UnitType.BASE && ((Field) selected).getCurrent().getOwner().getAccount() == account) {
+            if (((Field) selected).getCurrent().getOwner() != null&&((Field) selected).getCurrent().getType() != UnitType.BASE
+                    && ((Field) selected).getCurrent().getOwner() == player) {
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
                 shapeRenderer.setColor(Color.GREEN);
                 int radius = ((Field) selected).getCurrent().getMovePointsLeft();

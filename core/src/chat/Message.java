@@ -19,7 +19,7 @@ public class Message implements IMessage,Serializable {
     /**
      * Gibt an, ob Nachricht fuer alle Spieler sichtbar ist.
      */
-    private boolean visibleForAll;
+    private boolean visibleForAll = true;
     /**
      * List der Spieler, fuer die die Nachricht sichtbar ist.
      */

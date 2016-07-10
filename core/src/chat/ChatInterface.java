@@ -47,7 +47,7 @@ public interface ChatInterface extends Remote{
 
 
     //Getter Setter
-    public List getBacklog() throws RemoteException;
+    public List<Message> getBacklog() throws RemoteException;
     public List<Player> getParticipants()throws RemoteException;
     public void setParticipants(List<Player> p)throws RemoteException;
     public List<Player> getReadOnly()throws RemoteException;

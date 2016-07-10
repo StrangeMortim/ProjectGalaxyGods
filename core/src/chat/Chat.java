@@ -106,7 +106,7 @@ public class Chat implements ChatInterface,Serializable {
 
 
     //Getter Setter
-    public List getBacklog() {
+    public List<Message> getBacklog() {
         return backLog;
     }
 
