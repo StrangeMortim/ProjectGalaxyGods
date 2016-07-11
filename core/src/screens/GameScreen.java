@@ -4,23 +4,18 @@ import GameObject.Field;
 import GameObject.GameSession;
 import GameObject.Unit;
 import GameObject.UnitType;
-import Player.Account;
 import Player.Player;
 import chat.Chat;
 import chat.Message;
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -59,6 +54,13 @@ public class GameScreen implements Screen, InputProcessor{
     private ScrollPane chatScroller;
     private int lastMessageCount;
 
+    private Label label1,label2,label3,label4,label5;
+
+    private Table bottomTable;
+    Label unitName, unitHp, unitRange, unitAtk, unitDef, unitMPoints, unitOwner;
+    private TextButton baseUpLeft, baseUpRight, baseDownLeft, baseDownRight,
+                        heroUpLeft, heroUpRight, fieldUpLeft, fieldUpRight;
+
     //Prepare Textures
     private Texture[] textures = new Texture[]{new Texture(Gdx.files.internal("assets/sprites/normal0.png")),//0
             new Texture(Gdx.files.internal("assets/sprites/normal1.png")),        //1
@@ -78,7 +80,8 @@ public class GameScreen implements Screen, InputProcessor{
             new Texture(Gdx.files.internal("assets/sprites/wood.png")),//15
             new Texture(Gdx.files.internal("assets/sprites/iron.png")),//16
             new Texture(Gdx.files.internal("assets/sprites/mana.png")),//17
-            new Texture(Gdx.files.internal("assets/sprites/chest.png"))//18
+            new Texture(Gdx.files.internal("assets/sprites/chest.png")),//18
+            new Texture(Gdx.files.internal("assets/sprites/menuBackground.png")),//19
     };
 
 
@@ -116,9 +119,10 @@ public class GameScreen implements Screen, InputProcessor{
     public void show() {
         stage = new Stage(new ScreenViewport());
         skin = new Skin(Gdx.files.internal("assets/uiskin.json"));
-
+        showTopMenu();
+        showBottomMenu();
         chatTable = new Table();
-        chatTable.setBounds(Gdx.graphics.getWidth()*4/5,Gdx.graphics.getHeight()*1/4,Gdx.graphics.getWidth()*1/5,Gdx.graphics.getHeight()*1/4);
+        chatTable.setBounds(Gdx.graphics.getWidth()*4/5,Gdx.graphics.getHeight()/6,Gdx.graphics.getWidth()*1/5,Gdx.graphics.getHeight()/4);
         chatTable.align(Align.bottomLeft);
         sendMessageButton = new TextButton("Senden",skin);
         messageField = new TextArea("",skin);
@@ -206,6 +210,30 @@ public class GameScreen implements Screen, InputProcessor{
      */
     @Override
     public void render(float delta) {
+        label1.setText(player.getRessources()[2]+"");
+        label2.setText(player.getRessources()[0]+"");
+        label3.setText(player.getRessources()[1]+"");
+        label4.setText(player.getRessources()[3]+"");
+
+        try{
+        if(selected instanceof Unit){
+            unitAtk.setText("ATK: "+((Unit) selected).getAtk());
+            unitDef.setText("DEF: "+((Unit)selected).getDef());
+            unitHp.setText("HP: "+((Unit)selected).getCurrentHp()+"/"+((Unit)selected).getMaxHp());
+            unitMPoints.setText("BP: "+((Unit)selected).getMovePointsLeft()+"/"+((Unit)selected).getMovePoints());
+            unitName.setText("NAME: "+((Unit)selected).getType().toString());
+            unitRange.setText("RW: "+((Unit)selected).getRange());
+            unitOwner.setText("SPIELER: "+((Unit)selected).getOwner().getAccount().getName());
+        }else{
+            unitAtk.setText("");
+            unitDef.setText("");
+            unitHp.setText("");
+            unitMPoints.setText("");
+            unitName.setText("");
+            unitRange.setText("");
+            unitOwner.setText("");
+        }}catch(Exception e){}
+
         this.buildChatString();
         int batchWidth = 2600;
         int batchHeight = 2600;
@@ -332,8 +360,6 @@ public class GameScreen implements Screen, InputProcessor{
         shapeRenderer.rect(((int)x/100)*100, ((int)y/100)*100, 100, 100);
         shapeRenderer.end();
 
-
-        showTopMenu();
         stage.act();
         stage.draw();
     }
@@ -432,7 +458,7 @@ public class GameScreen implements Screen, InputProcessor{
         try {
             switch (button) {
                 case Input.Buttons.LEFT:
-                    selected = map[getFieldXPos(2600)][getFieldYPos(2600)]; //TODO batchBounds->attribute
+                    selected = map[getFieldXPos(2600)][getFieldYPos(2600)].select(); //TODO batchBounds->attribute
                     break;
                 case Input.Buttons.RIGHT:
                     System.out.println("No action assigned");
@@ -441,7 +467,7 @@ public class GameScreen implements Screen, InputProcessor{
                     System.out.println("No action assigned");
                     break;
             }
-        } catch (NullPointerException e){
+        } catch (Exception e){
             System.out.println("Probably everything ok, just dummies missing: GameScreen - touchDown");
             //e.printStackTrace();
         }
@@ -520,18 +546,18 @@ public class GameScreen implements Screen, InputProcessor{
         testUnit.setOwner(this.player);
         map[2][2].setCurrent(testUnit);
         //----------------------------------------------
-        if (selected != null && selected instanceof Field & ((Field) selected).getCurrent()!= null) {
-            if (((Field) selected).getCurrent().getOwner() != null&&((Field) selected).getCurrent().getType() != UnitType.BASE
-                    && ((Field) selected).getCurrent().getOwner() == player) {
+        if (selected != null && selected instanceof Unit) {
+            if (((Unit) selected).getOwner() != null&&((Unit) selected).getType() != UnitType.BASE
+                    && ((Unit) selected).getOwner() == player) {
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
                 shapeRenderer.setColor(Color.GREEN);
-                int radius = ((Field) selected).getCurrent().getMovePointsLeft();
+                int radius = ((Unit) selected).getMovePointsLeft();
                 for (int x = 0 - radius; x < radius + 1; x++) {
                     for (int y = 0 - radius; y < radius + 1; y++) {
-                        if (((Field) selected).getXPos() * 100 + x * 100 >= 0 && ((Field) selected).getYPos() * 100 + y * 100 >= 0
-                                && ((Field) selected).getYPos() * 100 + y * 100 <= 4900 && ((Field) selected).getXPos() * 100 + x * 100 <= 4900)
+                        if (((Unit) selected).getField().getXPos() * 100 + x * 100 >= 0 && ((Unit) selected).getField().getYPos() * 100 + y * 100 >= 0
+                                && ((Unit) selected).getField().getYPos() * 100 + y * 100 <= 4900 && ((Unit) selected).getField().getXPos() * 100 + x * 100 <= 4900)
                             // if(map[((Field) selected).getXPos()+x][((Field) selected).getYPos()+y].getWalkable()==true)
-                            shapeRenderer.rect(((Field) selected).getXPos() * 100 + x * 100, ((Field) selected).getYPos() * 100 + y * 100, 100, 100);
+                            shapeRenderer.rect(((Unit) selected).getField().getXPos() * 100 + x * 100, ((Unit) selected).getField().getYPos() * 100 + y * 100, 100, 100);
                     }
                 }
                 shapeRenderer.end();
@@ -543,29 +569,30 @@ public class GameScreen implements Screen, InputProcessor{
      * Zeigt die obere Menuebar an.
      */
     public void showTopMenu(){
-    //stage.clear();
+
         table = new Table();
         table.setWidth(stage.getWidth());
         table.align(Align.left|Align.top);
         table.setPosition(10, Gdx.graphics.getHeight());
         HorizontalGroup group = new HorizontalGroup();
         Image image =new Image(textures[14]);//Gold
-        final Label label1 = new Label("9000", skin);label1.setColor(Color.WHITE);
+        player.getRessources()[2]=10000;
+        label1 = new Label(player.getRessources()[2]+"", skin);label1.setColor(Color.WHITE);
         group.addActor(image);
         group.addActor(label1);
         Image image2 =new Image(textures[15]);//Holz
-        final Label label2 = new Label("9000", skin);label2.setColor(Color.WHITE);
+        label2 = new Label(player.getRessources()[0]+"", skin);label2.setColor(Color.WHITE);
         group.addActor(image2);
         group.addActor(label2);
         Image image3 =new Image(textures[16]);//Eisen
-        final Label label3 = new Label("9000", skin);label3.setColor(Color.WHITE);
+        label3 = new Label(player.getRessources()[1]+"", skin);label3.setColor(Color.WHITE);
         group.addActor(image3);
         group.addActor(label3);
         Image image4 =new Image(textures[17]);//Mana
-        final Label label4 = new Label("9000", skin);label4.setColor(Color.WHITE);
+        label4 = new Label(player.getRessources()[3]+"", skin);label4.setColor(Color.WHITE);
         group.addActor(image4);
         group.addActor(label4);
-        final Label label5 = new Label("9000", skin);label4.setColor(Color.WHITE);
+        label5 = new Label("9000", skin);label4.setColor(Color.WHITE);
         Image image5 =new Image(textures[18]);//Teamkasse
         group.addActor(image5);
         group.addActor(label5);
@@ -574,5 +601,72 @@ public class GameScreen implements Screen, InputProcessor{
         table.row();
         stage.addActor(table);
 
+    }
+
+    private void showBottomMenu(){
+        bottomTable=new Table();
+        bottomTable.setWidth(stage.getWidth());
+        bottomTable.setHeight(stage.getHeight()/6);
+        System.out.println(stage.getHeight()/6);
+        bottomTable.setPosition(0,0);
+        bottomTable.align(Align.bottomLeft);
+
+
+        Table stats = new Table();
+        stats.setHeight(stage.getHeight()/6);
+        stats.setPosition(0,0);
+        stats.align(Align.bottomLeft);
+        Table selection = new Table();
+        Table  buttons= new Table();
+
+        unitName=new Label("ddasdasddas",skin);
+        unitRange= new Label("asdasdsadasd",skin);
+        unitAtk=new Label("asdsaasdasd",skin);
+        unitDef=new Label("",skin);
+        unitMPoints=new Label("",skin);
+        unitOwner=new Label("",skin);
+        unitHp=new Label("",skin);
+
+        HorizontalGroup group = new HorizontalGroup();
+
+        stats.row().fill().expand();
+        stats.add(unitName);
+        stats.row().fill().expand();
+        stats.add(unitHp);
+        stats.add(unitMPoints);
+        stats.row().fill().expand();
+        stats.add(unitAtk);
+        stats.add(unitDef);
+        stats.row().fill().expand();
+        stats.add(unitRange);
+        stats.add(unitOwner);
+        stats.setWidth(stage.getWidth()/6);
+        stats.setScaleX(stage.getWidth()/6);
+       // stats.debugAll();
+
+        baseUpLeft = new TextButton("ObenLinks", skin);
+        baseUpRight = new TextButton("ObenRechts",skin);
+        baseDownLeft = new TextButton("UntenLinks", skin);
+        baseDownRight = new TextButton("UntenRechts", skin);
+        selection.padLeft(40);
+        selection.row().fill().expand().space(10);
+        selection.add(baseUpLeft);
+        selection.add(baseUpRight);
+        selection.row().fill().expand().space(10);
+        selection.add(baseDownLeft);
+        selection.add(baseDownRight);
+        selection.setHeight(bottomTable.getHeight());
+        baseUpLeft.setPosition(baseUpLeft.getParent().getOriginX(),baseUpLeft.getParent().getOriginY());
+        baseUpRight.setPosition(baseUpLeft.getParent().getWidth()/2,baseUpLeft.getParent().getOriginY());
+        baseDownLeft.setPosition(baseUpLeft.getParent().getOriginX(),baseUpLeft.getParent().getHeight()/2);
+        baseDownRight.setPosition(baseUpLeft.getParent().getWidth()/2,baseUpLeft.getParent().getHeight()/2);
+
+
+        NinePatch temp = new NinePatch(textures[19], 10, 10, 10, 10);
+        skin.add("background",temp);
+        bottomTable.setBackground(skin.getDrawable("background"));
+        bottomTable.add(stats).minWidth(bottomTable.getWidth()/4);
+        bottomTable.add(selection);
+        stage.addActor(bottomTable);
     }
 }
