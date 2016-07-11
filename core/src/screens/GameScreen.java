@@ -544,7 +544,7 @@ public class GameScreen implements Screen, InputProcessor{
         testUnit.setMovePointsLeft(3);
         testUnit.setSpriteName("sprites/spearfighter.png");
         testUnit.setOwner(this.player);
-        map[2][2].setCurrent(testUnit);
+        map[5][5].setCurrent(testUnit);
         //----------------------------------------------
         if (selected != null && selected instanceof Unit) {
             if (((Unit) selected).getOwner() != null&&((Unit) selected).getType() != UnitType.BASE
