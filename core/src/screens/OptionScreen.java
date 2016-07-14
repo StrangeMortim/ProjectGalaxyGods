@@ -235,6 +235,7 @@ public class OptionScreen implements Screen {
                 Gdx.graphics.setWindowedMode(Integer.parseInt(resolution.split("x")[0]),Integer.parseInt(resolution.split("x")[1]));
                 stage.getViewport().update(Integer.parseInt(resolution.split("x")[0]),Integer.parseInt(resolution.split("x")[1]), true);
                 game.setScreen(new OptionScreen(game));
+
             }
         });
 

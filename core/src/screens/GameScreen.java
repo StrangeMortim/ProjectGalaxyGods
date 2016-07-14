@@ -598,8 +598,36 @@ public class GameScreen implements Screen, InputProcessor{
         group.addActor(label5);
         group.space(10);
         table.add(group);
+        Table optionTable= new Table();
+        optionTable.padRight(10);
+        optionTable.setVisible(true);
+        TextButton optionen = new TextButton("Optionen",skin);
+        optionen.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                if(optionTable.isVisible()){
+                    optionTable.setVisible(false);
+                }else{
+                    optionTable.setVisible(true);
+                }
+            }
+        });
+        TextButton einstellungen = new TextButton("Einstellungen",skin);
+        TextButton aufgeben = new TextButton("Aufgeben",skin);
+        TextButton beenden = new TextButton("Beenden",skin);
+        optionTable.add(einstellungen);
+        optionTable.row();
+        optionTable.add(aufgeben);
+        optionTable.row();
+        optionTable.add(beenden);
+        optionTable.setPosition(Gdx.graphics.getWidth()-70,Gdx.graphics.getHeight()-80);
+
+        table.add(optionen).spaceLeft(stage.getWidth()/4);
         table.row();
+
         stage.addActor(table);
+        stage.addActor(optionTable);
+
 
     }
 
