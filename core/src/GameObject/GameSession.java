@@ -182,10 +182,12 @@ public class GameSession implements IGameSession, Serializable{
     /**
      * Leitet alle noetigen Schritte fuer das Beenden eines Zuges ein.
      */
-    public void finishTurn()throws RemoteException{
-        update();
-        finish();
-        save();
+    public void finishTurn(Player p)throws RemoteException{
+        if(p == active) {
+            update();
+            finish();
+            save();
+        }
     }
 
     /**

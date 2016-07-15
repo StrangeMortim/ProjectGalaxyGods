@@ -771,7 +771,7 @@ public class GameScreen implements Screen, InputProcessor{
             @Override
             public  void clicked(InputEvent event, float x, float y){
                 try {
-                    session.finish();
+                    session.finishTurn(player);
                 } catch (RemoteException e) {
                     System.out.println(e.getMessage());
                     e.printStackTrace();

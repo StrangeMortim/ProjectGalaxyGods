@@ -60,7 +60,7 @@ public interface IGameSession extends Remote {
     /**
      *
      */
-    public void finishTurn()throws RemoteException;
+    public void finishTurn(Player p)throws RemoteException;
 
     /**
      *
