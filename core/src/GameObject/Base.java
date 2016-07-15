@@ -5,6 +5,7 @@ import Action.Buff;
 import Player.Player;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.Map;
 
@@ -284,6 +285,18 @@ public class Base extends Unit implements IBase,Serializable {
                 owner.getRessources()[i] += (ressourcesLeft*originalCost[i]);
         }
         /*TODO check*/
+    }
+
+    /**
+     * Baut den Marktplatz
+     */
+    @Override
+    public void buildMarket() throws RemoteException {
+        if(owner.getRessources()[0] >= 100 && owner.getRessources()[2] >= 100){
+            owner.getRessources()[0] -= 100;
+            owner.getRessources()[2] -= 100;
+            owner.setMarket(true);
+        }
     }
 
     /**

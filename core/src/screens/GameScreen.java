@@ -33,6 +33,7 @@ public class GameScreen implements Screen, InputProcessor{
     private Game game;
     private GameSession session;
     private Field[][] map = null;
+    private boolean unrendered = true;
     private Object selected;
     private Player player;
     private Stage stage;
@@ -165,73 +166,76 @@ public class GameScreen implements Screen, InputProcessor{
         label4.setText(player.getRessources()[3]+"");
 
         try{
-        if(selected instanceof Unit){
-            unitAtk.setText("ATK: "+((Unit) selected).getAtk());
-            unitDef.setText("DEF: "+((Unit)selected).getDef());
-            unitHp.setText("HP: "+((Unit)selected).getCurrentHp()+"/"+((Unit)selected).getMaxHp());
-            unitMPoints.setText("BP: "+((Unit)selected).getMovePointsLeft()+"/"+((Unit)selected).getMovePoints());
-            unitName.setText("NAME: "+((Unit)selected).getType().toString());
-            unitRange.setText("RW: "+((Unit)selected).getRange());
-            unitOwner.setText("SPIELER: "+((Unit)selected).getOwner().getAccount().getName());
-        }else{
-            unitAtk.setText("");
-            unitDef.setText("");
-            unitHp.setText("");
-            unitMPoints.setText("");
-            unitName.setText("");
-            unitRange.setText("");
-            unitOwner.setText("");
-        }
+            if(unrendered) {
+                if (selected instanceof Unit) {
+                    unitAtk.setText("ATK: " + ((Unit) selected).getAtk());
+                    unitDef.setText("DEF: " + ((Unit) selected).getDef());
+                    unitHp.setText("HP: " + ((Unit) selected).getCurrentHp() + "/" + ((Unit) selected).getMaxHp());
+                    unitMPoints.setText("BP: " + ((Unit) selected).getMovePointsLeft() + "/" + ((Unit) selected).getMovePoints());
+                    unitName.setText("NAME: " + ((Unit) selected).getType().toString());
+                    unitRange.setText("RW: " + ((Unit) selected).getRange());
+                    unitOwner.setText("SPIELER: " + ((Unit) selected).getOwner().getAccount().getName());
+                } else {
+                    unitAtk.setText("");
+                    unitDef.setText("");
+                    unitHp.setText("");
+                    unitMPoints.setText("");
+                    unitName.setText("");
+                    unitRange.setText("");
+                    unitOwner.setText("");
+                }
 
-        if(selected instanceof Base){
-            if(baseRecruitButtons){
-                selectionUpLeft.setVisible(true);
-                selectionUpLeft.setText("Schwertkaempfer");
-                selectionUpLeft.setTouchable(Touchable.enabled);
-                selectionUpRight.setVisible(true);
-                selectionUpRight.setText("Speerkaempfer");
-                selectionDownLeft.setVisible(true);
-                selectionDownLeft.setText("Bogenschuetze");
-                selectionDownRight.setVisible(true);
-                selectionDownRight.setText("Arbeiter");
-            }else {
-                selectionUpLeft.setVisible(true);
-                selectionUpLeft.setText("Basis aktion 1");
-                selectionUpLeft.setTouchable(Touchable.enabled);
-                selectionUpRight.setVisible(true);
-                selectionUpRight.setText("Basis aktion 2");
-                selectionDownLeft.setVisible(true);
-                selectionDownLeft.setText("Einheiten Rekrutieren");
-                selectionDownRight.setVisible(true);
+                if (selected instanceof Base && ((Unit)selected).getOwner() == player) {
+                    if (baseRecruitButtons) {
+                        selectionUpLeft.setVisible(true);
+                        selectionUpLeft.setText("Schwertkaempfer");
+                        selectionUpLeft.setTouchable(Touchable.enabled);
+                        selectionUpRight.setVisible(true);
+                        selectionUpRight.setText("Speerkaempfer");
+                        selectionDownLeft.setVisible(true);
+                        selectionDownLeft.setText("Bogenschuetze");
+                        selectionDownRight.setVisible(true);
+                        selectionDownRight.setText("Arbeiter");
+                    } else {
+                        selectionUpLeft.setVisible(true);
+                        selectionUpLeft.setText("Labor bauen");
+                        selectionUpLeft.setTouchable(Touchable.enabled);
+                        selectionUpRight.setVisible(true);
+                        selectionUpRight.setText("Kaserne bauen");
+                        selectionDownLeft.setVisible(true);
+                        selectionDownLeft.setText("Einheiten Rekrutieren");
+                        selectionDownRight.setVisible(true);
+                        selectionDownRight.setText("Marktplatz bauen");
+                    }
+                } else if (selected instanceof Hero) {
+                    selectionUpLeft.setVisible(true);
+                    selectionUpLeft.setText("Heldenfaehigkeit links");
+                    selectionUpLeft.setTouchable(Touchable.enabled);
+                    selectionUpRight.setVisible(true);
+                    selectionUpRight.setText("Heldenfaehigkeit rechts");
+                    selectionDownLeft.setVisible(false);
+                    selectionDownRight.setVisible(false);
+                } else if (selected instanceof Field) {
+                    selectionUpLeft.setVisible(true);
+                    selectionUpLeft.setText("Mine bauen");
+
+                    if (((Field) selected).getResType() != 1)
+                        selectionUpLeft.setTouchable(Touchable.disabled);
+                    else
+                        selectionUpLeft.setTouchable(Touchable.enabled);
+
+                    selectionUpRight.setVisible(true);
+                    selectionUpRight.setText("Basis bauen");
+                    selectionDownLeft.setVisible(false);
+                    selectionDownRight.setVisible(false);
+                } else {
+                    selectionUpLeft.setVisible(false);
+                    selectionUpRight.setVisible(false);
+                    selectionDownLeft.setVisible(false);
+                    selectionDownRight.setVisible(false);
+                }
             }
-        }else if(selected instanceof Hero){
-            selectionUpLeft.setVisible(true);
-            selectionUpLeft.setText("Heldenfaehigkeit links");
-            selectionUpLeft.setTouchable(Touchable.enabled);
-            selectionUpRight.setVisible(true);
-            selectionUpRight.setText("Heldenfaehigkeit rechts");
-            selectionDownLeft.setVisible(false);
-            selectionDownRight.setVisible(false);
-        }if(selected instanceof Field){
-           selectionUpLeft.setVisible(true);
-           selectionUpLeft.setText("Mine bauen");
-
-           if(((Field)selected).getResType() != 1)
-                selectionUpLeft.setTouchable(Touchable.disabled);
-                else
-           selectionUpLeft.setTouchable(Touchable.enabled);
-
-           selectionUpRight.setVisible(true);
-           selectionUpRight.setText("Basis bauen");
-           selectionDownLeft.setVisible(false);
-           selectionDownRight.setVisible(false);
-        }else{
-            selectionUpLeft.setVisible(false);
-            selectionUpRight.setVisible(false);
-            selectionDownLeft.setVisible(false);
-            selectionDownRight.setVisible(false);
-        }
-
+        unrendered = false;
 
 
         }catch(Exception e){
@@ -389,6 +393,7 @@ public class GameScreen implements Screen, InputProcessor{
                 case Input.Buttons.LEFT:
                     selected = map[getFieldXPos(2600)][getFieldYPos(2600)].select(); //TODO batchBounds->attribute
                     baseRecruitButtons = false;
+                    unrendered = true;
                     return true;
                 case Input.Buttons.RIGHT:
                     System.out.println("No action assigned");
@@ -569,7 +574,7 @@ public class GameScreen implements Screen, InputProcessor{
         selection.row().fill().expand().space(10);
         selection.add(selectionUpLeft);
         selection.add(selectionUpRight);
-        //selection.row().fill().expand().space(10);
+        selection.row().fill().expand().space(10);
         selection.add(selectionDownLeft);
         selection.add(selectionDownRight);
         selection.setHeight(bottomTable.getHeight());
@@ -582,11 +587,11 @@ public class GameScreen implements Screen, InputProcessor{
         LX = selection.getOriginX();
         RX = selection.getWidth()/2;
 
-        ////Poisitionen setzen/////
+       /* ////Poisitionen setzen/////
         selectionUpLeft.setPosition(LX,uY);
         selectionUpRight.setPosition(RX,uY);
         selectionDownLeft.setPosition(LX, dY);
-        selectionDownRight.setPosition(RX, dY);
+        selectionDownRight.setPosition(RX, dY);*/
 
         //////////////Buttontabelle//////////////
         ////Buttons != null////
@@ -651,17 +656,20 @@ public class GameScreen implements Screen, InputProcessor{
             public void clicked(InputEvent event, float x, float y) {
                 if(selected instanceof Base){
                     if(baseRecruitButtons){
-                        //TODO
+                        ((Base)selected).createUnit(UnitType.SWORDFIGHTER);
                     } else{
-                        //TODO
+                        if(((Base)selected).getLabRoundsRemaining() != -1)
+                            ((Base)selected).abortLab();
+                        else
+                        ((Base)selected).buildLab();
                     }
                     System.out.println("UpLeft-Base");
                 } else if (selected instanceof Hero){
+                    ((Hero)selected).getLeftHand().execute();
                     System.out.println("UpLeft-Hero");
-                    //TODO
                 } else if(selected instanceof  Field){
                     System.out.println("UpLeft-Field");
-                    //TODO
+                    ((Field)selected).buildMine(player);
                 } else {
                     System.out.println(selected.getClass().getName());
                 }
@@ -673,17 +681,20 @@ public class GameScreen implements Screen, InputProcessor{
             public void clicked(InputEvent event, float x, float y) {
                 if(selected instanceof Base){
                     if(baseRecruitButtons){
-                        //TODO
+                        ((Base)selected).createUnit(UnitType.SPEARFIGHTER);
                     } else{
-                        //TODO
+                        if(((Base)selected).getCaserneRoundsRemaining() != -1)
+                            ((Base)selected).abortCaserne();
+                        else
+                            ((Base)selected).buildCaserne();
                     }
                     System.out.println("UpRight-Base");
                 } else if (selected instanceof Hero){
+                    ((Hero)selected).getRightHand().execute();
                     System.out.println("UpRight-Hero");
-                    //TODO
                 } else if(selected instanceof  Field){
                     System.out.println("UpRight-Field");
-                    //TODO
+                    ((Field)selected).buildBase(player);
                 }else {
                     System.out.println(selected.getClass().getName());
                 }
@@ -695,18 +706,18 @@ public class GameScreen implements Screen, InputProcessor{
             public void clicked(InputEvent event, float x, float y) {
                 if(selected instanceof Base){
                     if(baseRecruitButtons){
-                        //TODO
+                        ((Base)selected).createUnit(UnitType.ARCHER);
                     } else{
                         baseRecruitButtons = true;
-                        //TODO
+                        unrendered = true;
                     }
                     System.out.println("DownLeft-Base");
                 } else if (selected instanceof Hero){
                     System.out.println("DownLeft-Hero");
-                    //TODO
+                    //TODO/////////////////////////////////////////////////////////////////////////////////
                 } else if(selected instanceof  Field){
                     System.out.println("DownLeft-Field");
-                    //TODO
+                    //TODO/////////////////////////////////////////////////////////////////////////////////
                 }else {
                     System.out.println(selected.getClass().getName());
                 }
@@ -718,17 +729,21 @@ public class GameScreen implements Screen, InputProcessor{
             public void clicked(InputEvent event, float x, float y) {
                 if(selected instanceof Base){
                     if(baseRecruitButtons){
-                        //TODO
+                        ((Base)selected).createUnit(UnitType.WORKER);
                     } else{
-                        //TODO
+                        try {
+                            ((Base)selected).buildMarket();
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
                     }
                     System.out.println("DownRight-Base");
                 } else if (selected instanceof Hero){
                     System.out.println("DownRight-Hero");
-                    //TODO
+                    //TODO/////////////////////////////////////////////////////////////////////////////////
                 } else if(selected instanceof  Field){
                     System.out.println("DownRight-Field");
-                    //TODO
+                    //TODO/////////////////////////////////////////////////////////////////////////////////
                 }else {
                     System.out.println(selected.getClass().getName());
                 }
@@ -739,6 +754,7 @@ public class GameScreen implements Screen, InputProcessor{
         marketPlace.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
+                System.out.println("Marktplatz vorhanden: " + player.getMarket());
                 //TODO
             }
         });
@@ -746,6 +762,7 @@ public class GameScreen implements Screen, InputProcessor{
         techTree.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
+                System.out.println("Techtree kommt noch");
                 //TODO
             }
         });
@@ -753,7 +770,12 @@ public class GameScreen implements Screen, InputProcessor{
         finishRound.addListener(new ClickListener(){
             @Override
             public  void clicked(InputEvent event, float x, float y){
-                //TODO
+                try {
+                    session.finish();
+                } catch (RemoteException e) {
+                    System.out.println(e.getMessage());
+                    e.printStackTrace();
+                }
             }
         });
 

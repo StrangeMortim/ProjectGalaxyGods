@@ -46,6 +46,11 @@ public interface IBase extends Remote {
     public void abortCaserne()throws RemoteException;
 
     /**
+     * Baut den Marktplatz
+     */
+    public void buildMarket() throws RemoteException;
+
+    /**
      * Startet das Erforschen des uebergebenen Forschungsobjektes
      * @return true wenn der Start erfolgreich war(alle bedingungen erfuellt und noch nicht erforscht), sonst false
      */
