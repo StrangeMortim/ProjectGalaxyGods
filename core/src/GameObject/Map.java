@@ -1,6 +1,7 @@
 package GameObject;
 
 import Action.Buff;
+import Player.Player;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,6 +14,9 @@ public class Map implements IMap,Serializable {
     private int minPlayers = 2;
     private String levelName = "";
     private GameSession session = null;
+    private int currentPlayers = 0;
+    private int[] baseXPositions = new int[]{12, 12, 1, 23};
+    private int[] baseYPositions = new int[]{2,22,13,13};
 
 
     public Map(String levelName, int maxPlayers, int minPlayers, GameSession session){
@@ -254,5 +258,22 @@ public class Map implements IMap,Serializable {
     @Override
     public GameSession getSession(){
         return this.session;
+    }
+
+    @Override
+    public boolean addBase(Player p, int playerNumber) {
+        if(playerNumber > maxPlayers-1 || playerNumber < 0)
+            return false;
+
+        Base tmp = new Base(UnitType.BASE, p);
+        fields[baseXPositions[playerNumber]+1][baseYPositions[playerNumber]].setCurrent(tmp);
+        fields[baseXPositions[playerNumber]+1][baseYPositions[playerNumber]].setSpriteName("assets/sprites/baseFullRight.png");
+        fields[baseXPositions[playerNumber]][baseYPositions[playerNumber]-1].setCurrent(tmp);
+        fields[baseXPositions[playerNumber]][baseYPositions[playerNumber]-1].setSpriteName("assets/sprites/baseDownLeftEmpty.png");
+        fields[baseXPositions[playerNumber]+1][baseYPositions[playerNumber]-1].setCurrent(tmp);
+        fields[baseXPositions[playerNumber]+1][baseYPositions[playerNumber]-1].setSpriteName("assets/sprites/baseDownRightEmpty.png");
+        fields[baseXPositions[playerNumber]][baseYPositions[playerNumber]].setCurrent(tmp);
+        fields[baseXPositions[playerNumber]][baseYPositions[playerNumber]].setSpriteName("assets/sprites/baseFullLeft.png");
+        return true;
     }
 }

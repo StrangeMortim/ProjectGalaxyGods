@@ -2,6 +2,7 @@ package GameObject;
 
 
 import Action.Buff;
+import Player.Player;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -57,5 +58,7 @@ public interface IMap extends Remote {
     public String getLevelName()throws RemoteException;
 
     public GameSession getSession()throws RemoteException;
+
+    public boolean addBase(Player player, int playerNumber);
 
 }

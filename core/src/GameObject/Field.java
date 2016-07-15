@@ -274,12 +274,16 @@ public class Field implements IField,Serializable {
      */
     @Override
     public void setResType(int resType) {
-        if(resType < -1 || resType > 4)
+        if(resType < -1 || resType > 3)
             throw new IllegalArgumentException("That ressource does not exist");
 
         this.resType = resType;
+        walkable = (resType != 0 && resType != 1);
 
-        this.spriteName = (resType == 0) ? "assets/sprites/forest.png" : (resType == 1) ? "assets/sprites/ironNoMine"+new Random().nextInt(2)+".png" : this.spriteName;
+        this.spriteName = (resType == 0) ? "assets/sprites/forest.png"
+                        : (resType == 1) ? "assets/sprites/ironNoMine"+new Random().nextInt(2)+".png"
+                        : (resType == 3) ? "assets/sprites/manaField.png"
+                        : this.spriteName;
     }
 
     @Override
@@ -293,6 +297,8 @@ public class Field implements IField,Serializable {
             this.resValue = 0;
         else
             this.resValue = resValue;
+
+        this.setResType(-1);
     }
 
     @Override
@@ -315,7 +321,7 @@ public class Field implements IField,Serializable {
 
     @Override
     public void setYPos(int yPos) {
-        if(yPos < 0 || yPos > 8)
+        if(yPos < 0 || yPos > 24)
             throw new IllegalArgumentException("Invalid coordinates");
 
         this.yPos = yPos;
@@ -330,6 +336,12 @@ public class Field implements IField,Serializable {
     public void setCurrent(Unit current) {
         this.current = current;
         current.setField(this);
+        walkable = (current == null);
+
+        if(resType == 3){
+            current.getOwner().getRessources()[3] += resValue;
+            this.setResValue(0);
+        }
     }
 
     @Override
@@ -367,7 +379,7 @@ public class Field implements IField,Serializable {
             throw new IllegalArgumentException("SpriteName is empty");
 
         this.spriteName = spriteName;
-        this.texture = new Texture(Gdx.files.internal("assets/"+this.spriteName));
+       // this.texture = new Texture(Gdx.files.internal("assets/"+this.spriteName));
     }
 
     @Override

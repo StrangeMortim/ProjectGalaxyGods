@@ -3,6 +3,7 @@ package screens;
 import GameObject.GameSession;
 import Player.Account;
 import Player.Player;
+import Player.Team;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -18,6 +19,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
+import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 /**
  * Created by Benjamin Brennecke on 08.05.2016.
@@ -82,8 +86,40 @@ public class MenuScreen implements Screen{
 
         newGameButton.addListener(new ClickListener(){
             @Override
-            public void clicked(InputEvent event, float x, float y){game.setScreen(new GameScreen(game, new GameSession(), new Player(new Account("test","1234")) ));}
-        });
+            public void clicked(InputEvent event, float x, float y){
+                GameSession tmp = new GameSession();
+
+                Account acc1 = new Account("Spieler 1","password1");
+                Player p1 = new Player(acc1);
+                ArrayList<Player> t1 = new ArrayList<Player>();
+                t1.add(p1);
+                Team teamRot = new Team(t1, "Rot");
+
+                Account acc2 = new Account("Spieler 2","password2");
+                Player p2 = new Player(acc2);
+                ArrayList<Player> t2 = new ArrayList<Player>();
+                t2.add(p2);
+                Team teamBlau = new Team(t2, "Blau");
+
+                tmp.playerJoin(acc1, p1, teamRot, 0);
+
+                Account acc3 = new Account("Spieler 3","password3");
+                Player p3 = new Player(acc3);
+                t1.add(p3);
+
+                Account acc4 = new Account("Spieler 4","password4");
+                Player p4 = new Player(acc4);
+                t2.add(p4);
+
+                tmp.playerJoin(acc3, p3, teamRot, 2);
+                tmp.playerJoin(acc4, p4, teamBlau, 3);
+                try {
+                    tmp.setActive(p2);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                game.setScreen(new GameScreen(game, tmp, tmp.playerJoin(acc2, p2, teamBlau, 1) ));
+            }});
 
 
         /////////////////////Bauen der Tabelle////////////////////////////////////////

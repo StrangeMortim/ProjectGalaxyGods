@@ -8,6 +8,7 @@ import server.DBManager;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -20,11 +21,11 @@ public class GameSession implements IGameSession, Serializable{
     /**
      * Name der GameSession.
      */
-    private String name;
+    private String name = "TestSession";
     /**
      * Passwort der GameSesion.
      */
-    private String password;
+    private String password = "GameSession";
     /**
      * Liste mit den verbuendeten Spielern.
      */
@@ -45,6 +46,7 @@ public class GameSession implements IGameSession, Serializable{
      * Liste mit den Accounts und zugehoerigen Spielern.
      */
     private HashMap<Account,Player> identities;
+
     /**
      * Der Actionprocessor der derzeitigen Runde.
      */
@@ -56,15 +58,15 @@ public class GameSession implements IGameSession, Serializable{
     /**
      * Die Spielrunde in der sich die Spieler befinden.
      */
-    private int round;
+    private int round = 0;
     /**
      * Die Anzahl der maximalen Spieler pro Team.
      */
-    private int maxPlayersPerTeam;
+    private int maxPlayersPerTeam = 2;
     /**
      * Gibt an, ob die Runde gestartet ist.
      */
-    private boolean hasStarted;
+    private boolean hasStarted = false;
     /**
      * Der Marktplatz des Spiels.
      */
@@ -72,9 +74,15 @@ public class GameSession implements IGameSession, Serializable{
 
 
     public GameSession(){
+        identities = new HashMap<>();
+        market = new Market();
+        buffs = new ArrayList<>();
+        teams = new ArrayList<>();
+        currentTurn = new ActionProcessor(this);
+        sessionChat = new Chat();
+
         level = new Map("NoName",4, 2, this);
         level.init();
-        sessionChat = new Chat();
     }
 
     /**
@@ -208,8 +216,29 @@ public class GameSession implements IGameSession, Serializable{
      * @return true, wenn er hinzugefuegt werden konnte, sonst false.
      */
     @Override
-    public boolean playerJoin(Account a, Player p, Team t) {
-        return false;
+    public Player playerJoin(Account a, Player p, Team t, int playerPos) {
+        if(a == null)
+            throw new IllegalArgumentException("Account ist null");
+
+        if(identities.containsKey(a))
+            return identities.get(a);
+        else if(p == null || t == null)
+            throw new IllegalArgumentException("Player or Team is null");
+
+        for(Team t2: teams){
+            if(t2 == t){
+                t2.getPlayers().add(p);
+                identities.put(a, p);
+                level.addBase(p, playerPos);
+                return p;
+            }
+        }
+
+        teams.add(t);
+        t.getPlayers().add(p);
+        identities.put(a, p);
+        level.addBase(p, playerPos);
+        return p;
     }
 
 

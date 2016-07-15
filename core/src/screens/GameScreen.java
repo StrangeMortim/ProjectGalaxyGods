@@ -1,9 +1,6 @@
 package screens;
 
-import GameObject.Field;
-import GameObject.GameSession;
-import GameObject.Unit;
-import GameObject.UnitType;
+import GameObject.*;
 import Player.Player;
 import chat.Chat;
 import chat.Message;
@@ -13,8 +10,10 @@ import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
@@ -58,8 +57,9 @@ public class GameScreen implements Screen, InputProcessor{
 
     private Table bottomTable;
     Label unitName, unitHp, unitRange, unitAtk, unitDef, unitMPoints, unitOwner;
-    private TextButton baseUpLeft, baseUpRight, baseDownLeft, baseDownRight,
-                        heroUpLeft, heroUpRight, fieldUpLeft, fieldUpRight;
+    private TextButton selectionUpLeft, selectionUpRight, selectionDownLeft, selectionDownRight,
+                        marketPlace, techTree, finishRound;
+    private boolean baseRecruitButtons = false;
 
     //Prepare Textures
     private Texture[] textures = new Texture[]{new Texture(Gdx.files.internal("assets/sprites/normal0.png")),//0
@@ -121,59 +121,8 @@ public class GameScreen implements Screen, InputProcessor{
         skin = new Skin(Gdx.files.internal("assets/uiskin.json"));
         showTopMenu();
         showBottomMenu();
-        chatTable = new Table();
-        chatTable.setBounds(Gdx.graphics.getWidth()*4/5,Gdx.graphics.getHeight()/6,Gdx.graphics.getWidth()*1/5,Gdx.graphics.getHeight()/4);
-        chatTable.align(Align.bottomLeft);
-        sendMessageButton = new TextButton("Senden",skin);
-        messageField = new TextArea("",skin);
-
-        try {
-            lastMessageCount = session.getSessionChat().getBacklog().size();
-            session.getSessionChat().addParticipant(player); //TODO rausnehmen nicht vergessen
-        } catch (RemoteException e){
-            System.out.println(e.getMessage());
-        }
-
-        //backLog = new List(skin);
-        backLog = new Table();
-        backLog.align(Align.left);
-        backLog.row().fill().expandX().align(Align.left).height(skin.getFont("default-font").getLineHeight());
-        this.buildChatString();
-        chatScroller = new ScrollPane(backLog,skin);
-        chatScroller.setFadeScrollBars(false);
-        chatTable.add(chatScroller).expand().fill().colspan(2);
-        chatTable.row().fill();
-        userName = new Label(player.getAccount().getName(),skin);
-
-        chatTable.add(messageField);
-        chatTable.add(sendMessageButton);
-        stage.addActor(chatTable);
-
-        sendMessageButton.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y){
-                try{
-                    session.getSessionChat().addMessage(player.getAccount().getName() + ": ", messageField.getText());
-                    messageField.setText("");
-                }catch (RemoteException e){
-                    System.out.println(e.getMessage());
-                }
-            }
-        });
-
-        messageField.setTextFieldListener(new TextField.TextFieldListener() {
-            @Override
-            public void keyTyped(TextField textField, char c) {
-                if(c == '\n' || c == '\r'){
-                    try{
-                        session.getSessionChat().addMessage(player.getAccount().getName(), messageField.getText());
-                        messageField.setText("");
-                    }catch (RemoteException e){
-                        System.out.println(e.getMessage());
-                    }
-                }
-            }
-        });
+        showChat();
+        buildListeners();
 
 
         InputMultiplexer im = new InputMultiplexer(stage, this);
@@ -232,7 +181,62 @@ public class GameScreen implements Screen, InputProcessor{
             unitName.setText("");
             unitRange.setText("");
             unitOwner.setText("");
-        }}catch(Exception e){}
+        }
+
+        if(selected instanceof Base){
+            if(baseRecruitButtons){
+                selectionUpLeft.setVisible(true);
+                selectionUpLeft.setText("Schwertkaempfer");
+                selectionUpLeft.setTouchable(Touchable.enabled);
+                selectionUpRight.setVisible(true);
+                selectionUpRight.setText("Speerkaempfer");
+                selectionDownLeft.setVisible(true);
+                selectionDownLeft.setText("Bogenschuetze");
+                selectionDownRight.setVisible(true);
+                selectionDownRight.setText("Arbeiter");
+            }else {
+                selectionUpLeft.setVisible(true);
+                selectionUpLeft.setText("Basis aktion 1");
+                selectionUpLeft.setTouchable(Touchable.enabled);
+                selectionUpRight.setVisible(true);
+                selectionUpRight.setText("Basis aktion 2");
+                selectionDownLeft.setVisible(true);
+                selectionDownLeft.setText("Einheiten Rekrutieren");
+                selectionDownRight.setVisible(true);
+            }
+        }else if(selected instanceof Hero){
+            selectionUpLeft.setVisible(true);
+            selectionUpLeft.setText("Heldenfaehigkeit links");
+            selectionUpLeft.setTouchable(Touchable.enabled);
+            selectionUpRight.setVisible(true);
+            selectionUpRight.setText("Heldenfaehigkeit rechts");
+            selectionDownLeft.setVisible(false);
+            selectionDownRight.setVisible(false);
+        }if(selected instanceof Field){
+           selectionUpLeft.setVisible(true);
+           selectionUpLeft.setText("Mine bauen");
+
+           if(((Field)selected).getResType() != 1)
+                selectionUpLeft.setTouchable(Touchable.disabled);
+                else
+           selectionUpLeft.setTouchable(Touchable.enabled);
+
+           selectionUpRight.setVisible(true);
+           selectionUpRight.setText("Basis bauen");
+           selectionDownLeft.setVisible(false);
+           selectionDownRight.setVisible(false);
+        }else{
+            selectionUpLeft.setVisible(false);
+            selectionUpRight.setVisible(false);
+            selectionDownLeft.setVisible(false);
+            selectionDownRight.setVisible(false);
+        }
+
+
+
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
 
         this.buildChatString();
         int batchWidth = 2600;
@@ -244,24 +248,24 @@ public class GameScreen implements Screen, InputProcessor{
 
 
         //Move screen right
-        if((Gdx.input.getX()>=(Gdx.graphics.getWidth()* 9/10) || Gdx.input.isKeyPressed(Input.Keys.DPAD_RIGHT))&&camera.position.x<batchWidth)
+        if((Gdx.input.getX()>=(Gdx.graphics.getWidth()-10) || Gdx.input.isKeyPressed(Input.Keys.DPAD_RIGHT))&&camera.position.x<batchWidth)
         {camera.position.set(camera.position.x+10, camera.position.y, 0);
          }
 
         //Move screen left
-        if((Gdx.input.getX()<=(Gdx.graphics.getWidth()/10)|| Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT)) &&camera.position.x>0)
+        if((Gdx.input.getX()<=(10)|| Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT)) &&camera.position.x>0)
         {camera.position.set(camera.position.x-10, camera.position.y, 0);
 
         }
 
         //Move screen down
-        if((Gdx.input.getY()>=(Gdx.graphics.getHeight()* 9/10)|| Gdx.input.isKeyPressed(Input.Keys.DPAD_DOWN))&&camera.position.y>0)
+        if((Gdx.input.getY()>=(Gdx.graphics.getHeight()-10)|| Gdx.input.isKeyPressed(Input.Keys.DPAD_DOWN))&&camera.position.y>0)
         {camera.position.set(camera.position.x,camera.position.y-10, 0);
 
         }
 
         //Move screen up
-        if((Gdx.input.getY()<=(Gdx.graphics.getHeight()/10)|| Gdx.input.isKeyPressed(Input.Keys.DPAD_UP))&&camera.position.y<batchHeight)
+        if((Gdx.input.getY()<=(10)|| Gdx.input.isKeyPressed(Input.Keys.DPAD_UP))&&camera.position.y<batchHeight)
         {camera.position.set(camera.position.x,camera.position.y+10, 0);
            }
         camera.update();
@@ -370,6 +374,393 @@ public class GameScreen implements Screen, InputProcessor{
     }
 
     /**
+     * Called when the screen was touched or a mouse button was pressed. The button parameter will be {@link //Buttons#LEFT} on iOS.
+     *
+     * @param screenX The x coordinate, origin is in the upper left corner
+     * @param screenY The y coordinate, origin is in the upper left corner
+     * @param pointer the pointer for the event.
+     * @param button  the button
+     * @return whether the input was processed
+     */
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        try {
+            switch (button) {
+                case Input.Buttons.LEFT:
+                    selected = map[getFieldXPos(2600)][getFieldYPos(2600)].select(); //TODO batchBounds->attribute
+                    baseRecruitButtons = false;
+                    return true;
+                case Input.Buttons.RIGHT:
+                    System.out.println("No action assigned");
+                    return true;
+                case Input.Buttons.MIDDLE:
+                    System.out.println("No action assigned");
+                    return true;
+                default:
+                    return false;
+            }
+        } catch (Exception e){
+            System.out.println("Probably everything ok, just dummies missing: GameScreen - touchDown");
+            //e.printStackTrace();
+        }
+        return false;
+    }
+
+    private int getFieldXPos(int scrWidth){
+        Vector3 input = camera.unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0));
+        return (int)((input.x > scrWidth ? scrWidth : input.x < 0 ? 0 : input.x)/100);
+    }
+
+    private int getFieldYPos(int scrHeight){
+        Vector3 input = camera.unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0));
+        return (int)((input.y > scrHeight ? scrHeight : input.y < 0 ? 0 : input.y)/100);
+    }
+
+    /**
+     * Zeigt den Bewegungsradius eigener Einheiten an.
+     */
+    public void showMovementRange() {
+//Testweise-------------------------------------
+     //   session = new GameSession();
+     //   session.getMap().getFields()[2][4] = new Field(1, 1, 2, 4, session.getMap());
+        this.map = session.getMap().getFields();
+        Unit testUnit = new Unit(UnitType.SPEARFIGHTER, this.player);
+        testUnit.setMovePointsLeft(3);
+        testUnit.setSpriteName("sprites/spearfighter.png");
+        testUnit.setOwner(this.player);
+        map[5][5].setCurrent(testUnit);
+        //----------------------------------------------
+        if (selected != null && selected instanceof Unit) {
+            if (((Unit) selected).getOwner() != null&&((Unit) selected).getType() != UnitType.BASE
+                    && ((Unit) selected).getOwner() == player) {
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+                shapeRenderer.setColor(Color.GREEN);
+                int radius = ((Unit) selected).getMovePointsLeft();
+                for (int x = 0 - radius; x < radius + 1; x++) {
+                    for (int y = 0 - radius; y < radius + 1; y++) {
+                        if (((Unit) selected).getField().getXPos() * 100 + x * 100 >= 0 && ((Unit) selected).getField().getYPos() * 100 + y * 100 >= 0
+                                && ((Unit) selected).getField().getYPos() * 100 + y * 100 <= 4900 && ((Unit) selected).getField().getXPos() * 100 + x * 100 <= 4900)
+                            // if(map[((Field) selected).getXPos()+x][((Field) selected).getYPos()+y].getWalkable()==true)
+                            shapeRenderer.rect(((Unit) selected).getField().getXPos() * 100 + x * 100, ((Unit) selected).getField().getYPos() * 100 + y * 100, 100, 100);
+                    }
+                }
+                shapeRenderer.end();
+            }
+        }
+    }
+
+    /**
+     * Zeigt die obere Menuebar an.
+     */
+    public void showTopMenu(){
+
+        table = new Table();
+        table.setWidth(stage.getWidth());
+        table.align(Align.left|Align.top);
+        table.setPosition(10, Gdx.graphics.getHeight());
+        HorizontalGroup group = new HorizontalGroup();
+        Image image =new Image(textures[14]);//Gold
+        player.getRessources()[2]=10000;
+        label1 = new Label(player.getRessources()[2]+"", skin);label1.setColor(Color.WHITE);
+        group.addActor(image);
+        group.addActor(label1);
+        Image image2 =new Image(textures[15]);//Holz
+        label2 = new Label(player.getRessources()[0]+"", skin);label2.setColor(Color.WHITE);
+        group.addActor(image2);
+        group.addActor(label2);
+        Image image3 =new Image(textures[16]);//Eisen
+        label3 = new Label(player.getRessources()[1]+"", skin);label3.setColor(Color.WHITE);
+        group.addActor(image3);
+        group.addActor(label3);
+        Image image4 =new Image(textures[17]);//Mana
+        label4 = new Label(player.getRessources()[3]+"", skin);label4.setColor(Color.WHITE);
+        group.addActor(image4);
+        group.addActor(label4);
+        label5 = new Label("9000", skin);label4.setColor(Color.WHITE);
+        Image image5 =new Image(textures[18]);//Teamkasse
+        group.addActor(image5);
+        group.addActor(label5);
+        group.space(10);
+        table.add(group);
+        table.row();
+        stage.addActor(table);
+
+    }
+
+    private void showBottomMenu(){
+        ////Grundlegende Tabelle////
+        bottomTable=new Table();
+        bottomTable.setWidth(stage.getWidth());
+        bottomTable.setHeight(stage.getHeight()/6);
+        bottomTable.setPosition(0,0);
+        bottomTable.align(Align.bottomLeft);
+
+        ////Innere Tabellen initialisieren////
+        Table stats = new Table();
+        stats.setHeight(stage.getHeight()/6);
+        stats.setPosition(0,0);
+        stats.align(Align.bottomLeft);
+        Table selection = new Table();
+        Table  buttons= new Table();
+
+        ///////////Statistik Tabelle///////////////
+        ////Label generieren////
+        unitName=new Label("",skin);
+        unitRange= new Label("",skin);
+        unitAtk=new Label("",skin);
+        unitDef=new Label("",skin);
+        unitMPoints=new Label("",skin);
+        unitOwner=new Label("",skin);
+        unitHp=new Label("",skin);
+
+        ////Tabelle bauen////
+        stats.row().fill().expand();
+        stats.add(unitName);
+        stats.row().fill().expand();
+        stats.add(unitHp);
+        stats.add(unitMPoints);
+        stats.row().fill().expand();
+        stats.add(unitAtk);
+        stats.add(unitDef);
+        stats.row().fill().expand();
+        stats.add(unitRange);
+        stats.add(unitOwner);
+        stats.setWidth(stage.getWidth()/6);
+        stats.setScaleX(stage.getWidth()/6);
+       // stats.debugAll();
+
+        /////////////Auswahltabelle/////////////
+        ////Damit die Buttons nicht mit null anfangen////
+        selectionUpLeft = new TextButton("Oben links",skin);
+        selectionUpRight = new TextButton("Oben rechts",skin);
+        selectionDownLeft = new TextButton("Unten links",skin);
+        selectionDownRight = new TextButton("Unten rechts",skin);
+
+        /////Tabelle bauen/////
+        selection.padLeft(40);
+        selection.row().fill().expand().space(10);
+        selection.add(selectionUpLeft);
+        selection.add(selectionUpRight);
+        //selection.row().fill().expand().space(10);
+        selection.add(selectionDownLeft);
+        selection.add(selectionDownRight);
+        selection.setHeight(bottomTable.getHeight());
+
+        /////Positionen fest setzen/////
+        ///Koordinaten///
+        float LX, uY, RX, dY;
+        uY = selection.getOriginY();
+        dY = selection.getHeight()/2;
+        LX = selection.getOriginX();
+        RX = selection.getWidth()/2;
+
+        ////Poisitionen setzen/////
+        selectionUpLeft.setPosition(LX,uY);
+        selectionUpRight.setPosition(RX,uY);
+        selectionDownLeft.setPosition(LX, dY);
+        selectionDownRight.setPosition(RX, dY);
+
+        //////////////Buttontabelle//////////////
+        ////Buttons != null////
+        marketPlace = new TextButton("Marktplatz",skin);
+        techTree = new TextButton("Technologiebaum",skin);
+        finishRound = new TextButton("Runde beenden",skin);
+
+
+        /////Tabelle bauen/////
+        buttons.padLeft(10);
+        buttons.align(Align.right);
+        buttons.row().fill().expand().space(10);
+        buttons.add(marketPlace);
+        //buttons.add(finishRound);
+        //buttons.row().fill().expand().space(10);
+        buttons.add(techTree);
+        buttons.setHeight(bottomTable.getHeight());
+
+        NinePatch temp = new NinePatch(textures[19], 10, 10, 10, 10);
+        skin.add("background",temp);
+        bottomTable.setBackground(skin.getDrawable("background"));
+        bottomTable.add(stats).minWidth(bottomTable.getWidth()/4);
+        bottomTable.add(selection).minWidth(bottomTable.getWidth()/3);
+        bottomTable.add(buttons).minWidth(bottomTable.getWidth()/4);
+        bottomTable.add(finishRound).padLeft(50);
+        stage.addActor(bottomTable);
+    }
+
+    private void showChat(){
+        chatTable = new Table();
+        chatTable.setBounds(Gdx.graphics.getWidth()*4/5,Gdx.graphics.getHeight()/6,Gdx.graphics.getWidth()*1/5,Gdx.graphics.getHeight()/4);
+        chatTable.align(Align.bottomLeft);
+        sendMessageButton = new TextButton("Senden",skin);
+        messageField = new TextArea("",skin);
+
+        try {
+            lastMessageCount = session.getSessionChat().getBacklog().size();
+            session.getSessionChat().addParticipant(player); //TODO rausnehmen nicht vergessen
+        } catch (RemoteException e){
+            System.out.println(e.getMessage());
+        }
+
+        //backLog = new List(skin);
+        backLog = new Table();
+        backLog.align(Align.left);
+        backLog.row().fill().expandX().align(Align.left).height(skin.getFont("default-font").getLineHeight());
+        this.buildChatString();
+        chatScroller = new ScrollPane(backLog,skin);
+        chatScroller.setFadeScrollBars(false);
+        chatTable.add(chatScroller).expand().fill().colspan(2);
+        chatTable.row().fill();
+        userName = new Label(player.getAccount().getName(),skin);
+
+        chatTable.add(messageField);
+        chatTable.add(sendMessageButton);
+        stage.addActor(chatTable);
+    }
+
+    private void buildListeners(){
+        selectionUpLeft.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if(selected instanceof Base){
+                    if(baseRecruitButtons){
+                        //TODO
+                    } else{
+                        //TODO
+                    }
+                    System.out.println("UpLeft-Base");
+                } else if (selected instanceof Hero){
+                    System.out.println("UpLeft-Hero");
+                    //TODO
+                } else if(selected instanceof  Field){
+                    System.out.println("UpLeft-Field");
+                    //TODO
+                } else {
+                    System.out.println(selected.getClass().getName());
+                }
+            }
+        });
+
+        selectionUpRight.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if(selected instanceof Base){
+                    if(baseRecruitButtons){
+                        //TODO
+                    } else{
+                        //TODO
+                    }
+                    System.out.println("UpRight-Base");
+                } else if (selected instanceof Hero){
+                    System.out.println("UpRight-Hero");
+                    //TODO
+                } else if(selected instanceof  Field){
+                    System.out.println("UpRight-Field");
+                    //TODO
+                }else {
+                    System.out.println(selected.getClass().getName());
+                }
+            }
+        });
+
+        selectionDownLeft.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if(selected instanceof Base){
+                    if(baseRecruitButtons){
+                        //TODO
+                    } else{
+                        baseRecruitButtons = true;
+                        //TODO
+                    }
+                    System.out.println("DownLeft-Base");
+                } else if (selected instanceof Hero){
+                    System.out.println("DownLeft-Hero");
+                    //TODO
+                } else if(selected instanceof  Field){
+                    System.out.println("DownLeft-Field");
+                    //TODO
+                }else {
+                    System.out.println(selected.getClass().getName());
+                }
+            }
+        });
+
+        selectionDownRight.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if(selected instanceof Base){
+                    if(baseRecruitButtons){
+                        //TODO
+                    } else{
+                        //TODO
+                    }
+                    System.out.println("DownRight-Base");
+                } else if (selected instanceof Hero){
+                    System.out.println("DownRight-Hero");
+                    //TODO
+                } else if(selected instanceof  Field){
+                    System.out.println("DownRight-Field");
+                    //TODO
+                }else {
+                    System.out.println(selected.getClass().getName());
+                }
+            }
+        });
+
+        ////Bottom general////
+        marketPlace.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                //TODO
+            }
+        });
+
+        techTree.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                //TODO
+            }
+        });
+
+        finishRound.addListener(new ClickListener(){
+            @Override
+            public  void clicked(InputEvent event, float x, float y){
+                //TODO
+            }
+        });
+
+
+        ////Chat////
+        sendMessageButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                try{
+                    session.getSessionChat().addMessage(player.getAccount().getName() + ": ", messageField.getText());
+                    messageField.setText("");
+                }catch (RemoteException e){
+                    System.out.println(e.getMessage());
+                }
+            }
+        });
+
+        messageField.setTextFieldListener(new TextField.TextFieldListener() {
+            @Override
+            public void keyTyped(TextField textField, char c) {
+                if(c == '\n' || c == '\r'){
+                    try{
+                        session.getSessionChat().addMessage(player.getAccount().getName(), messageField.getText());
+                        messageField.setText("");
+                    }catch (RemoteException e){
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        });
+    }
+
+
+    ////Aktuell nicht gebraucht////
+    /**
      * @param width trivial
      * @param height trivial
      * @see //ApplicationListener#resize(int, int)
@@ -445,46 +836,6 @@ public class GameScreen implements Screen, InputProcessor{
     }
 
     /**
-     * Called when the screen was touched or a mouse button was pressed. The button parameter will be {@link //Buttons#LEFT} on iOS.
-     *
-     * @param screenX The x coordinate, origin is in the upper left corner
-     * @param screenY The y coordinate, origin is in the upper left corner
-     * @param pointer the pointer for the event.
-     * @param button  the button
-     * @return whether the input was processed
-     */
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        try {
-            switch (button) {
-                case Input.Buttons.LEFT:
-                    selected = map[getFieldXPos(2600)][getFieldYPos(2600)].select(); //TODO batchBounds->attribute
-                    break;
-                case Input.Buttons.RIGHT:
-                    System.out.println("No action assigned");
-                    break;
-                case Input.Buttons.MIDDLE:
-                    System.out.println("No action assigned");
-                    break;
-            }
-        } catch (Exception e){
-            System.out.println("Probably everything ok, just dummies missing: GameScreen - touchDown");
-            //e.printStackTrace();
-        }
-        return false;
-    }
-
-    private int getFieldXPos(int scrWidth){
-        Vector3 input = camera.unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0));
-        return (int)((input.x > scrWidth ? scrWidth : input.x < 0 ? 0 : input.x)/100);
-    }
-
-    private int getFieldYPos(int scrHeight){
-        Vector3 input = camera.unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0));
-        return (int)((input.y > scrHeight ? scrHeight : input.y < 0 ? 0 : input.y)/100);
-    }
-
-    /**
      * Called when a finger was lifted or a mouse button was released. The button parameter will be {@link //Buttons#LEFT} on iOS.
      *
      * @param screenX  trivial
@@ -530,143 +881,5 @@ public class GameScreen implements Screen, InputProcessor{
     @Override
     public boolean scrolled(int amount) {
         return false;
-    }
-
-    /**
-     * Zeigt den Bewegungsradius eigener Einheiten an.
-     */
-    public void showMovementRange() {
-//Testweise-------------------------------------
-     //   session = new GameSession();
-     //   session.getMap().getFields()[2][4] = new Field(1, 1, 2, 4, session.getMap());
-        this.map = session.getMap().getFields();
-        Unit testUnit = new Unit(UnitType.SPEARFIGHTER, this.player);
-        testUnit.setMovePointsLeft(3);
-        testUnit.setSpriteName("sprites/spearfighter.png");
-        testUnit.setOwner(this.player);
-        map[5][5].setCurrent(testUnit);
-        //----------------------------------------------
-        if (selected != null && selected instanceof Unit) {
-            if (((Unit) selected).getOwner() != null&&((Unit) selected).getType() != UnitType.BASE
-                    && ((Unit) selected).getOwner() == player) {
-                shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-                shapeRenderer.setColor(Color.GREEN);
-                int radius = ((Unit) selected).getMovePointsLeft();
-                for (int x = 0 - radius; x < radius + 1; x++) {
-                    for (int y = 0 - radius; y < radius + 1; y++) {
-                        if (((Unit) selected).getField().getXPos() * 100 + x * 100 >= 0 && ((Unit) selected).getField().getYPos() * 100 + y * 100 >= 0
-                                && ((Unit) selected).getField().getYPos() * 100 + y * 100 <= 4900 && ((Unit) selected).getField().getXPos() * 100 + x * 100 <= 4900)
-                            // if(map[((Field) selected).getXPos()+x][((Field) selected).getYPos()+y].getWalkable()==true)
-                            shapeRenderer.rect(((Unit) selected).getField().getXPos() * 100 + x * 100, ((Unit) selected).getField().getYPos() * 100 + y * 100, 100, 100);
-                    }
-                }
-                shapeRenderer.end();
-            }
-        }
-    }
-
-    /**
-     * Zeigt die obere Menuebar an.
-     */
-    public void showTopMenu(){
-
-        table = new Table();
-        table.setWidth(stage.getWidth());
-        table.align(Align.left|Align.top);
-        table.setPosition(10, Gdx.graphics.getHeight());
-        HorizontalGroup group = new HorizontalGroup();
-        Image image =new Image(textures[14]);//Gold
-        player.getRessources()[2]=10000;
-        label1 = new Label(player.getRessources()[2]+"", skin);label1.setColor(Color.WHITE);
-        group.addActor(image);
-        group.addActor(label1);
-        Image image2 =new Image(textures[15]);//Holz
-        label2 = new Label(player.getRessources()[0]+"", skin);label2.setColor(Color.WHITE);
-        group.addActor(image2);
-        group.addActor(label2);
-        Image image3 =new Image(textures[16]);//Eisen
-        label3 = new Label(player.getRessources()[1]+"", skin);label3.setColor(Color.WHITE);
-        group.addActor(image3);
-        group.addActor(label3);
-        Image image4 =new Image(textures[17]);//Mana
-        label4 = new Label(player.getRessources()[3]+"", skin);label4.setColor(Color.WHITE);
-        group.addActor(image4);
-        group.addActor(label4);
-        label5 = new Label("9000", skin);label4.setColor(Color.WHITE);
-        Image image5 =new Image(textures[18]);//Teamkasse
-        group.addActor(image5);
-        group.addActor(label5);
-        group.space(10);
-        table.add(group);
-        table.row();
-        stage.addActor(table);
-
-    }
-
-    private void showBottomMenu(){
-        bottomTable=new Table();
-        bottomTable.setWidth(stage.getWidth());
-        bottomTable.setHeight(stage.getHeight()/6);
-        System.out.println(stage.getHeight()/6);
-        bottomTable.setPosition(0,0);
-        bottomTable.align(Align.bottomLeft);
-
-
-        Table stats = new Table();
-        stats.setHeight(stage.getHeight()/6);
-        stats.setPosition(0,0);
-        stats.align(Align.bottomLeft);
-        Table selection = new Table();
-        Table  buttons= new Table();
-
-        unitName=new Label("ddasdasddas",skin);
-        unitRange= new Label("asdasdsadasd",skin);
-        unitAtk=new Label("asdsaasdasd",skin);
-        unitDef=new Label("",skin);
-        unitMPoints=new Label("",skin);
-        unitOwner=new Label("",skin);
-        unitHp=new Label("",skin);
-
-        HorizontalGroup group = new HorizontalGroup();
-
-        stats.row().fill().expand();
-        stats.add(unitName);
-        stats.row().fill().expand();
-        stats.add(unitHp);
-        stats.add(unitMPoints);
-        stats.row().fill().expand();
-        stats.add(unitAtk);
-        stats.add(unitDef);
-        stats.row().fill().expand();
-        stats.add(unitRange);
-        stats.add(unitOwner);
-        stats.setWidth(stage.getWidth()/6);
-        stats.setScaleX(stage.getWidth()/6);
-       // stats.debugAll();
-
-        baseUpLeft = new TextButton("ObenLinks", skin);
-        baseUpRight = new TextButton("ObenRechts",skin);
-        baseDownLeft = new TextButton("UntenLinks", skin);
-        baseDownRight = new TextButton("UntenRechts", skin);
-        selection.padLeft(40);
-        selection.row().fill().expand().space(10);
-        selection.add(baseUpLeft);
-        selection.add(baseUpRight);
-        selection.row().fill().expand().space(10);
-        selection.add(baseDownLeft);
-        selection.add(baseDownRight);
-        selection.setHeight(bottomTable.getHeight());
-        baseUpLeft.setPosition(baseUpLeft.getParent().getOriginX(),baseUpLeft.getParent().getOriginY());
-        baseUpRight.setPosition(baseUpLeft.getParent().getWidth()/2,baseUpLeft.getParent().getOriginY());
-        baseDownLeft.setPosition(baseUpLeft.getParent().getOriginX(),baseUpLeft.getParent().getHeight()/2);
-        baseDownRight.setPosition(baseUpLeft.getParent().getWidth()/2,baseUpLeft.getParent().getHeight()/2);
-
-
-        NinePatch temp = new NinePatch(textures[19], 10, 10, 10, 10);
-        skin.add("background",temp);
-        bottomTable.setBackground(skin.getDrawable("background"));
-        bottomTable.add(stats).minWidth(bottomTable.getWidth()/4);
-        bottomTable.add(selection);
-        stage.addActor(bottomTable);
     }
 }

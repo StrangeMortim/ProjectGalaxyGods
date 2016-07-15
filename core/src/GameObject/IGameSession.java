@@ -61,6 +61,7 @@ public interface IGameSession extends Remote {
      *
      */
     public void finishTurn()throws RemoteException;
+
     /**
      *
      * @param a
@@ -68,7 +69,7 @@ public interface IGameSession extends Remote {
      * @param t
      * @return
      */
-    public boolean playerJoin(Account a, Player p, Team t)throws RemoteException;
+    public Player playerJoin(Account a, Player p, Team t, int playerPos)throws RemoteException;
     /**
      *
      * @param p
