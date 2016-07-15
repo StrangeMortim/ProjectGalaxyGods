@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class Player implements IPlayer,Serializable {
 
-    private int[] ressources = new int[4];
+    private int[] ressources = new int[]{500,500,500,500};
     private int[] ressourcesBoni = new int[4];
     private TechnologyTree tree = new TechnologyTree();
     private Boolean turn = false;

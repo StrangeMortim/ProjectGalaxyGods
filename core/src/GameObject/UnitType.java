@@ -4,7 +4,7 @@ package GameObject;
 import java.io.Serializable;
 
 public enum UnitType implements IUnitType,Serializable {
-    BASE, SPEARFIGHTER, ARCHER, SWORDFIGHTER,/*TODO Add Types*/
+    BASE, SPEARFIGHTER, ARCHER, SWORDFIGHTER, WORKER,/*TODO Add Types*/
     ;
 
     /**
@@ -124,6 +124,8 @@ public enum UnitType implements IUnitType,Serializable {
                 return "sprites/archer.png";
             case SWORDFIGHTER:
                 return "sprites/swordfighter.png";
+            case WORKER:
+                return "sprites/worker.png";
             default:
                 return "splash.jpg";
         }
