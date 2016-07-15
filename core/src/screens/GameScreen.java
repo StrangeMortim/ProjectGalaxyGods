@@ -1,6 +1,7 @@
 package screens;
 
 import GameObject.*;
+import GameObject.Field;
 import Player.Player;
 import chat.Chat;
 import chat.Message;
@@ -17,10 +18,12 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.reflect.*;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.List;
 
 
 /**
@@ -87,6 +90,7 @@ public class GameScreen implements Screen, InputProcessor{
 
 
     public  GameScreen(Game game, GameSession session, Player player){
+
         this.player=player;
         batch=new SpriteBatch();
         this.session = session;
@@ -110,6 +114,13 @@ public class GameScreen implements Screen, InputProcessor{
         for(int i=0;i<26;++i)
             for(int j=0;j<24;++j)
                 fields[i][j] = r.nextInt(2);
+
+        this.map = session.getMap().getFields();
+        Unit testUnit = new Unit(UnitType.SPEARFIGHTER, this.player);
+        testUnit.setMovePointsLeft(3);
+        testUnit.setSpriteName("sprites/spearfighter.png");
+        testUnit.setOwner(this.player);
+        map[5][5].setCurrent(testUnit);
 
     }
 
@@ -396,6 +407,7 @@ public class GameScreen implements Screen, InputProcessor{
                     unrendered = true;
                     return true;
                 case Input.Buttons.RIGHT:
+                    move();
                     System.out.println("No action assigned");
                     return true;
                 case Input.Buttons.MIDDLE:
@@ -425,16 +437,6 @@ public class GameScreen implements Screen, InputProcessor{
      * Zeigt den Bewegungsradius eigener Einheiten an.
      */
     public void showMovementRange() {
-//Testweise-------------------------------------
-     //   session = new GameSession();
-     //   session.getMap().getFields()[2][4] = new Field(1, 1, 2, 4, session.getMap());
-        this.map = session.getMap().getFields();
-        Unit testUnit = new Unit(UnitType.SPEARFIGHTER, this.player);
-        testUnit.setMovePointsLeft(3);
-        testUnit.setSpriteName("sprites/spearfighter.png");
-        testUnit.setOwner(this.player);
-        map[5][5].setCurrent(testUnit);
-        //----------------------------------------------
         if (selected != null && selected instanceof Unit) {
             if (((Unit) selected).getOwner() != null&&((Unit) selected).getType() != UnitType.BASE
                     && ((Unit) selected).getOwner() == player) {
@@ -443,10 +445,19 @@ public class GameScreen implements Screen, InputProcessor{
                 int radius = ((Unit) selected).getMovePointsLeft();
                 for (int x = 0 - radius; x < radius + 1; x++) {
                     for (int y = 0 - radius; y < radius + 1; y++) {
-                        if (((Unit) selected).getField().getXPos() * 100 + x * 100 >= 0 && ((Unit) selected).getField().getYPos() * 100 + y * 100 >= 0
-                                && ((Unit) selected).getField().getYPos() * 100 + y * 100 <= 4900 && ((Unit) selected).getField().getXPos() * 100 + x * 100 <= 4900)
-                            // if(map[((Field) selected).getXPos()+x][((Field) selected).getYPos()+y].getWalkable()==true)
-                            shapeRenderer.rect(((Unit) selected).getField().getXPos() * 100 + x * 100, ((Unit) selected).getField().getYPos() * 100 + y * 100, 100, 100);
+                        if (((Unit) selected).getField().getXPos() * 100 + x * 100 >= 0
+                                && ((Unit) selected).getField().getYPos() * 100 + y * 100 >= 0
+                                && ((Unit) selected).getField().getYPos() * 100 + y * 100 <= 4900
+                                && ((Unit) selected).getField().getXPos() * 100 + x * 100 <= 4900)
+
+                            if(map[((Unit) selected).getField().getXPos()+x][((Unit) selected).getField().getYPos()+y].getWalkable()) {
+                                shapeRenderer.rect(((Unit) selected).getField().getXPos() * 100 + x * 100, ((Unit) selected).getField().getYPos() * 100 + y * 100, 100, 100);
+
+                            }/*else{
+                                shapeRenderer.setColor(Color.RED);
+                                shapeRenderer.rect(((Unit) selected).getField().getXPos() * 100 + x * 100, ((Unit) selected).getField().getYPos() * 100 + y * 100, 100, 100);
+                                shapeRenderer.setColor(Color.GREEN);
+                            }*/
                     }
                 }
                 shapeRenderer.end();
@@ -932,4 +943,41 @@ public class GameScreen implements Screen, InputProcessor{
     public boolean scrolled(int amount) {
         return false;
     }
+
+    /**
+     * This method implements the movement of units.
+     */
+    public void move(){
+        Object obj = map[getFieldXPos(2600)][getFieldYPos(2600)].select();
+        if(selected instanceof Unit && obj instanceof Field){
+            Unit unit = ((Unit)selected);
+            Field target = (Field)obj;
+            int radius = unit.getMovePointsLeft();
+            for (int x = 0 - radius; x < radius + 1; x++) {
+                for (int y = 0 - radius; y < radius + 1; y++) {
+                    try{
+                        if(map[target.getXPos()+x][target.getYPos()+y].getWalkable()) {
+                            if(unit.getMovePointsLeft()<=0){return;}
+                         unit.getField().setCurrent(null);
+                            target.setCurrent(unit);
+                            if(x<0)x=(x*-1);
+                            if(y<0)y=(y*-1);
+                            System.out.println(x+":"+y);
+                            if(x>y){unit.setMovePointsLeft(unit.getMovePointsLeft()-(x-1));
+                                if(x-1==0){unit.setMovePointsLeft(0);}
+                                return;
+                            }else{unit.setMovePointsLeft(unit.getMovePointsLeft()-(y-1));
+                                if(y-1==0){unit.setMovePointsLeft(0);}
+                                return;
+                            }
+
+                        }
+                    }catch(Exception e){
+                    }
+                }}
+        }
+
+    }
+
+
 }

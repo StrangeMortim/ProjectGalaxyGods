@@ -278,8 +278,8 @@ public class Field implements IField,Serializable {
             throw new IllegalArgumentException("That ressource does not exist");
 
         this.resType = resType;
-        walkable = (resType != 0 && resType != 1);
-
+        walkable=false;
+        if(resType==3) {walkable=true;}
         this.spriteName = (resType == 0) ? "assets/sprites/forest.png"
                         : (resType == 1) ? "assets/sprites/ironNoMine"+new Random().nextInt(2)+".png"
                         : (resType == 3) ? "assets/sprites/manaField.png"
@@ -334,10 +334,12 @@ public class Field implements IField,Serializable {
 
     @Override
     public void setCurrent(Unit current) {
+        if(current==null){
+            walkable=true;
+            return;
+        }
         this.current = current;
         current.setField(this);
-        walkable = (current == null);
-
         if(resType == 3){
             current.getOwner().getRessources()[3] += resValue;
             this.setResValue(0);
