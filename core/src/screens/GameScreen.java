@@ -1,6 +1,7 @@
 package screens;
 
 import GameObject.*;
+import GameObject.Field;
 import Player.Player;
 import chat.Chat;
 import chat.Message;
@@ -18,11 +19,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.reflect.*;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import javafx.scene.text.Font;
 
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.List;
 
 
 /**
@@ -97,11 +100,14 @@ public class GameScreen implements Screen, InputProcessor{
             new Texture(Gdx.files.internal("assets/sprites/chest.png")),//18
             new Texture(Gdx.files.internal("assets/sprites/menuBackground.png")),//19
             new Texture(Gdx.files.internal("assets/sprites/marketplace.png")),//20
+            new Texture(Gdx.files.internal("assets/sprites/buttonArbeiter.png")), // 21
+            new Texture(Gdx.files.internal("assets/sprites/buttonBackground.png")), // 22
     };
     //endregion
 
 
     public  GameScreen(Game game, GameSession session, Player player){
+
         this.player=player;
         batch=new SpriteBatch();
         this.session = session;
@@ -125,6 +131,13 @@ public class GameScreen implements Screen, InputProcessor{
         for(int i=0;i<26;++i)
             for(int j=0;j<24;++j)
                 fields[i][j] = r.nextInt(2);
+
+        this.map = session.getMap().getFields();
+        Unit testUnit = new Unit(UnitType.SPEARFIGHTER, this.player);
+        testUnit.setMovePointsLeft(3);
+        testUnit.setSpriteName("sprites/spearfighter.png");
+        testUnit.setOwner(this.player);
+        map[5][5].setCurrent(testUnit);
 
     }
 
@@ -195,34 +208,45 @@ public class GameScreen implements Screen, InputProcessor{
                         selectionUpLeft.setVisible(true);
                         selectionUpLeft.setText("Schwertkaempfer");
                         selectionUpLeft.setTouchable(Touchable.enabled);
+                        selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
                         selectionUpRight.setVisible(true);
                         selectionUpRight.setText("Speerkaempfer");
+                        selectionUpRight.getStyle().up = skin.getDrawable("defaultIcon");
                         selectionDownLeft.setVisible(true);
                         selectionDownLeft.setText("Bogenschuetze");
+                        selectionDownLeft.getStyle().up = skin.getDrawable("defaultIcon");
                         selectionDownRight.setVisible(true);
-                        selectionDownRight.setText("Arbeiter");
+                        selectionDownRight.setText("");
+                        selectionDownRight.getStyle().up = skin.getDrawable("workerIcon");
                     } else {
                         selectionUpLeft.setVisible(true);
                         selectionUpLeft.setText("Labor bauen");
                         selectionUpLeft.setTouchable(Touchable.enabled);
+                        selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
                         selectionUpRight.setVisible(true);
                         selectionUpRight.setText("Kaserne bauen");
+                        selectionUpRight.getStyle().up = skin.getDrawable("defaultIcon");
                         selectionDownLeft.setVisible(true);
                         selectionDownLeft.setText("Einheiten Rekrutieren");
+                        selectionDownLeft.getStyle().up = skin.getDrawable("defaultIcon");
                         selectionDownRight.setVisible(true);
                         selectionDownRight.setText("Marktplatz bauen");
+                        selectionDownRight.getStyle().up = skin.getDrawable("defaultIcon");
                     }
                 } else if (selected instanceof Hero) {
                     selectionUpLeft.setVisible(true);
                     selectionUpLeft.setText("Heldenfaehigkeit links");
                     selectionUpLeft.setTouchable(Touchable.enabled);
+                    selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
                     selectionUpRight.setVisible(true);
                     selectionUpRight.setText("Heldenfaehigkeit rechts");
+                    selectionUpRight.getStyle().up = skin.getDrawable("defaultIcon");
                     selectionDownLeft.setVisible(false);
                     selectionDownRight.setVisible(false);
                 } else if (selected instanceof Field) {
                     selectionUpLeft.setVisible(true);
                     selectionUpLeft.setText("Mine bauen");
+                    selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
 
                     if (((Field) selected).getResType() != 1)
                         selectionUpLeft.setTouchable(Touchable.disabled);
@@ -231,6 +255,7 @@ public class GameScreen implements Screen, InputProcessor{
 
                     selectionUpRight.setVisible(true);
                     selectionUpRight.setText("Basis bauen");
+                    selectionUpRight.getStyle().up = skin.getDrawable("defaultIcon");
                     selectionDownLeft.setVisible(false);
                     selectionDownRight.setVisible(false);
                 } else {
@@ -397,6 +422,7 @@ public class GameScreen implements Screen, InputProcessor{
                     unrendered = true;
                     return true;
                 case Input.Buttons.RIGHT:
+                    move();
                     System.out.println("No action assigned");
                     return true;
                 case Input.Buttons.MIDDLE:
@@ -427,16 +453,6 @@ public class GameScreen implements Screen, InputProcessor{
      * Zeigt den Bewegungsradius eigener Einheiten an.
      */
     public void showMovementRange() {
-//Testweise-------------------------------------
-     //   session = new GameSession();
-     //   session.getMap().getFields()[2][4] = new Field(1, 1, 2, 4, session.getMap());
-        this.map = session.getMap().getFields();
-        Unit testUnit = new Unit(UnitType.SPEARFIGHTER, this.player);
-        testUnit.setMovePointsLeft(3);
-        testUnit.setSpriteName("sprites/spearfighter.png");
-        testUnit.setOwner(this.player);
-        map[5][5].setCurrent(testUnit);
-        //----------------------------------------------
         if (selected != null && selected instanceof Unit) {
             if (((Unit) selected).getOwner() != null&&((Unit) selected).getType() != UnitType.BASE
                     && ((Unit) selected).getOwner() == player) {
@@ -445,10 +461,19 @@ public class GameScreen implements Screen, InputProcessor{
                 int radius = ((Unit) selected).getMovePointsLeft();
                 for (int x = 0 - radius; x < radius + 1; x++) {
                     for (int y = 0 - radius; y < radius + 1; y++) {
-                        if (((Unit) selected).getField().getXPos() * 100 + x * 100 >= 0 && ((Unit) selected).getField().getYPos() * 100 + y * 100 >= 0
-                                && ((Unit) selected).getField().getYPos() * 100 + y * 100 <= 4900 && ((Unit) selected).getField().getXPos() * 100 + x * 100 <= 4900)
-                            // if(map[((Field) selected).getXPos()+x][((Field) selected).getYPos()+y].getWalkable()==true)
-                            shapeRenderer.rect(((Unit) selected).getField().getXPos() * 100 + x * 100, ((Unit) selected).getField().getYPos() * 100 + y * 100, 100, 100);
+                        if (((Unit) selected).getField().getXPos() * 100 + x * 100 >= 0
+                                && ((Unit) selected).getField().getYPos() * 100 + y * 100 >= 0
+                                && ((Unit) selected).getField().getYPos() * 100 + y * 100 <= 4900
+                                && ((Unit) selected).getField().getXPos() * 100 + x * 100 <= 4900)
+
+                            if(map[((Unit) selected).getField().getXPos()+x][((Unit) selected).getField().getYPos()+y].getWalkable()) {
+                                shapeRenderer.rect(((Unit) selected).getField().getXPos() * 100 + x * 100, ((Unit) selected).getField().getYPos() * 100 + y * 100, 100, 100);
+
+                            }/*else{
+                                shapeRenderer.setColor(Color.RED);
+                                shapeRenderer.rect(((Unit) selected).getField().getXPos() * 100 + x * 100, ((Unit) selected).getField().getYPos() * 100 + y * 100, 100, 100);
+                                shapeRenderer.setColor(Color.GREEN);
+                            }*/
                     }
                 }
                 shapeRenderer.end();
@@ -523,6 +548,19 @@ public class GameScreen implements Screen, InputProcessor{
     }
 
     private void showBottomMenu(){
+        NinePatch tmp = null;
+        TextButton.TextButtonStyle style = null;
+
+        tmp = new NinePatch(textures[22], 0, 0, 0, 0);
+        skin.add("defaultIcon",tmp);
+        tmp = new NinePatch(textures[21], 0, 0, 0, 0);
+        skin.add("workerIcon",tmp);
+        tmp = new NinePatch(textures[20], 0, 0, 0, 0);
+        skin.add("marketIcon",tmp);
+        tmp = new NinePatch(textures[19], 10, 10, 10, 10);
+        skin.add("background",tmp);
+
+
         ////Grundlegende Tabelle////
         bottomTable=new Table();
         bottomTable.setWidth(stage.getWidth());
@@ -566,60 +604,51 @@ public class GameScreen implements Screen, InputProcessor{
 
         /////////////Auswahltabelle/////////////
         ////Damit die Buttons nicht mit null anfangen////
-        selectionUpLeft = new TextButton("Oben links",skin);
-        selectionUpRight = new TextButton("Oben rechts",skin);
-        selectionDownLeft = new TextButton("Unten links",skin);
-        selectionDownRight = new TextButton("Unten rechts",skin);
+        style = new TextButton.TextButtonStyle(skin.get("default",TextButton.TextButtonStyle.class));
+        selectionUpLeft = new TextButton("Oben links",style);
+        style = new TextButton.TextButtonStyle(skin.get("default",TextButton.TextButtonStyle.class));
+        selectionUpRight = new TextButton("Oben rechts",style);
+        style = new TextButton.TextButtonStyle(skin.get("default",TextButton.TextButtonStyle.class));
+        selectionDownLeft = new TextButton("Unten links",style);
+        style = new TextButton.TextButtonStyle(skin.get("default",TextButton.TextButtonStyle.class));
+        selectionDownRight = new TextButton("Unten rechts",style);
 
         /////Tabelle bauen/////
         selection.padLeft(40);
-        selection.row().fill().expand().space(10);
+        selection.row().fill().expand().space(10).size(bottomTable.getHeight()/2,bottomTable.getHeight()/3);
         selection.add(selectionUpLeft);
         selection.add(selectionUpRight);
-        selection.row().fill().expand().space(10);
+        selection.row().fill().expand().space(10).size(bottomTable.getHeight()/2,bottomTable.getHeight()/3);
         selection.add(selectionDownLeft);
         selection.add(selectionDownRight);
         selection.setHeight(bottomTable.getHeight());
 
-        /////Positionen fest setzen/////
-        ///Koordinaten///
-        float LX, uY, RX, dY;
-        uY = selection.getOriginY();
-        dY = selection.getHeight()/2;
-        LX = selection.getOriginX();
-        RX = selection.getWidth()/2;
-
-       /* ////Poisitionen setzen/////
-        selectionUpLeft.setPosition(LX,uY);
-        selectionUpRight.setPosition(RX,uY);
-        selectionDownLeft.setPosition(LX, dY);
-        selectionDownRight.setPosition(RX, dY);*/
-
         //////////////Buttontabelle//////////////
         ////Buttons != null////
-        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
-        NinePatch tmp = new NinePatch(textures[20], 0, 0, 0, 0);
-        skin.add("marketIcon",tmp);
-        style.up = skin.getDrawable("marketIcon");
-        style.down = skin.getDrawable("marketIcon");
-        style.font = new BitmapFont(Gdx.files.internal("assets/fonts/black.fnt"),false);
-        marketPlace = new TextButton("Marktplatz",style);
-        techTree = new TextButton("Technologiebaum",skin);
-        finishRound = new TextButton("Runde beenden",skin);
+        style = new TextButton.TextButtonStyle(skin.get("default",TextButton.TextButtonStyle.class));
+        marketPlace = new TextButton("",style);
+        marketPlace.getStyle().up = skin.getDrawable("marketIcon");
+        marketPlace.getStyle().down = skin.getDrawable("marketIcon");
+        marketPlace.setTouchable(Touchable.disabled);
+        style = new TextButton.TextButtonStyle(skin.get("default",TextButton.TextButtonStyle.class));
+        techTree = new TextButton("Technologiebaum",style);
+        techTree.getStyle().up = skin.getDrawable("defaultIcon");
+        style = new TextButton.TextButtonStyle(skin.get("default",TextButton.TextButtonStyle.class));
+        finishRound = new TextButton("Runde beenden",style);
+        finishRound.getStyle().up = skin.getDrawable("defaultIcon");
+
 
 
         /////Tabelle bauen/////
         buttons.padLeft(10);
         buttons.align(Align.right);
-        buttons.row().fill().expand().space(10);
+        buttons.row().fill().expand().space(10).size(bottomTable.getHeight()*(float)0.8,bottomTable.getHeight()*(float)0.75);
         buttons.add(marketPlace);
-        //buttons.add(finishRound);
-        //buttons.row().fill().expand().space(10);
+//        buttons.row().fill().expand().space(10);
         buttons.add(techTree);
+        buttons.add(finishRound);
         buttons.setHeight(bottomTable.getHeight());
 
-        NinePatch temp = new NinePatch(textures[19], 10, 10, 10, 10);
-        skin.add("background",temp);
         bottomTable.setBackground(skin.getDrawable("background"));
         bottomTable.add(stats).minWidth(bottomTable.getWidth()/4);
         bottomTable.add(selection).minWidth(bottomTable.getWidth()/3);
@@ -835,7 +864,10 @@ public class GameScreen implements Screen, InputProcessor{
                         ((Base)selected).createUnit(UnitType.WORKER);
                     } else{
                         try {
-                            ((Base)selected).buildMarket();
+                            boolean success = ((Base)selected).buildMarket();
+                            if(success) {
+                                marketPlace.setTouchable(Touchable.enabled);
+                            }
                         } catch (RemoteException e) {
                             e.printStackTrace();
                         }
@@ -1158,4 +1190,41 @@ public class GameScreen implements Screen, InputProcessor{
         return false;
     }
     //endregion
+
+    /**
+     * This method implements the movement of units.
+     */
+    public void move(){
+        Object obj = map[getFieldXPos(2600)][getFieldYPos(2600)].select();
+        if(selected instanceof Unit && obj instanceof Field){
+            Unit unit = ((Unit)selected);
+            Field target = (Field)obj;
+            int radius = unit.getMovePointsLeft();
+            for (int x = 0 - radius; x < radius + 1; x++) {
+                for (int y = 0 - radius; y < radius + 1; y++) {
+                    try{
+                        if(map[target.getXPos()+x][target.getYPos()+y].getWalkable()) {
+                            if(unit.getMovePointsLeft()<=0){return;}
+                         unit.getField().setCurrent(null);
+                            target.setCurrent(unit);
+                            if(x<0)x=(x*-1);
+                            if(y<0)y=(y*-1);
+                            System.out.println(x+":"+y);
+                            if(x>y){unit.setMovePointsLeft(unit.getMovePointsLeft()-(x-1));
+                                if(x-1==0){unit.setMovePointsLeft(0);}
+                                return;
+                            }else{unit.setMovePointsLeft(unit.getMovePointsLeft()-(y-1));
+                                if(y-1==0){unit.setMovePointsLeft(0);}
+                                return;
+                            }
+
+                        }
+                    }catch(Exception e){
+                    }
+                }}
+        }
+
+    }
+
+
 }

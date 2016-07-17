@@ -291,12 +291,17 @@ public class Base extends Unit implements IBase,Serializable {
      * Baut den Marktplatz
      */
     @Override
-    public void buildMarket() throws RemoteException {
+    public boolean buildMarket() throws RemoteException {
+        if(owner.getMarket())
+            return true;
+
         if(owner.getRessources()[0] >= 100 && owner.getRessources()[2] >= 100){
             owner.getRessources()[0] -= 100;
             owner.getRessources()[2] -= 100;
             owner.setMarket(true);
+            return true;
         }
+        return false;
     }
 
     /**

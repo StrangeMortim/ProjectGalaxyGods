@@ -184,6 +184,12 @@ public class GameSession implements IGameSession, Serializable{
      */
     public void finishTurn(Player p)throws RemoteException{
         if(p == active) {
+            List<Player> player = new ArrayList<>();
+            for(Team t:teams){player.addAll(t.getPlayers());}
+            int index = (player.indexOf(p)+1) % player.size();
+            p.setTurn(false);
+            setActive(player.get(index));
+
             update();
             finish();
             save();
@@ -326,6 +332,7 @@ public class GameSession implements IGameSession, Serializable{
 
     public void setActive(Player active)throws RemoteException {
         this.active = active;
+        active.setTurn(true);
     }
 
     public List<Buff> getBuffs()throws RemoteException {

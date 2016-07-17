@@ -69,3 +69,4 @@ CoffeeDB
 /*.log
 /core/*.log
 DerbyDB
+/core/assets/Thumbs.db

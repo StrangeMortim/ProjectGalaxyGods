@@ -48,7 +48,7 @@ public interface IBase extends Remote {
     /**
      * Baut den Marktplatz
      */
-    public void buildMarket() throws RemoteException;
+    public boolean buildMarket() throws RemoteException;
 
     /**
      * Startet das Erforschen des uebergebenen Forschungsobjektes
