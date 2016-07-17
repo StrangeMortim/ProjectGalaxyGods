@@ -6,18 +6,20 @@ import chat.Chat;
 import chat.Message;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.*;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import javafx.scene.text.Font;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -46,6 +48,7 @@ public class GameScreen implements Screen, InputProcessor{
     ShapeRenderer shapeRenderer = new ShapeRenderer();
     private Table table;
 
+    //region Chat
     private Table chatTable;
     private TextButton sendMessageButton;
     private TextField messageField;
@@ -53,16 +56,26 @@ public class GameScreen implements Screen, InputProcessor{
     private Label userName;
     private ScrollPane chatScroller;
     private int lastMessageCount;
+    //endregion
 
     private Label label1,label2,label3,label4,label5;
 
+    //region Bottomtable
     private Table bottomTable;
     Label unitName, unitHp, unitRange, unitAtk, unitDef, unitMPoints, unitOwner;
     private TextButton selectionUpLeft, selectionUpRight, selectionDownLeft, selectionDownRight,
                         marketPlace, techTree, finishRound;
     private boolean baseRecruitButtons = false;
+//endregion
 
-    //Prepare Textures
+    //region Market
+    private Table marketTable;
+    private Label woodPrice, woodAmount, woodError, ironPrice, ironAmount, ironError, connectionError;
+    private TextField woodField, ironField;
+    private TextButton buyButton, sellButton, closeButton;
+    //endregion
+
+    //region Textures
     private Texture[] textures = new Texture[]{new Texture(Gdx.files.internal("assets/sprites/normal0.png")),//0
             new Texture(Gdx.files.internal("assets/sprites/normal1.png")),        //1
             new Texture(Gdx.files.internal("assets/sprites/forest.png")),      //2
@@ -83,7 +96,9 @@ public class GameScreen implements Screen, InputProcessor{
             new Texture(Gdx.files.internal("assets/sprites/mana.png")),//17
             new Texture(Gdx.files.internal("assets/sprites/chest.png")),//18
             new Texture(Gdx.files.internal("assets/sprites/menuBackground.png")),//19
+            new Texture(Gdx.files.internal("assets/sprites/marketplace.png")),//20
     };
+    //endregion
 
 
     public  GameScreen(Game game, GameSession session, Player player){
@@ -120,9 +135,11 @@ public class GameScreen implements Screen, InputProcessor{
     public void show() {
         stage = new Stage(new ScreenViewport());
         skin = new Skin(Gdx.files.internal("assets/uiskin.json"));
+
         showTopMenu();
         showBottomMenu();
         showChat();
+        showMarket();
         buildListeners();
 
 
@@ -130,28 +147,7 @@ public class GameScreen implements Screen, InputProcessor{
         Gdx.input.setInputProcessor(im);
     }
 
-    private void buildChatString(){
-        try {
-            Chat chat = session.getSessionChat();
-            ArrayList<Message> backLogTmp = new ArrayList<>(chat.getBacklog());
-            if(backLogTmp.size() > lastMessageCount && (chat.getParticipants().isEmpty() || chat.getParticipants().contains(player))) {
-                Label tmp;
-                for(int i=lastMessageCount; i<backLogTmp.size(); ++i){
-                    if(backLogTmp.get(i).getVisibleForAll() || backLogTmp.get(i).getVisibleFor().contains(player)){
-                        tmp = new Label(backLogTmp.get(i).getContent(),skin);
-                        tmp.setWrap(true);
-                        backLog.add(tmp);
-                        backLog.row().fill().expandX().align(Align.left).height(tmp.getHeight());
-                        chatScroller.layout();
-                        chatScroller.setScrollPercentY(100);
-                    }
-                }
-                lastMessageCount = backLogTmp.size();
-            }
-        } catch (RemoteException e){
-            System.out.println(e.getMessage());
-        }
-    }
+
 
     /**
      * Called when the screen should render itself.
@@ -160,11 +156,20 @@ public class GameScreen implements Screen, InputProcessor{
      */
     @Override
     public void render(float delta) {
+        int batchWidth = 2600;
+        int batchHeight = 2600;
+        int i=0;
+        int j=0;
+
+        batch.setProjectionMatrix(camera.combined);
+        shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
+
         label1.setText(player.getRessources()[2]+"");
         label2.setText(player.getRessources()[0]+"");
         label3.setText(player.getRessources()[1]+"");
         label4.setText(player.getRessources()[3]+"");
 
+        //region Buttonumstellungen fuer Auswahlbuttons
         try{
             if(unrendered) {
                 if (selected instanceof Unit) {
@@ -241,16 +246,11 @@ public class GameScreen implements Screen, InputProcessor{
         }catch(Exception e){
             System.out.println(e.getMessage());
         }
+        //endregion
 
-        this.buildChatString();
-        int batchWidth = 2600;
-        int batchHeight = 2600;
-        int i=0;
-        int j=0;
-        batch.setProjectionMatrix(camera.combined);
-        shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
+        buildChatString();
 
-
+        //region Kamerabeweung
         //Move screen right
         if((Gdx.input.getX()>=(Gdx.graphics.getWidth()-10) || Gdx.input.isKeyPressed(Input.Keys.DPAD_RIGHT))&&camera.position.x<batchWidth)
         {camera.position.set(camera.position.x+10, camera.position.y, 0);
@@ -273,14 +273,14 @@ public class GameScreen implements Screen, InputProcessor{
         {camera.position.set(camera.position.x,camera.position.y+10, 0);
            }
         camera.update();
-
-
+        //endregion
 
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 
         batch.begin();
+        //region Felder zeichnen
         String textureName = "";
         int textureIndex = 0;
         try{
@@ -351,6 +351,7 @@ public class GameScreen implements Screen, InputProcessor{
 
                 }
         }
+        //endregion
 
 //testweise
         batch.draw(new Texture(Gdx.files.internal("assets/sprites/spearfighter.png")), 500,500,100,100);
@@ -420,6 +421,7 @@ public class GameScreen implements Screen, InputProcessor{
         Vector3 input = camera.unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0));
         return (int)((input.y > scrHeight ? scrHeight : input.y < 0 ? 0 : input.y)/100);
     }
+
 
     /**
      * Zeigt den Bewegungsradius eigener Einheiten an.
@@ -595,7 +597,13 @@ public class GameScreen implements Screen, InputProcessor{
 
         //////////////Buttontabelle//////////////
         ////Buttons != null////
-        marketPlace = new TextButton("Marktplatz",skin);
+        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
+        NinePatch tmp = new NinePatch(textures[20], 0, 0, 0, 0);
+        skin.add("marketIcon",tmp);
+        style.up = skin.getDrawable("marketIcon");
+        style.down = skin.getDrawable("marketIcon");
+        style.font = new BitmapFont(Gdx.files.internal("assets/fonts/black.fnt"),false);
+        marketPlace = new TextButton("Marktplatz",style);
         techTree = new TextButton("Technologiebaum",skin);
         finishRound = new TextButton("Runde beenden",skin);
 
@@ -650,7 +658,102 @@ public class GameScreen implements Screen, InputProcessor{
         stage.addActor(chatTable);
     }
 
+    private void buildChatString(){
+        try {
+            Chat chat = session.getSessionChat();
+            ArrayList<Message> backLogTmp = new ArrayList<>(chat.getBacklog());
+            if(backLogTmp.size() > lastMessageCount && (chat.getParticipants().isEmpty() || chat.getParticipants().contains(player))) {
+                Label tmp;
+                for(int i=lastMessageCount; i<backLogTmp.size(); ++i){
+                    if(backLogTmp.get(i).getVisibleForAll() || backLogTmp.get(i).getVisibleFor().contains(player)){
+                        tmp = new Label(backLogTmp.get(i).getContent(),skin);
+                        tmp.setWrap(true);
+                        backLog.add(tmp);
+                        backLog.row().fill().expandX().align(Align.left).height(tmp.getHeight());
+                        chatScroller.layout();
+                        chatScroller.setScrollPercentY(100);
+                    }
+                }
+                lastMessageCount = backLogTmp.size();
+            }
+        } catch (RemoteException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void showMarket(){
+        marketTable = new Table();
+        marketTable.align(Align.left);
+        marketTable.setPosition(stage.getWidth()/3, stage.getHeight()/2);
+        marketTable.setWidth(stage.getWidth()/3);
+        marketTable.setHeight(stage.getHeight()/3);
+
+
+        try {
+            Market tmp = session.getMarket();
+
+            woodAmount = new Label("Holz: " + tmp.getWood(),skin);
+            woodPrice = new Label("Preis: " + tmp.woodPrice(),skin);
+
+            ironAmount = new Label("Eisen: " + tmp.getIron(),skin);
+            ironPrice = new Label("Preis: " + tmp.ironPrice(),skin);
+
+        } catch (RemoteException e) {
+            woodAmount = new Label("Holz: n/a",skin);
+            woodPrice = new Label("Preis: n/a",skin);
+
+            ironAmount = new Label("Eisen: n/a",skin);
+            ironPrice = new Label("Preis: n/a",skin);
+
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+
+        woodField = new TextField("",skin);
+        woodField.setTextFieldFilter(new TextField.TextFieldFilter.DigitsOnlyFilter());
+        woodError = new Label("Nicht genug Ressourcen",skin);
+        woodError.setColor(Color.RED);
+        woodError.setVisible(false);
+
+        ironField = new TextField("",skin);
+        ironField.setTextFieldFilter(new TextField.TextFieldFilter.DigitsOnlyFilter());
+        ironError = new Label("Nicht genug Ressourcen",skin);
+        ironError.setColor(Color.RED);
+        ironError.setVisible(false);
+
+        connectionError = new Label("Keine Verbindung zum Marktplatz",skin);
+        connectionError.setColor(Color.RED);
+        connectionError.setVisible(false);
+
+        buyButton = new TextButton("Kaufen",skin);
+        sellButton = new TextButton("Verkaufen",skin);
+        closeButton = new TextButton("Schliessen",skin);
+
+        marketTable.row().fill().space(10);
+        marketTable.add(woodAmount);
+        marketTable.add(woodPrice);
+        marketTable.add(woodField);
+        marketTable.row().fill().space(10);
+        marketTable.add(woodError);
+        marketTable.row().fill().space(10);
+        marketTable.add(ironAmount);
+        marketTable.add(ironPrice);
+        marketTable.add(ironField);
+        marketTable.row().fill().space(10);
+        marketTable.add(ironError);
+        marketTable.row().fill().space(10);
+        marketTable.add(buyButton);
+        marketTable.add(sellButton);
+        marketTable.add(closeButton);
+        marketTable.row().fill().space(10);
+        marketTable.add(connectionError).colspan(2);
+        marketTable.setBackground(skin.getDrawable("background"));
+        marketTable.setVisible(false);
+        stage.addActor(marketTable);
+    }
+
     private void buildListeners(){
+        //region Selection
         selectionUpLeft.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -749,16 +852,135 @@ public class GameScreen implements Screen, InputProcessor{
                 }
             }
         });
+        //endregion
 
-        ////Bottom general////
+        //region Bottomgeneral
+        //region Market
         marketPlace.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                System.out.println("Marktplatz vorhanden: " + player.getMarket());
-                //TODO
+                marketTable.setVisible(!marketTable.isVisible());
             }
         });
 
+        buyButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+              try{
+                  Market market = session.getMarket();
+
+                  if(!woodField.getText().equals("")) {
+                      boolean wood = market.buy(player,0,Integer.parseInt(woodField.getText()));
+                      woodAmount.setText("Holz: " + market.getWood());
+                      woodPrice.setText("Preis: " + market.woodPrice());
+
+                      if(wood)
+                          woodField.setText("");
+                      else{
+                          woodError.setVisible(true);
+                          Timer timer = new Timer();
+                          timer.scheduleTask(new Timer.Task() {
+                              @Override
+                              public void run() {
+                                  woodError.setVisible(false);
+                              }
+                          },5);
+                      }
+                  }
+
+                  if(!ironField.getText().equals("")) {
+                      boolean iron = market.buy(player,1,Integer.parseInt(ironField.getText()));
+                      ironAmount.setText("Eisen: " + market.getWood());
+                      ironPrice.setText("Preis: " + market.woodPrice());
+
+                      if(iron)
+                          ironField.setText("");
+                      else{
+                          ironError.setVisible(true);
+                          Timer timer = new Timer();
+                          timer.scheduleTask(new Timer.Task() {
+                              @Override
+                              public void run() {
+                                  ironError.setVisible(false);
+                              }
+                          },5);
+                      }
+                  }
+
+              }catch (RemoteException e){
+                  System.out.println(e.getMessage());
+                  e.printStackTrace();
+              }
+            }
+        });
+
+        sellButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                try{
+                    Market market = session.getMarket();
+
+                    if(!woodField.getText().equals("")) {
+                        boolean wood = market.sell(player,0,Integer.parseInt(woodField.getText()));
+                        woodAmount.setText("Holz: " + market.getWood());
+                        woodPrice.setText("Preis: " + market.woodPrice());
+
+                        if(wood)
+                            woodField.setText("");
+                        else{
+                            woodError.setVisible(true);
+                            Timer timer = new Timer();
+                            timer.scheduleTask(new Timer.Task() {
+                                @Override
+                                public void run() {
+                                    woodError.setVisible(false);
+                                }
+                            },5);
+                        }
+                    }
+
+                    if(!ironField.getText().equals("")) {
+                        boolean iron = market.sell(player,1,Integer.parseInt(ironField.getText()));
+                        ironAmount.setText("Eisen: " + market.getIron());
+                        ironPrice.setText("Preis: " + market.woodPrice());
+
+                        if(iron)
+                            ironField.setText("");
+                        else{
+                            ironError.setVisible(true);
+                            Timer timer = new Timer();
+                            timer.scheduleTask(new Timer.Task() {
+                                @Override
+                                public void run() {
+                                    ironError.setVisible(false);
+                                }
+                            },5);
+                        }
+                    }
+
+                }catch (RemoteException e){
+                    connectionError.setVisible(true);
+                    Timer timer = new Timer();
+                    timer.scheduleTask(new Timer.Task(){
+                        @Override
+                        public void run(){ connectionError.setVisible(false);}
+                    },5);
+                    System.out.println(e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        closeButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                marketTable.setVisible(false);
+            }
+        });
+
+        //endregion
+
+        //region TechTree
         techTree.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
@@ -766,6 +988,8 @@ public class GameScreen implements Screen, InputProcessor{
                 //TODO
             }
         });
+
+        //endregion
 
         finishRound.addListener(new ClickListener(){
             @Override
@@ -778,9 +1002,9 @@ public class GameScreen implements Screen, InputProcessor{
                 }
             }
         });
+        //endregion
 
-
-        ////Chat////
+        //region Chat
         sendMessageButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
@@ -806,9 +1030,10 @@ public class GameScreen implements Screen, InputProcessor{
                 }
             }
         });
+        //endregion
     }
 
-
+//region Standardmethoden fuer Screen/InputProcessor
     ////Aktuell nicht gebraucht////
     /**
      * @param width trivial
@@ -932,4 +1157,5 @@ public class GameScreen implements Screen, InputProcessor{
     public boolean scrolled(int amount) {
         return false;
     }
+    //endregion
 }

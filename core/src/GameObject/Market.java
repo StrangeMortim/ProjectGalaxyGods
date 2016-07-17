@@ -3,6 +3,7 @@ package GameObject;
 import Player.Player;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 
 /**
  * Created by benja_000 on 12.06.2016.
@@ -53,7 +54,9 @@ public class Market implements IMarket,Serializable{
                 p.getRessources()[0] += amount;
                 p.getRessources()[2] -= amount*woodPrice;
                 wood -= amount;
-                woodPrice = (100/wood) * 10;
+                double woodValue = 100.0/wood;
+                woodValue = (woodValue<1.0) ? 1.0 : woodValue;
+                woodPrice = (int)(woodValue * 10);
                 return true;
             case 1:
                 if(iron < amount || amount*ironPrice > p.getRessources()[2])
@@ -62,7 +65,9 @@ public class Market implements IMarket,Serializable{
                 p.getRessources()[1] += amount;
                 p.getRessources()[2] -= amount*ironPrice;
                 iron -= amount;
-                ironPrice = (100/iron) * 10;
+                double ironValue = 100.0/iron;
+                ironValue = (ironValue<1.0) ? 1.0 : ironValue;
+                ironPrice = (int)(ironValue*10);
                 return true;
             default:
                 return false;
@@ -79,24 +84,29 @@ public class Market implements IMarket,Serializable{
      */
     @Override
     public boolean sell(Player p, int type, int amount) {
+        //TODO fix price
         switch (type){
             case 0:
                 if(p.getRessources()[0] < amount)
                     return false;
 
+                wood += amount;
+                double woodValue = 100.0/wood;
+                woodValue = (woodValue<1.0) ? 1.0 : woodValue;
+                woodPrice = (int)(woodValue * 10);
                 p.getRessources()[0] -= amount;
                 p.getRessources()[2] += amount*woodPrice;
-                wood += amount;
-                woodPrice = (100/wood) * 10;
                 return true;
             case 1:
                 if(p.getRessources()[1] < amount)
                     return false;
 
+                iron += amount;
+                double ironValue = 100.0/iron;
+                ironValue = (ironValue<1.0) ? 1.0 : ironValue;
+                ironPrice = (int)(ironValue*10);
                 p.getRessources()[1] -= amount;
                 p.getRessources()[2] += amount*ironPrice;
-                iron += amount;
-                ironPrice = (100/iron) * 10;
                 return true;
             default:
                 return false;
@@ -108,10 +118,22 @@ public class Market implements IMarket,Serializable{
     public void setIron(int price) {
 iron=price;
     }
+
+    @Override
+    public int getIron() throws RemoteException {
+        return iron;
+    }
+
     @Override
     public void setWood(int price) {
 wood=price;
     }
+
+    @Override
+    public int getWood() throws RemoteException {
+        return wood;
+    }
+
     @Override
     public int ironPrice() {
         return ironPrice;

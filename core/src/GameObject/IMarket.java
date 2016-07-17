@@ -31,7 +31,9 @@ public interface IMarket extends Remote {
 
     //Getter Setter
     public void setIron(int price)throws RemoteException;
+    public int getIron() throws RemoteException;
     public void setWood(int price)throws RemoteException;
+    public int getWood() throws RemoteException;
     public int ironPrice()throws RemoteException;
     public int woodPrice()throws RemoteException;
 
