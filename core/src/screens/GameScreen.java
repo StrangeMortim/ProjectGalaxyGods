@@ -102,6 +102,7 @@ public class GameScreen implements Screen, InputProcessor{
             new Texture(Gdx.files.internal(SpriteNames.MARKETPLACE.getSpriteName())),//20
             new Texture(Gdx.files.internal(SpriteNames.BUTTON_WORKER.getSpriteName())), // 21
             new Texture(Gdx.files.internal(SpriteNames.BUTTON_BG.getSpriteName())), // 22
+            new Texture(Gdx.files.internal(SpriteNames.SPEARFIGHTER.getSpriteName()))//23
     };
     //endregion
 
@@ -355,6 +356,9 @@ public class GameScreen implements Screen, InputProcessor{
                             break;
                         case "assets/sprites/ironNoMine1.png":
                             textureIndex = 13;
+                            break;
+                        case "assets/sprites/spearfighter.png":
+                            textureIndex = 23;
                             break;
                         default:
                             textureIndex = 0;
@@ -1216,8 +1220,8 @@ public class GameScreen implements Screen, InputProcessor{
                         unit.setMovePointsLeft(unit.getMovePointsLeft()-diff);
                         unrendered=true;
                     }
-            }catch(Exception e){
-                }}
+            }catch(Exception e){}
+        }
 
     }
 

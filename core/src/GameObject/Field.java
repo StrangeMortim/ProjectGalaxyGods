@@ -338,11 +338,16 @@ public class Field implements IField,Serializable {
     public void setCurrent(Unit current) {
         if(current==null){
             walkable=true;
+            setSpriteName(SpriteNames.NORMAL_FIELD.getSpriteName());
             this.current=null;
             return;
         }
         this.current = current;
         current.setField(this);
+        if(current.getSpriteName()!="")
+        setSpriteName(current.getSpriteName());
+
+
         if(resType == Constants.MANA){
             current.getOwner().getRessources()[Constants.MANA] += resValue;
             resValue = 0;
