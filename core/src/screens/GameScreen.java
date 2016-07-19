@@ -102,7 +102,10 @@ public class GameScreen implements Screen, InputProcessor{
             new Texture(Gdx.files.internal(SpriteNames.MARKETPLACE.getSpriteName())),//20
             new Texture(Gdx.files.internal(SpriteNames.BUTTON_WORKER.getSpriteName())), // 21
             new Texture(Gdx.files.internal(SpriteNames.BUTTON_BG.getSpriteName())), // 22
-            new Texture(Gdx.files.internal(SpriteNames.SPEARFIGHTER.getSpriteName()))//23
+            new Texture(Gdx.files.internal(SpriteNames.SPEARFIGHTER.getSpriteName())),//23
+            new Texture(Gdx.files.internal(SpriteNames.SWORDFIGHTER.getSpriteName())),//24
+            new Texture(Gdx.files.internal(SpriteNames.WORKER.getSpriteName())),//25
+            new Texture(Gdx.files.internal(SpriteNames.HERO.getSpriteName()))//26
     };
     //endregion
 
@@ -359,6 +362,15 @@ public class GameScreen implements Screen, InputProcessor{
                             break;
                         case "assets/sprites/spearfighter.png":
                             textureIndex = 23;
+                            break;
+                        case "assets/sprites/swordfighter.png":
+                            textureIndex = 24;
+                            break;
+                        case "assets/sprites/worker.png":
+                            textureIndex = 25;
+                            break;
+                        case "assets/sprites/hero.png":
+                            textureIndex = 26;
                             break;
                         default:
                             textureIndex = 0;
