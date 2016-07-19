@@ -34,6 +34,7 @@ public class OptionScreen implements Screen {
     private Skin skin;
     private Sprite backGround;
     private SpriteBatch batch;
+    private GameScreen screen;
 
     private Table lowerButtons;
     private TextButton homeButton;
@@ -60,7 +61,10 @@ public class OptionScreen implements Screen {
     private int soundVolume = prefs.getInteger("soundVol", 100);
 
     public OptionScreen(Game game){ this.game = game;}
-
+    public OptionScreen(Game game, GameScreen screen){
+        this.game= game;
+        this.screen=screen;
+    }
 
     /**
      * Called when this screen becomes the current screen for a {@link Game}.
@@ -162,7 +166,9 @@ public class OptionScreen implements Screen {
         //////////////////////Listener Generierung/////////////////////////////////////
         homeButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) { game.setScreen(new MenuScreen(game));}
+            public void clicked(InputEvent event, float x, float y) { if(screen==null){game.setScreen(new MenuScreen(game));}
+                else{game.setScreen(screen);}
+            }
         });
 
         resSb.addListener(new ChangeListener() {

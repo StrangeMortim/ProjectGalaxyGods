@@ -531,6 +531,12 @@ public class GameScreen implements Screen, InputProcessor{
             }
         });
         TextButton einstellungen = new TextButton("Einstellungen",skin);
+        einstellungen.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                game.setScreen(new OptionScreen(game,(GameScreen) game.getScreen()));
+            }
+        });
         TextButton aufgeben = new TextButton("Aufgeben",skin);
         TextButton beenden = new TextButton("Beenden",skin);
         optionTable.add(einstellungen);
