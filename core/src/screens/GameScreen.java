@@ -381,7 +381,7 @@ public class GameScreen implements Screen, InputProcessor{
         //endregion
 
 //testweise
-        batch.draw(new Texture(Gdx.files.internal(SpriteNames.SPEARFIGHTER.getSpriteName())), 500,500,100,100);
+
 
         batch.end();
 
@@ -1218,14 +1218,18 @@ public class GameScreen implements Screen, InputProcessor{
                             if(x<0)x=(x*-1);
                             if(y<0)y=(y*-1);
                             System.out.println(x+":"+y);
-                            if(x>y){unit.setMovePointsLeft(unit.getMovePointsLeft()-(x-1));
-                                if(x-1==0){unit.setMovePointsLeft(0);}
+                            if(x>y){
+                                if(x-1==0){unit.setMovePointsLeft(0);
+                                return;}
+                                unit.setMovePointsLeft(unit.getMovePointsLeft()-(x));
                                 return;
-                            }else{unit.setMovePointsLeft(unit.getMovePointsLeft()-(y-1));
-                                if(y-1==0){unit.setMovePointsLeft(0);}
+                            }else{
+                                if(y-1==0){unit.setMovePointsLeft(0);
+                                return;}
+                                unit.setMovePointsLeft(unit.getMovePointsLeft()-(y));
+
                                 return;
                             }
-
                         }
                     }catch(Exception e){
                     }

@@ -338,6 +338,7 @@ public class Field implements IField,Serializable {
     public void setCurrent(Unit current) {
         if(current==null){
             walkable=true;
+            this.current=null;
             return;
         }
         this.current = current;
@@ -346,6 +347,7 @@ public class Field implements IField,Serializable {
             current.getOwner().getRessources()[Constants.MANA] += resValue;
             resValue = 0;
         }
+        walkable=false;
     }
 
     @Override
