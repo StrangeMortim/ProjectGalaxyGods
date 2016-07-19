@@ -127,7 +127,7 @@ public class GameScreen implements Screen, InputProcessor{
             map = session.getMap().getFields();
 
             Unit testUnit = new Unit(UnitType.SPEARFIGHTER, this.player);
-            testUnit.setMovePointsLeft(3);
+            testUnit.setMovePointsLeft(8);
             testUnit.setSpriteName(SpriteNames.SPEARFIGHTER.getSpriteName());
             testUnit.setOwner(this.player);
             map[5][5].setCurrent(testUnit);
@@ -469,8 +469,8 @@ public class GameScreen implements Screen, InputProcessor{
                     for (int y = 0 - radius; y < radius + 1; y++) {
                         if (((Unit) selected).getField().getXPos() * 100 + x * 100 >= 0
                                 && ((Unit) selected).getField().getYPos() * 100 + y * 100 >= 0
-                                && ((Unit) selected).getField().getYPos() * 100 + y * 100 <= 4900
-                                && ((Unit) selected).getField().getXPos() * 100 + x * 100 <= 4900)
+                                && ((Unit) selected).getField().getYPos() * 100 + y * 100 <= Constants.FIELDYLENGTH*100-100
+                                && ((Unit) selected).getField().getXPos() * 100 + x * 100 <= Constants.FIELDXLENGTH*100-100)
 
                             if(map[((Unit) selected).getField().getXPos()+x][((Unit) selected).getField().getYPos()+y].getWalkable()) {
                                 shapeRenderer.rect(((Unit) selected).getField().getXPos() * 100 + x * 100, ((Unit) selected).getField().getYPos() * 100 + y * 100, 100, 100);
