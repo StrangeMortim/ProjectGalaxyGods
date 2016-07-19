@@ -11,8 +11,8 @@ import java.util.Map;
 
 public class Base extends Unit implements IBase,Serializable {
 
-    private int labRoundsRemaining=-1;
-    private int caserneRoundsRemaining=-1;
+    private int labRoundsRemaining=Constants.NONE_OR_NOT_SET;
+    private int caserneRoundsRemaining=Constants.NONE_OR_NOT_SET;
     private HashMap<Unit, Integer> recruiting = new HashMap<Unit, Integer>();
     private List<UnitType> avaibleUnits = new ArrayList<UnitType>();
     private HashMap<Research, Integer> researching = new HashMap<Research,Integer>();
@@ -29,19 +29,22 @@ public class Base extends Unit implements IBase,Serializable {
         List<Buff> result = new ArrayList<Buff>();
 
         //receive ressources from near units
-        currentField.getNearUnits().stream().filter(u -> u.getOwner() == this.owner).forEach(u -> {
-            owner.getRessources()[0] += u.getRessources()[0];
-            u.getRessources()[0] = 0;
-            owner.getRessources()[1] += u.getRessources()[1];
-            u.getRessources()[1] = 0;
-        });
+        for(Unit u: currentField.getNearUnits()){
+            if(u.getOwner() == this.owner){
+                owner.getRessources()[Constants.WOOD] += u.getRessources()[Constants.WOOD];
+                u.getRessources()[Constants.WOOD] = Constants.FINISHED;
+                owner.getRessources()[Constants.IRON] += u.getRessources()[Constants.IRON];
+                u.getRessources()[Constants.IRON] = Constants.FINISHED;
+            }
+        }
+
 
         //count down if lab is in building state
-        if(labRoundsRemaining > 0)
+        if(labRoundsRemaining > Constants.FINISHED)
             labRoundsRemaining--;
 
         //count down if caserne is in building state
-        if(caserneRoundsRemaining > 0)
+        if(caserneRoundsRemaining > Constants.FINISHED)
             caserneRoundsRemaining--;
 
         //count all recruiting states down and if finished, spawn them
@@ -49,7 +52,7 @@ public class Base extends Unit implements IBase,Serializable {
         while (it.hasNext()){
             Map.Entry<Unit,Integer> entry = (Map.Entry)it.next();
             entry.setValue(entry.getValue()-1);
-            if(entry.getValue() <= 0){
+            if(entry.getValue() <= Constants.FINISHED){
                 if(this.spawnUnit(entry.getKey()))
                     it.remove(); //remove if spawn was successfull
             }
@@ -62,7 +65,7 @@ public class Base extends Unit implements IBase,Serializable {
         while (it.hasNext()){
             Map.Entry<Research,Integer> entry = (Map.Entry)it.next();
             entry.setValue(entry.getValue()-1);
-            if(entry.getValue() <= 0){
+            if(entry.getValue() <= Constants.FINISHED){
                 current = entry.getKey();
                 if(current.isPermanet()) {
                     owner.getPermaBuffs().add(current);
@@ -125,17 +128,18 @@ public class Base extends Unit implements IBase,Serializable {
         int xPos = currentField.getXPos();
         int yPos = currentField.getYPos();
 
-        int range = 1;
+        int yRange = 1;
 
         Field current = null;
 
-        //iterate as long as the range does not exceed the map bounds in every way TODO from hardcoded to dynamic bounds
-        while (range < 7) {
+        //iterate as long as the range does not exceed the map bounds in every way
+        // Y-Range is a bit short than x-range so currently some fields aren't covered TODO
+        while (yRange < Constants.FIELDYLENGTH/2) {
             //iterate on column level
-            for (int i = yPos - range; i <= yPos + range; ++i) {
+            for (int i = yPos - yRange; i <= yPos + yRange; ++i) {
 
                 //iterate on row level
-                for (int k = xPos - range; k <= xPos + range; ++k)
+                for (int k = xPos - yRange; k <= xPos + yRange; ++k)
                     current = currentField.getMap().getField(k, i);
                 //if field found and free, place unit
                 if (current != null && current.getCurrent() == null) {
@@ -144,7 +148,7 @@ public class Base extends Unit implements IBase,Serializable {
                     return true;
                 }
             }
-            range++;
+            yRange++;
         }
 
         return false;
@@ -165,12 +169,14 @@ public class Base extends Unit implements IBase,Serializable {
             int[] ressourcesAvailable = owner.getRessources();
 
             //Check if enough ressources, if not return result(null)
-            for (int j = 0; j<4; ++j)
+            //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
+            for (int j = Constants.WOOD; j<=Constants.MANA; ++j)
                 if(cost[j] > ressourcesAvailable[j])
                    return  false;
 
 
-                for(int i = 0; i < 4; ++i)
+            //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
+                for(int i = Constants.WOOD; i <= Constants.MANA; ++i)
                 owner.getRessources()[i] -= cost[i];
 
                 recruiting.put(new Unit(type, owner), type.getRecruitingTime());
@@ -196,7 +202,8 @@ public class Base extends Unit implements IBase,Serializable {
             int[] originalCost = whichType.getRessourceCost();
             float ressourcesRemaining = recruiting.get(which) / whichType.getRecruitingTime();
 
-            for(int i = 0; i<4; ++i)
+            //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
+            for(int i = Constants.WOOD; i<=Constants.MANA; ++i)
             owner.getRessources()[i] += (ressourcesRemaining* originalCost[i]);
 
             recruiting.remove(which);
@@ -211,16 +218,18 @@ public class Base extends Unit implements IBase,Serializable {
      */
     @Override
     public boolean buildLab() {
-        if(labRoundsRemaining == -1){
+        if(labRoundsRemaining == Constants.NONE_OR_NOT_SET){
             int[] ressourceCost = Building.LABOR.getRessourceCost();
             int[] avaibleRessources = owner.getRessources();
 
             //check if enough ressources, if not return false
-            for(int i=0; i<4; ++i)
+            //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
+            for(int i=Constants.WOOD; i<=Constants.MANA; ++i)
                 if (ressourceCost[i] > avaibleRessources[i])
                     return false;
 
-            for(int j=0; j<4; ++j)
+            //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
+            for(int j=Constants.WOOD; j<=Constants.MANA; ++j)
                 owner.getRessources()[j] -= ressourceCost[j];
 
             labRoundsRemaining = Building.LABOR.getBuildTime();
@@ -235,13 +244,14 @@ public class Base extends Unit implements IBase,Serializable {
      */
     @Override
     public void abortLab() {
-        if(labRoundsRemaining > 0){
+        if(labRoundsRemaining > Constants.FINISHED){
             float ressourcesLeft = labRoundsRemaining / Building.LABOR.getBuildTime();
-            labRoundsRemaining = -1;
+            labRoundsRemaining = Constants.NONE_OR_NOT_SET;
 
             int[] originalCost = Building.LABOR.getRessourceCost();
 
-            for(int i=0; i<4;++i)
+            //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
+            for(int i=Constants.WOOD; i<=Constants.MANA;++i)
                 owner.getRessources()[i] += (ressourcesLeft*originalCost[i]);
         }
         /*TODO check*/
@@ -252,16 +262,18 @@ public class Base extends Unit implements IBase,Serializable {
      */
     @Override
     public boolean buildCaserne() {
-        if(caserneRoundsRemaining == -1){
+        if(caserneRoundsRemaining == Constants.NONE_OR_NOT_SET){
             int[] ressourceCost = Building.CASERNE.getRessourceCost();
             int[] avaibleRessources = owner.getRessources();
 
             //check if enough ressources, if not return false
-            for(int i=0; i<4; ++i)
+            //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
+            for(int i=Constants.WOOD; i<=Constants.MANA; ++i)
                 if (ressourceCost[i] > avaibleRessources[i])
                     return false;
 
-            for(int j=0; j<4; ++j)
+            //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
+            for(int j=Constants.WOOD; j<=Constants.MANA; ++j)
                 owner.getRessources()[j] -= ressourceCost[j];
 
             caserneRoundsRemaining = Building.CASERNE.getBuildTime();
@@ -275,13 +287,14 @@ public class Base extends Unit implements IBase,Serializable {
      */
     @Override
     public void abortCaserne() {
-        if(caserneRoundsRemaining > 0){
+        if(caserneRoundsRemaining > Constants.FINISHED){
             float ressourcesLeft = caserneRoundsRemaining / Building.CASERNE.getBuildTime();
-            caserneRoundsRemaining = -1;
+            caserneRoundsRemaining = Constants.NONE_OR_NOT_SET;
 
             int[] originalCost = Building.CASERNE.getRessourceCost();
 
-            for(int i=0; i<4;++i)
+            //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
+            for(int i=Constants.WOOD; i<=Constants.MANA;++i)
                 owner.getRessources()[i] += (ressourcesLeft*originalCost[i]);
         }
         /*TODO check*/
@@ -295,9 +308,10 @@ public class Base extends Unit implements IBase,Serializable {
         if(owner.getMarket())
             return true;
 
-        if(owner.getRessources()[0] >= 100 && owner.getRessources()[2] >= 100){
-            owner.getRessources()[0] -= 100;
-            owner.getRessources()[2] -= 100;
+        if(owner.getRessources()[Constants.WOOD] >= Building.MARKET.getRessourceCost()[Constants.WOOD]
+                && owner.getRessources()[Constants.GOLD] >= Building.MARKET.getRessourceCost()[Constants.GOLD]){
+            owner.getRessources()[Constants.WOOD] -= Building.MARKET.getRessourceCost()[Constants.WOOD];
+            owner.getRessources()[Constants.GOLD] -= Building.MARKET.getRessourceCost()[Constants.GOLD];
             owner.setMarket(true);
             return true;
         }
@@ -317,11 +331,13 @@ public class Base extends Unit implements IBase,Serializable {
             int[] avaibleRessources = owner.getRessources();
 
             //check if enough ressources, if not return false
-            for (int i = 0; i < 4; ++i)
+            //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
+            for (int i = Constants.WOOD; i <= Constants.MANA; ++i)
                 if (ressourceCost[i] > avaibleRessources[i])
                     return false;
 
-            for (int j = 0; j < 4; ++j)
+            //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
+            for (int j = Constants.WOOD; j <=Constants.MANA; ++j)
                 owner.getRessources()[j] -= ressourceCost[j];
 
             researching.put(research, research.getResearchTime());
@@ -353,7 +369,8 @@ public class Base extends Unit implements IBase,Serializable {
                     int[] originalCost = research.getRessourceCost();
                     float ressourcesLeft = entry.getValue() / research.getResearchTime();
 
-                    for(int i=0; i<4;++i)
+                    //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
+                    for(int i=Constants.WOOD; i<=Constants.MANA;++i)
                         owner.getRessources()[i] += (ressourcesLeft * originalCost[i]);
 
                     //remove buff and research
@@ -375,8 +392,8 @@ public class Base extends Unit implements IBase,Serializable {
      */
     @Override
     public void setLabRoundsRemaining(int remaining) {
-        if(remaining < -1)
-            this.labRoundsRemaining = -1;
+        if(remaining < Constants.NONE_OR_NOT_SET)
+            this.labRoundsRemaining = Constants.NONE_OR_NOT_SET;
         else
         this.labRoundsRemaining = remaining;
     }
@@ -388,8 +405,8 @@ public class Base extends Unit implements IBase,Serializable {
 
     @Override
     public void setCaserneRoundsRemaining(int remaining) {
-        if(remaining < -1)
-            this.caserneRoundsRemaining = -1;
+        if(remaining < Constants.NONE_OR_NOT_SET)
+            this.caserneRoundsRemaining = Constants.NONE_OR_NOT_SET;
         else
             this.caserneRoundsRemaining = remaining;
     }

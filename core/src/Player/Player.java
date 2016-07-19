@@ -1,6 +1,7 @@
 package Player;
 
 import Action.Buff;
+import GameObject.Constants;
 import GameObject.Research;
 
 import java.io.Serializable;
@@ -12,7 +13,7 @@ import java.util.List;
  */
 public class Player implements IPlayer,Serializable {
 
-    private int[] ressources = new int[]{500,500,500,500};
+    private int[] ressources = new int[]{Constants.PLAYER_START_WOOD,Constants.PLAYER_START_IRON,Constants.PLAYER_START_GOLD,Constants.PLAYER_START_MANA};
     private int[] ressourcesBoni = new int[4];
     private TechnologyTree tree = new TechnologyTree();
     private Boolean turn = false;

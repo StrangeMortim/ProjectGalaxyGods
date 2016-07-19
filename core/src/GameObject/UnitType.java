@@ -116,18 +116,16 @@ public enum UnitType implements IUnitType,Serializable {
     @Override
     public String getSpriteName() {
         switch (this){
-            case BASE:
-                return "sprites/baseZero.png";
             case SPEARFIGHTER:
-                return "sprites/spearfighter.png";
+                return SpriteNames.SPEARFIGHTER.getSpriteName();
             case ARCHER:
-                return "sprites/archer.png";
+                return SpriteNames.ARCHER.getSpriteName();
             case SWORDFIGHTER:
-                return "sprites/swordfighter.png";
+                return SpriteNames.SWORDFIGHTER.getSpriteName();
             case WORKER:
-                return "sprites/worker.png";
+                return SpriteNames.WORKER.getSpriteName();
             default:
-                return "splash.jpg";
+                return "";
         }
     }
 

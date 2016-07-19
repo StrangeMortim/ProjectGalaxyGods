@@ -47,27 +47,27 @@ public class Market implements IMarket,Serializable{
     @Override
     public boolean buy(Player p, int type, int amount) {
         switch (type){
-            case 0:
-                if(wood < amount || amount*woodPrice > p.getRessources()[2])
+            case Constants.WOOD:
+                if(wood < amount || amount*woodPrice > p.getRessources()[Constants.GOLD])
                     return false;
 
-                p.getRessources()[0] += amount;
-                p.getRessources()[2] -= amount*woodPrice;
+                p.getRessources()[Constants.WOOD] += amount;
+                p.getRessources()[Constants.GOLD] -= amount*woodPrice;
                 wood -= amount;
-                double woodValue = 100.0/wood;
+                double woodValue = ((double)Constants.WOOD_MARKET_DEFAULT_AMOUNT)/wood;
                 woodValue = (woodValue<1.0) ? 1.0 : woodValue;
-                woodPrice = (int)(woodValue * 10);
+                woodPrice = (int)(woodValue * Constants.WOOD_MARKET_DEFAULT_PRICE);
                 return true;
-            case 1:
-                if(iron < amount || amount*ironPrice > p.getRessources()[2])
+            case Constants.IRON:
+                if(iron < amount || amount*ironPrice > p.getRessources()[Constants.GOLD])
                     return false;
 
-                p.getRessources()[1] += amount;
-                p.getRessources()[2] -= amount*ironPrice;
+                p.getRessources()[Constants.IRON] += amount;
+                p.getRessources()[Constants.GOLD] -= amount*ironPrice;
                 iron -= amount;
-                double ironValue = 100.0/iron;
+                double ironValue = ((double)Constants.IRON_MARKET_DEFAULT_AMOUNT)/iron;
                 ironValue = (ironValue<1.0) ? 1.0 : ironValue;
-                ironPrice = (int)(ironValue*10);
+                ironPrice = (int)(ironValue*Constants.IRON_MARKET_DEFAULT_PRICE);
                 return true;
             default:
                 return false;
@@ -86,27 +86,27 @@ public class Market implements IMarket,Serializable{
     public boolean sell(Player p, int type, int amount) {
         //TODO fix price
         switch (type){
-            case 0:
-                if(p.getRessources()[0] < amount)
+            case Constants.WOOD:
+                if(p.getRessources()[Constants.WOOD] < amount)
                     return false;
 
                 wood += amount;
-                double woodValue = 100.0/wood;
+                double woodValue = ((double)Constants.WOOD_MARKET_DEFAULT_AMOUNT)/wood;
                 woodValue = (woodValue<1.0) ? 1.0 : woodValue;
-                woodPrice = (int)(woodValue * 10);
-                p.getRessources()[0] -= amount;
-                p.getRessources()[2] += amount*woodPrice;
+                woodPrice = (int)(woodValue * Constants.WOOD_MARKET_DEFAULT_PRICE);
+                p.getRessources()[Constants.WOOD] -= amount;
+                p.getRessources()[Constants.GOLD] += amount*woodPrice;
                 return true;
-            case 1:
+            case Constants.IRON:
                 if(p.getRessources()[1] < amount)
                     return false;
 
                 iron += amount;
-                double ironValue = 100.0/iron;
+                double ironValue = ((double)Constants.IRON_MARKET_DEFAULT_AMOUNT)/iron;
                 ironValue = (ironValue<1.0) ? 1.0 : ironValue;
-                ironPrice = (int)(ironValue*10);
-                p.getRessources()[1] -= amount;
-                p.getRessources()[2] += amount*ironPrice;
+                ironPrice = (int)(ironValue*Constants.IRON_MARKET_DEFAULT_PRICE);
+                p.getRessources()[Constants.IRON] -= amount;
+                p.getRessources()[Constants.GOLD] += amount*ironPrice;
                 return true;
             default:
                 return false;

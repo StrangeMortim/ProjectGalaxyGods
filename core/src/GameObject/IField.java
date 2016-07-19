@@ -84,8 +84,6 @@ public interface IField extends Remote {
 
     public String getSpriteName();
 
-    public Texture getTexture();
-
     public void setHasMine(boolean hasMine);
 
     public boolean getHasMine();

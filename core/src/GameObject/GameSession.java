@@ -81,8 +81,8 @@ public class GameSession implements IGameSession, Serializable{
         currentTurn = new ActionProcessor(this);
         sessionChat = new Chat();
 
-        level = new Map("NoName",4, 2, this);
-        level.init();
+            level = new Map("NoName", 4, 2, this);
+            level.init();
     }
 
     /**

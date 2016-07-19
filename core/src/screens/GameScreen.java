@@ -79,29 +79,29 @@ public class GameScreen implements Screen, InputProcessor{
     //endregion
 
     //region Textures
-    private Texture[] textures = new Texture[]{new Texture(Gdx.files.internal("assets/sprites/normal0.png")),//0
-            new Texture(Gdx.files.internal("assets/sprites/normal1.png")),        //1
-            new Texture(Gdx.files.internal("assets/sprites/forest.png")),      //2
-            new Texture(Gdx.files.internal("assets/sprites/ironNoMine0.png")),//3
-            new Texture(Gdx.files.internal("assets/sprites/baseFullRight.png")),//4
-            new Texture(Gdx.files.internal("assets/sprites/baseFullLeft.png")),//5
-            new Texture(Gdx.files.internal("assets/sprites/baseDownRightFull.png")),//6
-            new Texture(Gdx.files.internal("assets/sprites/baseDownRightLabor.png")),//7
-            new Texture(Gdx.files.internal("assets/sprites/baseDownRightCaserne.png")),//8
-            new Texture(Gdx.files.internal("assets/sprites/baseDownRightEmpty.png")),//9
-            new Texture(Gdx.files.internal("assets/sprites/baseDownLeftCaserne.png")),//10
-            new Texture(Gdx.files.internal("assets/sprites/baseDownLeftEmpty.png")),//11
-            new Texture(Gdx.files.internal("assets/sprites/normal2.png")),//12
-            new Texture(Gdx.files.internal("assets/sprites/ironNoMine1.png")),//13
-            new Texture(Gdx.files.internal("assets/sprites/gold.png")),//14
-            new Texture(Gdx.files.internal("assets/sprites/wood.png")),//15
-            new Texture(Gdx.files.internal("assets/sprites/iron.png")),//16
-            new Texture(Gdx.files.internal("assets/sprites/mana.png")),//17
-            new Texture(Gdx.files.internal("assets/sprites/chest.png")),//18
-            new Texture(Gdx.files.internal("assets/sprites/menuBackground.png")),//19
-            new Texture(Gdx.files.internal("assets/sprites/marketplace.png")),//20
-            new Texture(Gdx.files.internal("assets/sprites/buttonArbeiter.png")), // 21
-            new Texture(Gdx.files.internal("assets/sprites/buttonBackground.png")), // 22
+    private Texture[] textures = new Texture[]{new Texture(Gdx.files.internal(SpriteNames.NORMAL_FIELD.getSpecificName(0))),//0
+            new Texture(Gdx.files.internal(SpriteNames.NORMAL_FIELD.getSpecificName(1))),        //1
+            new Texture(Gdx.files.internal(SpriteNames.FOREST.getSpriteName())),      //2
+            new Texture(Gdx.files.internal(SpriteNames.IRON_FIELD.getSpecificName(0))),//3
+            new Texture(Gdx.files.internal(SpriteNames.BASE_UP_RIGHT.getSpriteName())),//4
+            new Texture(Gdx.files.internal(SpriteNames.BASE_UP_LEFT.getSpriteName())),//5
+            new Texture(Gdx.files.internal(SpriteNames.BASE_DOWN_RIGHT_FULL.getSpriteName())),//6
+            new Texture(Gdx.files.internal(SpriteNames.BASE_DOWN_RIGHT_LAB.getSpriteName())),//7
+            new Texture(Gdx.files.internal(SpriteNames.BASE_DOWN_RIGHT_CASERNE.getSpriteName())),//8
+            new Texture(Gdx.files.internal(SpriteNames.BASE_DOWN_RIGHT_EMPTY.getSpriteName())),//9
+            new Texture(Gdx.files.internal(SpriteNames.BASE_DOWN_LEFT_CASERNE.getSpriteName())),//10
+            new Texture(Gdx.files.internal(SpriteNames.BASE_DOWN_LEFT_EMPTY.getSpriteName())),//11
+            new Texture(Gdx.files.internal(SpriteNames.NORMAL_FIELD.getSpecificName(2))),//12
+            new Texture(Gdx.files.internal(SpriteNames.IRON_FIELD.getSpecificName(1))),//13
+            new Texture(Gdx.files.internal(SpriteNames.GOLD_ICON.getSpriteName())),//14
+            new Texture(Gdx.files.internal(SpriteNames.WOOD_ICON.getSpriteName())),//15
+            new Texture(Gdx.files.internal(SpriteNames.IRON_ICON.getSpriteName())),//16
+            new Texture(Gdx.files.internal(SpriteNames.MANA_ICON.getSpriteName())),//17
+            new Texture(Gdx.files.internal(SpriteNames.CHEST_ICON.getSpriteName())),//18
+            new Texture(Gdx.files.internal(SpriteNames.MENU_BG.getSpriteName())),//19
+            new Texture(Gdx.files.internal(SpriteNames.MARKETPLACE.getSpriteName())),//20
+            new Texture(Gdx.files.internal(SpriteNames.BUTTON_WORKER.getSpriteName())), // 21
+            new Texture(Gdx.files.internal(SpriteNames.BUTTON_BG.getSpriteName())), // 22
     };
     //endregion
 
@@ -124,20 +124,22 @@ public class GameScreen implements Screen, InputProcessor{
 
         try{
             map = session.getMap().getFields();
+
+            Unit testUnit = new Unit(UnitType.SPEARFIGHTER, this.player);
+            testUnit.setMovePointsLeft(3);
+            testUnit.setSpriteName(SpriteNames.SPEARFIGHTER.getSpriteName());
+            testUnit.setOwner(this.player);
+            map[5][5].setCurrent(testUnit);
         } catch (NullPointerException e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+
+            Random r = new Random();
+            for(int i=0;i<Constants.FIELDXLENGTH;++i)
+                for(int j=0;j<Constants.FIELDYLENGTH;++j)
+                    fields[i][j] = r.nextInt(2);
         }
 
-        Random r = new Random();
-        for(int i=0;i<26;++i)
-            for(int j=0;j<24;++j)
-                fields[i][j] = r.nextInt(2);
-
-        this.map = session.getMap().getFields();
-        Unit testUnit = new Unit(UnitType.SPEARFIGHTER, this.player);
-        testUnit.setMovePointsLeft(3);
-        testUnit.setSpriteName("sprites/spearfighter.png");
-        testUnit.setOwner(this.player);
-        map[5][5].setCurrent(testUnit);
 
     }
 
@@ -155,7 +157,6 @@ public class GameScreen implements Screen, InputProcessor{
         showMarket();
         buildListeners();
 
-
         InputMultiplexer im = new InputMultiplexer(stage, this);
         Gdx.input.setInputProcessor(im);
     }
@@ -169,18 +170,18 @@ public class GameScreen implements Screen, InputProcessor{
      */
     @Override
     public void render(float delta) {
-        int batchWidth = 2600;
-        int batchHeight = 2600;
+        int batchWidth = Constants.FIELDXLENGTH*100;
+        int batchHeight = Constants.FIELDYLENGTH*100;
         int i=0;
         int j=0;
 
         batch.setProjectionMatrix(camera.combined);
         shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
 
-        label1.setText(player.getRessources()[2]+"");
-        label2.setText(player.getRessources()[0]+"");
-        label3.setText(player.getRessources()[1]+"");
-        label4.setText(player.getRessources()[3]+"");
+        label1.setText(player.getRessources()[Constants.GOLD]+"");
+        label2.setText(player.getRessources()[Constants.WOOD]+"");
+        label3.setText(player.getRessources()[Constants.IRON]+"");
+        label4.setText(player.getRessources()[Constants.MANA]+"");
 
         //region Buttonumstellungen fuer Auswahlbuttons
         try{
@@ -248,7 +249,7 @@ public class GameScreen implements Screen, InputProcessor{
                     selectionUpLeft.setText("Mine bauen");
                     selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
 
-                    if (((Field) selected).getResType() != 1)
+                    if (((Field) selected).getResType() != Constants.IRON)
                         selectionUpLeft.setTouchable(Touchable.disabled);
                     else
                         selectionUpLeft.setTouchable(Touchable.enabled);
@@ -366,8 +367,9 @@ public class GameScreen implements Screen, InputProcessor{
                 i++;
             }
         }catch (NullPointerException e) {
-            for (i = 0; i < 26; ++i)
-                for (j = 0; j < 24; ++j) {
+            System.out.println("GameScreen 370: " + e.getMessage());
+            for (i = 0; i < Constants.FIELDXLENGTH; ++i)
+                for (j = 0; j < Constants.FIELDYLENGTH; ++j) {
 
                     if (fields[i][j] == 0)
                         batch.draw(bg, 100 * i, 100 * j, 100, 100);
@@ -379,7 +381,7 @@ public class GameScreen implements Screen, InputProcessor{
         //endregion
 
 //testweise
-        batch.draw(new Texture(Gdx.files.internal("assets/sprites/spearfighter.png")), 500,500,100,100);
+        batch.draw(new Texture(Gdx.files.internal(SpriteNames.SPEARFIGHTER.getSpriteName())), 500,500,100,100);
 
         batch.end();
 
@@ -417,7 +419,7 @@ public class GameScreen implements Screen, InputProcessor{
         try {
             switch (button) {
                 case Input.Buttons.LEFT:
-                    selected = map[getFieldXPos(2600)][getFieldYPos(2600)].select(); //TODO batchBounds->attribute
+                    selected = map[getFieldXPos(Constants.FIELDXLENGTH*100)][getFieldYPos(Constants.FIELDYLENGTH*100)].select(); //TODO batchBounds->attribute
                     baseRecruitButtons = false;
                     unrendered = true;
                     return true;
@@ -790,7 +792,7 @@ public class GameScreen implements Screen, InputProcessor{
                     if(baseRecruitButtons){
                         ((Base)selected).createUnit(UnitType.SWORDFIGHTER);
                     } else{
-                        if(((Base)selected).getLabRoundsRemaining() != -1)
+                        if(((Base)selected).getLabRoundsRemaining() != Constants.NONE_OR_NOT_SET)
                             ((Base)selected).abortLab();
                         else
                         ((Base)selected).buildLab();
@@ -815,7 +817,7 @@ public class GameScreen implements Screen, InputProcessor{
                     if(baseRecruitButtons){
                         ((Base)selected).createUnit(UnitType.SPEARFIGHTER);
                     } else{
-                        if(((Base)selected).getCaserneRoundsRemaining() != -1)
+                        if(((Base)selected).getCaserneRoundsRemaining() != Constants.NONE_OR_NOT_SET)
                             ((Base)selected).abortCaserne();
                         else
                             ((Base)selected).buildCaserne();
@@ -902,7 +904,7 @@ public class GameScreen implements Screen, InputProcessor{
                   Market market = session.getMarket();
 
                   if(!woodField.getText().equals("")) {
-                      boolean wood = market.buy(player,0,Integer.parseInt(woodField.getText()));
+                      boolean wood = market.buy(player,Constants.WOOD,Integer.parseInt(woodField.getText()));
                       woodAmount.setText("Holz: " + market.getWood());
                       woodPrice.setText("Preis: " + market.woodPrice());
 
@@ -921,7 +923,7 @@ public class GameScreen implements Screen, InputProcessor{
                   }
 
                   if(!ironField.getText().equals("")) {
-                      boolean iron = market.buy(player,1,Integer.parseInt(ironField.getText()));
+                      boolean iron = market.buy(player,Constants.IRON,Integer.parseInt(ironField.getText()));
                       ironAmount.setText("Eisen: " + market.getWood());
                       ironPrice.setText("Preis: " + market.woodPrice());
 
@@ -953,7 +955,7 @@ public class GameScreen implements Screen, InputProcessor{
                     Market market = session.getMarket();
 
                     if(!woodField.getText().equals("")) {
-                        boolean wood = market.sell(player,0,Integer.parseInt(woodField.getText()));
+                        boolean wood = market.sell(player,Constants.WOOD,Integer.parseInt(woodField.getText()));
                         woodAmount.setText("Holz: " + market.getWood());
                         woodPrice.setText("Preis: " + market.woodPrice());
 
@@ -972,7 +974,7 @@ public class GameScreen implements Screen, InputProcessor{
                     }
 
                     if(!ironField.getText().equals("")) {
-                        boolean iron = market.sell(player,1,Integer.parseInt(ironField.getText()));
+                        boolean iron = market.sell(player,Constants.IRON,Integer.parseInt(ironField.getText()));
                         ironAmount.setText("Eisen: " + market.getIron());
                         ironPrice.setText("Preis: " + market.woodPrice());
 
@@ -1195,7 +1197,7 @@ public class GameScreen implements Screen, InputProcessor{
      * This method implements the movement of units.
      */
     public void move(){
-        Object obj = map[getFieldXPos(2600)][getFieldYPos(2600)].select();
+        Object obj = map[getFieldXPos(Constants.FIELDXLENGTH*100)][getFieldYPos(Constants.FIELDYLENGTH*100)].select();
         if(selected instanceof Unit && obj instanceof Field){
             Unit unit = ((Unit)selected);
             Field target = (Field)obj;

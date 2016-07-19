@@ -11,4 +11,6 @@ public interface IBuilding extends Remote {
     public int[] getRessourceCost()throws RemoteException;
 
     public int getBuildTime()throws RemoteException;
+
+    public int[] getInitialCost() throws RemoteException;
 }

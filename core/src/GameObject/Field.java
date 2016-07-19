@@ -2,7 +2,6 @@ package GameObject;
 
 import Action.Buff;
 import Player.Player;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 
 import java.io.Serializable;
@@ -13,15 +12,14 @@ import java.util.Random;
 
 public class Field implements IField,Serializable {
 
-    private int resType = -1;
+    private int resType = Constants.NONE_OR_NOT_SET;
     private int resValue = 0;
-    private int xPos = -1;
-    private int yPos = -1;
+    private int xPos = Constants.NONE_OR_NOT_SET;
+    private int yPos = Constants.NONE_OR_NOT_SET;
     private Unit current;
     private boolean walkable=true;
-    private int roundsRemain = -1;
+    private int roundsRemain = Constants.NONE_OR_NOT_SET;
     private String spriteName = "";
-    private Texture texture;
     private boolean baseBuilding = false;
     private Player builder = null;
     private boolean mineBuilding = false;
@@ -29,7 +27,7 @@ public class Field implements IField,Serializable {
     private Map map = null;
 
     public Field(int resType, int resValue, int xPos, int yPos, Map map){
-        if(resType < -1 || resType > 4 || xPos < 0 || xPos > 26 || yPos < 0 || yPos >24 || map == null)
+        if(resType < Constants.NONE_OR_NOT_SET || resType > Constants.MANA || xPos < 0 || xPos > Constants.FIELDXLENGTH || yPos < 0 || yPos >Constants.FIELDYLENGTH || map == null)
             throw new IllegalArgumentException("Invalid Values");
 
         this.resType = resType;
@@ -42,7 +40,7 @@ public class Field implements IField,Serializable {
         //sprites must be named "normal" + number(next higher int) and be png files
         //sprites must be located in sprites folder
         Random r = new Random();
-        this.spriteName = "assets/sprites/normal" + r.nextInt(2) + ".png";
+        this.spriteName = SpriteNames.NORMAL_FIELD.getSpriteName();
         //this.texture = new Texture(Gdx.files.internal("assets/"+this.spriteName));
     }
 
@@ -70,7 +68,7 @@ public class Field implements IField,Serializable {
     private void distributeRessources(){
         /*TODO specify how ressources are distributed*/
         //if field has ressources
-        if(resType != -1) {
+        if(resType != Constants.NONE_OR_NOT_SET) {
             List<Unit> nearUnits = null;
             nearUnits = this.getNearUnits();
 
@@ -78,32 +76,23 @@ public class Field implements IField,Serializable {
 
             //add ressources to all near units depending on the fields ressource
             switch (resType) {
-                case 0:
+                case Constants.WOOD:
                     for (Unit u : nearUnits) {
                         tmp = u.getOwner();
                         if(tmp.getTurn()) {  //check player
-                            u.getRessources()[0] += 10 + tmp.getRessourceBoni()[0];
-                            resValue -= (10 + tmp.getRessourceBoni()[0]);
+                            u.getRessources()[Constants.WOOD] += Constants.WOOD_RES_VALUE + tmp.getRessourceBoni()[Constants.WOOD];
+                            resValue -= (Constants.WOOD_RES_VALUE + tmp.getRessourceBoni()[Constants.WOOD]);
                         }
                     }
                     break;
-                case 1:
+                case Constants.IRON:
                     if(hasMine) {
                         for (Unit u : nearUnits) {
                             tmp = u.getOwner();
                             if(tmp.getTurn()) { //check player
-                                u.getRessources()[1] += 10 + tmp.getRessourceBoni()[1];
-                                resValue -= (10 + tmp.getRessourceBoni()[1]);
+                                u.getRessources()[Constants.IRON] += Constants.IRON_RES_VALUE + tmp.getRessourceBoni()[Constants.IRON];
+                                resValue -= (Constants.IRON_RES_VALUE + tmp.getRessourceBoni()[Constants.IRON]);
                             }
-                        }
-                    }
-                    break;
-                case 3:
-                    for (Unit u : nearUnits) {
-                        tmp = u.getOwner();
-                        if(tmp.getTurn()) { //check player
-                            u.getRessources()[3] += 10 + tmp.getRessourceBoni()[3];
-                            resValue -= (10 + tmp.getRessourceBoni()[3]);
                         }
                     }
                     break;
@@ -112,8 +101,8 @@ public class Field implements IField,Serializable {
             }
 
             //if no more ressources left after  dispersal, set no-ressource values
-            if(resValue <= 0){
-                resType = -1;
+            if(resValue <= Constants.FINISHED){
+                resType = Constants.NONE_OR_NOT_SET;
                 resValue = 0;
             }
         }
@@ -124,14 +113,14 @@ public class Field implements IField,Serializable {
      */
     private void updateBuildingProcesses(){
         /*TODO check*/
-        if(roundsRemain > 0){ //there is something to build
+        if(roundsRemain > Constants.FINISHED){ //there is something to build
 
             List<Unit> nearUnits = this.getNearUnits();
             if (baseBuilding) {
                 for(Unit u: nearUnits)
                     if(u.getOwner() == builder) {       //if it's a base and owner units are near, count down the rounds, -1 for every unit near
                         roundsRemain--;
-                        if (roundsRemain == 0) {        //if the rounds reach zero, build the base and stop
+                        if (roundsRemain == Constants.FINISHED) {        //if the rounds reach zero, build the base and stop
                             current = new Base(UnitType.BASE, builder);
                             builder = null;
                             baseBuilding = false;
@@ -144,12 +133,13 @@ public class Field implements IField,Serializable {
                      */
             } else if(mineBuilding){
                 if(!nearUnits.isEmpty())
-                    nearUnits.stream().filter(u -> u.getOwner().getRessources()[0] >= 5).forEach(u -> {
-                        u.getOwner().getRessources()[0] -= 5;
-                        roundsRemain--;
-                    });
-
-                if(roundsRemain <= 0) {
+                    for(Unit u: nearUnits){
+                        if(u.getOwner().getRessources()[Constants.WOOD] >= Building.MINE.getRessourceCost()[Constants.WOOD]){
+                            u.getOwner().getRessources()[Constants.WOOD] -= Building.MINE.getRessourceCost()[Constants.WOOD];
+                            roundsRemain--;
+                        }
+                    }
+                if(roundsRemain <= Constants.FINISHED) {
                     hasMine = true;
                     mineBuilding = false;
                 }
@@ -192,7 +182,8 @@ public class Field implements IField,Serializable {
         if(current == null && !hasMine){
             int[] baseCost = UnitType.BASE.getRessourceCost();
             int[] availableRessources = player.getRessources();
-            for(int j=0; j<4; ++j)
+            //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
+            for(int j = Constants.WOOD; j<=Constants.MANA; ++j)
                 if (baseCost[j] > availableRessources[j])
                     return false;
 
@@ -201,8 +192,9 @@ public class Field implements IField,Serializable {
                 if(u.getOwner() == player){
                     baseBuilding = true;
                     roundsRemain = UnitType.BASE.getRecruitingTime();
-                    for(int j2=0; j2<4; ++j2)
-                        player.getRessources()[j2] -= baseCost[j2];
+                    //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
+                    for(int k = Constants.WOOD; k<=Constants.MANA; ++k)
+                        player.getRessources()[k] -= baseCost[k];
 
                     builder = player;
                     walkable = false;
@@ -227,10 +219,12 @@ public class Field implements IField,Serializable {
             if(u.getOwner() == player){
                 int[] originalCost = UnitType.BASE.getRessourceCost();
                 float ressourcesLeft = roundsRemain / UnitType.BASE.getRecruitingTime();
-                for(int i=0; i<4; ++i)
+
+                //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
+                for(int i = Constants.WOOD; i<=Constants.MANA; ++i)
                     player.getRessources()[i] = (int)(ressourcesLeft*originalCost[i]);
 
-                roundsRemain = -1;
+                roundsRemain = Constants.NONE_OR_NOT_SET;
                 walkable = true;
                 baseBuilding = false;
                 return true;
@@ -248,15 +242,15 @@ public class Field implements IField,Serializable {
      */
     @Override
     public boolean buildMine(Player player) {
-        if(roundsRemain == -1 && current == null && resType == 1){
+        if(roundsRemain == Constants.NONE_OR_NOT_SET && current == null && resType == Constants.IRON){
             List<Unit> nearUnits = this.getNearUnits();
             //check near units if one of them belongs to player, player may start building
             for(Unit u: nearUnits)
                 if(u.getOwner() == player){
-                    roundsRemain = 8;
+                    roundsRemain = Building.MINE.getBuildTime();
                     mineBuilding = true;
                     walkable = false;
-                    player.getRessources()[0] -= 10;  //initial starting cost
+                    player.getRessources()[Constants.WOOD] -= Building.MINE.getInitialCost()[Constants.WOOD];  //initial starting cost
                     return true;
                 }
         }
@@ -277,16 +271,20 @@ public class Field implements IField,Serializable {
      */
     @Override
     public void setResType(int resType) {
-        if(resType < -1 || resType > 3)
+        if(resType < Constants.NONE_OR_NOT_SET || resType > Constants.MANA)
             throw new IllegalArgumentException("That ressource does not exist");
+
+
 
         this.resType = resType;
         walkable=false;
-        if(resType==3) {walkable=true;}
-        this.spriteName = (resType == 0) ? "assets/sprites/forest.png"
-                        : (resType == 1) ? "assets/sprites/ironNoMine"+new Random().nextInt(2)+".png"
-                        : (resType == 3) ? "assets/sprites/manaField.png"
-                        : this.spriteName;
+        if(resType==Constants.MANA) {walkable=true;}
+
+        this.spriteName = (resType == Constants.WOOD) ? SpriteNames.FOREST.getSpriteName()
+                        : (resType == Constants.IRON) ? SpriteNames.IRON_FIELD.getSpriteName()
+                        : (resType == Constants.MANA) ? SpriteNames.MIRACLE.getSpriteName()
+                        : SpriteNames.NORMAL_FIELD.getSpriteName();
+        
     }
 
     @Override
@@ -296,12 +294,13 @@ public class Field implements IField,Serializable {
 
     @Override
     public void setResValue(int resValue){
-        if(resValue < 0)
+        if(resValue < 0) {
             this.resValue = 0;
-        else
+            this.setResType(Constants.NONE_OR_NOT_SET);
+        }else
             this.resValue = resValue;
 
-        this.setResType(-1);
+
     }
 
     @Override
@@ -311,7 +310,7 @@ public class Field implements IField,Serializable {
 
     @Override
     public void setXPos(int xPos) {
-        if(xPos < 0 || xPos > 8)
+        if(xPos < 0 || xPos > Constants.FIELDXLENGTH)
             throw new IllegalArgumentException("Invalid coordinates");
 
         this.xPos = xPos;
@@ -324,7 +323,7 @@ public class Field implements IField,Serializable {
 
     @Override
     public void setYPos(int yPos) {
-        if(yPos < 0 || yPos > 24)
+        if(yPos < 0 || yPos > Constants.FIELDYLENGTH)
             throw new IllegalArgumentException("Invalid coordinates");
 
         this.yPos = yPos;
@@ -343,9 +342,9 @@ public class Field implements IField,Serializable {
         }
         this.current = current;
         current.setField(this);
-        if(resType == 3){
-            current.getOwner().getRessources()[3] += resValue;
-            this.setResValue(0);
+        if(resType == Constants.MANA){
+            current.getOwner().getRessources()[Constants.MANA] += resValue;
+            resValue = 0;
         }
     }
 
@@ -366,8 +365,8 @@ public class Field implements IField,Serializable {
 
     @Override
     public void setRoundsRemain(int roundsRemain) {
-        if(roundsRemain < -1)
-            this.roundsRemain = 0;
+        if(roundsRemain < Constants.NONE_OR_NOT_SET)
+            this.roundsRemain = Constants.NONE_OR_NOT_SET;
         else
             this.roundsRemain = roundsRemain;
     }
@@ -390,11 +389,6 @@ public class Field implements IField,Serializable {
     @Override
     public String getSpriteName() {
         return spriteName;
-    }
-
-    @Override
-    public Texture getTexture() {
-        return texture;
     }
 
     @Override

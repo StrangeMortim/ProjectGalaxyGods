@@ -110,8 +110,8 @@ public class Unit implements IUnit,Serializable {
 
     @Override
     public void setMovePoints(int movePoints) {
-        if(movePoints < 0)
-            this.movePoints = 0;
+        if(movePoints < Constants.FINISHED)
+            this.movePoints = Constants.FINISHED;
         else
             this.movePoints = movePoints;
     }
