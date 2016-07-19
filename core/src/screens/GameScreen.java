@@ -1202,41 +1202,29 @@ public class GameScreen implements Screen, InputProcessor{
     /**
      * This method implements the movement of units.
      */
-    public void move(){
-        Object obj = map[getFieldXPos(Constants.FIELDXLENGTH*100)][getFieldYPos(Constants.FIELDYLENGTH*100)].select();
-        if(selected instanceof Unit && obj instanceof Field){
-            Unit unit = ((Unit)selected);
-            Field target = (Field)obj;
+    public void move() {
+        Object obj = map[getFieldXPos(Constants.FIELDXLENGTH * 100)][getFieldYPos(Constants.FIELDYLENGTH * 100)].select();
+        if (selected instanceof Unit && obj instanceof Field) {
+            Unit unit = ((Unit) selected);
+            Field target = (Field) obj;
             int radius = unit.getMovePointsLeft();
-            for (int x = 0 - radius; x < radius + 1; x++) {
-                for (int y = 0 - radius; y < radius + 1; y++) {
-                    try{
-                        if(map[target.getXPos()+x][target.getYPos()+y].getWalkable()) {
-                            if(unit.getMovePointsLeft()<=0){return;}
-                         unit.getField().setCurrent(null);
-                            target.setCurrent(unit);
-                            if(x<0)x=(x*-1);
-                            if(y<0)y=(y*-1);
-                            System.out.println(x+":"+y);
-                            if(x>y){
-                                if(x-1==0){unit.setMovePointsLeft(0);
-                                return;}
-                                unit.setMovePointsLeft(unit.getMovePointsLeft()-(x));
-                                return;
-                            }else{
-                                if(y-1==0){unit.setMovePointsLeft(0);
-                                return;}
-                                unit.setMovePointsLeft(unit.getMovePointsLeft()-(y));
-
-                                return;
-                            }
-                        }
-                    }catch(Exception e){
+            try {
+                  int diff=Math.max(Math.abs(unit.getField().getXPos() - target.getXPos()), Math.abs(unit.getField().getYPos() - target.getYPos()));
+                    if (target.getWalkable()&&diff <= unit.getMovePointsLeft()) {
+                        unit.getField().setCurrent(null);
+                        target.setCurrent(unit);
+                        unit.setMovePointsLeft(unit.getMovePointsLeft()-diff);
+                        unrendered=true;
                     }
+            }catch(Exception e){
                 }}
-        }
 
     }
 
 
 }
+
+
+
+
+
