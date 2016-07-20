@@ -240,7 +240,8 @@ public class OptionScreen implements Screen {
                 prefs.flush();
                 Gdx.graphics.setWindowedMode(Integer.parseInt(resolution.split("x")[0]),Integer.parseInt(resolution.split("x")[1]));
                 stage.getViewport().update(Integer.parseInt(resolution.split("x")[0]),Integer.parseInt(resolution.split("x")[1]), true);
-                game.setScreen(new OptionScreen(game));
+                if(screen==null){game.setScreen(new OptionScreen(game));}
+                else{game.setScreen(new OptionScreen(game,screen));}
 
             }
         });
