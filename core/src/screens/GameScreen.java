@@ -78,6 +78,15 @@ public class GameScreen implements Screen, InputProcessor{
     private TextButton buyButton, sellButton, closeButton;
     //endregion
 
+    //region Techtree
+    private Table treeTable;
+    private TextButton steelButtonLv1,steelButtonLv2,steelButtonLv3,steelButtonLv4,steelButtonLv5,
+                       magicButtonLv1,magicButtonLv2,magicButtonLv3,magicButtonLv4,magicButtonLv5,
+                       cultureButtonLv1,cultureButtonLv2,cultureButtonLv3,cultureButtonLv4,cultureButtonLv5,
+                       treeCloseButton;
+    private Label steelPath,steelInfo, magicPath, magicInfo, culturePath,cultureInfo;
+    //endregion
+
     //region Textures
     private Texture[] textures = new Texture[]{new Texture(Gdx.files.internal(SpriteNames.NORMAL_FIELD.getSpecificName(0))),//0
             new Texture(Gdx.files.internal(SpriteNames.NORMAL_FIELD.getSpecificName(1))),        //1
@@ -105,7 +114,9 @@ public class GameScreen implements Screen, InputProcessor{
             new Texture(Gdx.files.internal(SpriteNames.SPEARFIGHTER.getSpriteName())),//23
             new Texture(Gdx.files.internal(SpriteNames.SWORDFIGHTER.getSpriteName())),//24
             new Texture(Gdx.files.internal(SpriteNames.WORKER.getSpriteName())),//25
-            new Texture(Gdx.files.internal(SpriteNames.HERO.getSpriteName()))//26
+            new Texture(Gdx.files.internal(SpriteNames.HERO.getSpriteName())),//26
+            new Texture(Gdx.files.internal(SpriteNames.BUTTON_SPEARFIGHTER.getSpriteName())),//27
+            new Texture(Gdx.files.internal(SpriteNames.BUTTON_SWORDFIGHTER.getSpriteName()))//28
     };
     //endregion
 
@@ -159,6 +170,7 @@ public class GameScreen implements Screen, InputProcessor{
         showBottomMenu();
         showChat();
         showMarket();
+        showTechtree();
         buildListeners();
 
         InputMultiplexer im = new InputMultiplexer(stage, this);
@@ -211,12 +223,12 @@ public class GameScreen implements Screen, InputProcessor{
                 if (selected instanceof Base && ((Unit)selected).getOwner() == player) {
                     if (baseRecruitButtons) {
                         selectionUpLeft.setVisible(true);
-                        selectionUpLeft.setText("Schwertkaempfer");
+                        selectionUpLeft.setText("");
                         selectionUpLeft.setTouchable(Touchable.enabled);
-                        selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
+                        selectionUpLeft.getStyle().up = skin.getDrawable("swordfighterIcon");
                         selectionUpRight.setVisible(true);
-                        selectionUpRight.setText("Speerkaempfer");
-                        selectionUpRight.getStyle().up = skin.getDrawable("defaultIcon");
+                        selectionUpRight.setText("");
+                        selectionUpRight.getStyle().up = skin.getDrawable("spearfighterIcon");
                         selectionDownLeft.setVisible(true);
                         selectionDownLeft.setText("Bogenschuetze");
                         selectionDownLeft.getStyle().up = skin.getDrawable("defaultIcon");
@@ -583,6 +595,10 @@ public class GameScreen implements Screen, InputProcessor{
         skin.add("marketIcon",tmp);
         tmp = new NinePatch(textures[19], 10, 10, 10, 10);
         skin.add("background",tmp);
+        tmp = new NinePatch(textures[27], 10, 10, 10, 10);
+        skin.add("spearfighterIcon",tmp);
+        tmp = new NinePatch(textures[28], 10, 10, 10, 10);
+        skin.add("swordfighterIcon",tmp);
 
 
         ////Grundlegende Tabelle////
@@ -638,11 +654,13 @@ public class GameScreen implements Screen, InputProcessor{
         selectionDownRight = new TextButton("Unten rechts",style);
 
         /////Tabelle bauen/////
+        float buttonHeight = bottomTable.getHeight()/3;
+        float buttonWidth = bottomTable.getHeight()/2;
         selection.padLeft(40);
-        selection.row().fill().expand().space(10).size(bottomTable.getHeight()/2,bottomTable.getHeight()/3);
+        selection.row().fill().expand().space(10).size(buttonWidth,buttonHeight);
         selection.add(selectionUpLeft);
         selection.add(selectionUpRight);
-        selection.row().fill().expand().space(10).size(bottomTable.getHeight()/2,bottomTable.getHeight()/3);
+        selection.row().fill().expand().space(10).size(buttonWidth,buttonHeight);
         selection.add(selectionDownLeft);
         selection.add(selectionDownRight);
         selection.setHeight(bottomTable.getHeight());
@@ -803,6 +821,131 @@ public class GameScreen implements Screen, InputProcessor{
         marketTable.setBackground(skin.getDrawable("background"));
         marketTable.setVisible(false);
         stage.addActor(marketTable);
+    }
+
+    private void showTechtree(){
+        NinePatch tmp = null;
+        TextButton.TextButtonStyle style = null;
+
+        //TODO change Textureindex
+        tmp = new NinePatch(textures[22], 0, 0, 0, 0);
+        skin.add("defaultIcon",tmp);
+        tmp = new NinePatch(textures[22], 0, 0, 0, 0);
+        skin.add("steelIcon",tmp);
+        tmp = new NinePatch(textures[22], 0, 0, 0, 0);
+        skin.add("magicIcon",tmp);
+        tmp = new NinePatch(textures[22], 0, 0, 0, 0);
+        skin.add("cultureIcon",tmp);
+
+        treeTable = new Table();
+        treeTable.align(Align.left);
+        treeTable.setPosition(stage.getWidth()/12, stage.getHeight()/3);
+        treeTable.setWidth(stage.getWidth()/4*3);
+        treeTable.setHeight(stage.getHeight()/5*3);
+
+        //Steel
+        style = new TextButton.TextButtonStyle(skin.get("default",TextButton.TextButtonStyle.class));
+        style.up = skin.getDrawable("steelIcon");
+        style.fontColor = Color.LIGHT_GRAY;
+        steelButtonLv1 = new TextButton("St.1",style);
+        steelButtonLv2 = new TextButton("St.2",style);
+        steelButtonLv2.setVisible(false);
+        steelButtonLv3 = new TextButton("St.3",style);
+        steelButtonLv3.setVisible(false);
+        steelButtonLv4 = new TextButton("St.4",style);
+        steelButtonLv4.setVisible(false);
+        steelButtonLv5 = new TextButton("St.5",style);
+        steelButtonLv5.setVisible(false);
+        steelPath = new Label("Zweig des Stahl: ",skin);
+        steelPath.setColor(Color.LIGHT_GRAY);
+        steelInfo = new Label("Jede Stufe erhoeht das gewonnene Eisen und Holz um 5%",skin);
+        steelInfo.setColor(Color.LIGHT_GRAY);
+
+        //MagicButtons
+        style = new TextButton.TextButtonStyle(skin.get("default",TextButton.TextButtonStyle.class));
+        style.up = skin.getDrawable("magicIcon");
+        style.fontColor = Color.ROYAL;
+        magicButtonLv1 = new TextButton("St.1",style);
+        magicButtonLv2 = new TextButton("St.2",style);
+        magicButtonLv2.setVisible(false);
+        magicButtonLv3 = new TextButton("St.3",style);
+        magicButtonLv3.setVisible(false);
+        magicButtonLv4 = new TextButton("St.4",style);
+        magicButtonLv4.setVisible(false);
+        magicButtonLv5 = new TextButton("St.5",style);
+        magicButtonLv5.setVisible(false);
+        magicPath = new Label("Zweig der Magie: ",skin);
+        magicPath.setColor(Color.ROYAL);
+        magicInfo = new Label("Jede Stufe verringert den Mana-Verbrauch um 3%",skin);
+        magicInfo.setColor(Color.ROYAL);
+
+        //CultureButtons
+        style = new TextButton.TextButtonStyle(skin.get("default",TextButton.TextButtonStyle.class));
+        style.up = skin.getDrawable("cultureIcon");
+        style.fontColor = Color.GOLD;
+        cultureButtonLv1 = new TextButton("St.1",style);
+        cultureButtonLv2 = new TextButton("St.2",style);
+        cultureButtonLv2.setVisible(false);
+        cultureButtonLv3 = new TextButton("St.3",style);
+        cultureButtonLv3.setVisible(false);
+        cultureButtonLv4 = new TextButton("St.4",style);
+        cultureButtonLv4.setVisible(false);
+        cultureButtonLv5 = new TextButton("St.5",style);
+        cultureButtonLv5.setVisible(false);
+        culturePath = new Label("Zweig der Kultur: ",skin);
+        culturePath.setColor(Color.GOLD);
+        cultureInfo = new Label("Jede Stufe erhoet das pro Runde erhaltende Gold um 5", skin);
+        cultureInfo.setColor(Color.GOLD);
+
+        //
+        style = new TextButton.TextButtonStyle(skin.get("default",TextButton.TextButtonStyle.class));
+        style.up = skin.getDrawable("defaultIcon");
+        treeCloseButton = new TextButton("Schliessen",style);
+
+        float buttonSideSize = treeTable.getHeight()/9;
+        //Build Table
+        treeTable.row().fill().expand().size(buttonSideSize,buttonSideSize);
+        treeTable.add(steelPath);
+        treeTable.row().fill().expand().size(buttonSideSize,buttonSideSize);
+        treeTable.add(steelButtonLv1);
+        treeTable.add(steelButtonLv2);
+        treeTable.add(steelButtonLv3);
+        treeTable.add(steelButtonLv4);
+        treeTable.add(steelButtonLv5);
+        treeTable.row().fill().expand().size(buttonSideSize,buttonSideSize);
+        treeTable.add(steelInfo);
+        treeTable.row().fill().expand().size(buttonSideSize,buttonSideSize);
+        treeTable.add(magicPath);
+        treeTable.row().fill().expand().size(buttonSideSize,buttonSideSize);
+        treeTable.add(magicButtonLv1);
+        treeTable.add(magicButtonLv2);
+        treeTable.add(magicButtonLv3);
+        treeTable.add(magicButtonLv4);
+        treeTable.add(magicButtonLv5);
+        treeTable.row().fill().expand().size(buttonSideSize,buttonSideSize);
+        treeTable.add(magicInfo);
+        treeTable.row().fill().expand().size(buttonSideSize,buttonSideSize);
+        treeTable.add(culturePath);
+        treeTable.row().fill().expand().size(buttonSideSize,buttonSideSize);
+        treeTable.add(cultureButtonLv1);
+        treeTable.add(cultureButtonLv2);
+        treeTable.add(cultureButtonLv3);
+        treeTable.add(cultureButtonLv4);
+        treeTable.add(cultureButtonLv5);
+        treeTable.row().fill().expand().size(buttonSideSize,buttonSideSize);
+        treeTable.add(cultureInfo);
+        treeTable.row().fill().expand().size(buttonSideSize*3,buttonSideSize*(float)1.5);
+        treeTable.add();
+        treeTable.add();
+        treeTable.add();
+        treeTable.add();
+        treeTable.add();
+        treeTable.add(treeCloseButton);
+
+        treeTable.setBackground(skin.getDrawable("background"));
+        treeTable.setVisible(false);
+        stage.addActor(treeTable);
+
     }
 
     private void buildListeners(){
@@ -1040,8 +1183,166 @@ public class GameScreen implements Screen, InputProcessor{
         techTree.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
+                treeTable.setVisible(!treeTable.isVisible());
                 System.out.println("Techtree kommt noch");
                 //TODO
+            }
+        });
+
+        //region Steelbuttons
+        steelButtonLv1.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                steelButtonLv2.setVisible(true);
+                steelButtonLv1.setVisible(false);
+                //TODO
+            }
+        });
+
+        steelButtonLv2.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                steelButtonLv3.setVisible(true);
+                steelButtonLv2.setVisible(false);
+                //TODO
+            }
+        });
+
+        steelButtonLv3.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                steelButtonLv4.setVisible(true);
+                steelButtonLv3.setVisible(false);
+                //TODO
+            }
+        });
+
+        steelButtonLv4.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                steelButtonLv5.setVisible(true);
+                steelButtonLv4.setVisible(false);
+                //TODO
+            }
+        });
+
+        steelButtonLv5.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                steelButtonLv5.setText("");
+                NinePatch tmp = null;
+                tmp = new NinePatch(textures[16], 0, 0, 0, 0);
+                skin.add("ironIcon",tmp);
+                steelButtonLv5.getStyle().up = skin.getDrawable("ironIcon");
+                //TODO
+            }
+        });
+        //endregion
+
+        //region Magic
+        magicButtonLv1.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                magicButtonLv2.setVisible(true);
+                magicButtonLv1.setVisible(false);
+                //TODO
+            }
+        });
+
+        magicButtonLv2.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                magicButtonLv3.setVisible(true);
+                magicButtonLv2.setVisible(false);
+                //TODO
+            }
+        });
+
+        magicButtonLv3.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                magicButtonLv4.setVisible(true);
+                magicButtonLv3.setVisible(false);
+                //TODO
+            }
+        });
+
+        magicButtonLv4.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                magicButtonLv5.setVisible(true);
+                magicButtonLv4.setVisible(false);
+                //TODO
+            }
+        });
+
+        magicButtonLv5.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                magicButtonLv5.setText("");
+                NinePatch tmp = null;
+                tmp = new NinePatch(textures[17], 0, 0, 0, 0);
+                skin.add("manaIcon",tmp);
+                magicButtonLv5.getStyle().up = skin.getDrawable("manaIcon");
+                //TODO
+            }
+        });
+        //endregion
+
+        //region Culture
+        cultureButtonLv1.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                cultureButtonLv2.setVisible(true);
+                cultureButtonLv1.setVisible(false);
+                //TODO
+            }
+        });
+
+        cultureButtonLv2.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                cultureButtonLv3.setVisible(true);
+                cultureButtonLv2.setVisible(false);
+                //TODO
+            }
+        });
+
+        cultureButtonLv3.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                cultureButtonLv4.setVisible(true);
+                cultureButtonLv3.setVisible(false);
+                //TODO
+            }
+        });
+
+        cultureButtonLv4.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                cultureButtonLv5.setVisible(true);
+                cultureButtonLv4.setVisible(false);
+                //TODO
+            }
+        });
+
+        cultureButtonLv5.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                cultureButtonLv5.setText("");
+                NinePatch tmp = null;
+                tmp = new NinePatch(textures[14], 0, 0, 0, 0);
+                skin.add("goldIcon",tmp);
+                cultureButtonLv5.getStyle().up = skin.getDrawable("goldIcon");
+                //TODO
+            }
+        });
+        //endregion
+
+        treeCloseButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event,float x, float y){
+                treeTable.setVisible(false);
             }
         });
 

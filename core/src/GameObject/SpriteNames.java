@@ -9,7 +9,7 @@ public enum  SpriteNames {
     NORMAL_FIELD, IRON_FIELD,FOREST,MINE, MIRACLE,
     BASE_UP_LEFT,BASE_UP_RIGHT,BASE_DOWN_LEFT_CASERNE,BASE_DOWN_LEFT_EMPTY,BASE_DOWN_RIGHT_EMPTY,BASE_DOWN_RIGHT_CASERNE,BASE_DOWN_RIGHT_LAB,BASE_DOWN_RIGHT_FULL,
     CHEST_ICON, GOLD_ICON, MANA_ICON, IRON_ICON, WOOD_ICON,
-    BUTTON_BG, BUTTON_WORKER, MENU_BG,
+    BUTTON_BG, BUTTON_WORKER, MENU_BG, BUTTON_SPEARFIGHTER, BUTTON_SWORDFIGHTER,
     MARKETPLACE, TECHTREE,
     ARCHER, SPEARFIGHTER, SWORDFIGHTER, WORKER, HERO;
 
@@ -68,6 +68,10 @@ public enum  SpriteNames {
                 return folder+"hero.png";
             case MENU_BG:
                 return folder+"menuBackground.png";
+            case BUTTON_SPEARFIGHTER:
+                return folder+"buttonSpearfighter.png";
+            case BUTTON_SWORDFIGHTER:
+                return folder+"buttonSwordfighter.png";
             default:
                 return "";
         }
