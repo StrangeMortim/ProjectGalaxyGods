@@ -946,8 +946,8 @@ public class GameScreen implements Screen, InputProcessor{
 
                   if(!ironField.getText().equals("")) {
                       boolean iron = market.buy(player,Constants.IRON,Integer.parseInt(ironField.getText()));
-                      ironAmount.setText("Eisen: " + market.getWood());
-                      ironPrice.setText("Preis: " + market.woodPrice());
+                      ironAmount.setText("Eisen: " + market.getIron());
+                      ironPrice.setText("Preis: " + market.ironPrice());
 
                       if(iron)
                           ironField.setText("");

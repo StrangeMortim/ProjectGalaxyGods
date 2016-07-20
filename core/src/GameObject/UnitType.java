@@ -137,9 +137,9 @@ public enum UnitType implements IUnitType,Serializable {
             case SPEARFIGHTER:
                 return 2;
             case ARCHER:
-                return 2;
+                return 0;
             case SWORDFIGHTER:
-                return 3;
+                return 0;
             default:
                 return 0;
         }

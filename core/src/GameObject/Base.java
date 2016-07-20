@@ -21,6 +21,10 @@ public class Base extends Unit implements IBase,Serializable {
 
     public Base(UnitType type, Player owner) {
         super(type, owner);
+        avaibleUnits.add(UnitType.ARCHER);
+        avaibleUnits.add(UnitType.SPEARFIGHTER);
+        avaibleUnits.add(UnitType.SWORDFIGHTER);
+        avaibleUnits.add(UnitType.WORKER);
         /*TODO implement*/
     }
 
@@ -140,13 +144,18 @@ public class Base extends Unit implements IBase,Serializable {
 
                 //iterate on row level
                 for (int k = xPos - yRange; k <= xPos + yRange; ++k)
-                    current = currentField.getMap().getField(k, i);
-                //if field found and free, place unit
-                if (current != null && current.getCurrent() == null) {
-                    current.setCurrent(u);
-                    currentField.getMap().getSession().registerUnit(u);
-                    return true;
-                }
+                    try {
+                        current = currentField.getMap().getField(k, i);
+                        //if field found and free, place unit
+                        if (current.getCurrent() == null) {
+                            current.setCurrent(u);
+                            currentField.getMap().getSession().registerUnit(u);
+                            return true;
+                        }
+                    }catch (Exception e){
+                        continue;
+                    }
+
             }
             yRange++;
         }
@@ -179,7 +188,10 @@ public class Base extends Unit implements IBase,Serializable {
                 for(int i = Constants.WOOD; i <= Constants.MANA; ++i)
                 owner.getRessources()[i] -= cost[i];
 
+                if(type.getRecruitingTime() != 0)
                 recruiting.put(new Unit(type, owner), type.getRecruitingTime());
+            else
+                    spawnUnit(new Unit(type, owner));
 
         }
         /*TODO check*/
