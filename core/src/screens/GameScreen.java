@@ -116,7 +116,11 @@ public class GameScreen implements Screen, InputProcessor{
             new Texture(Gdx.files.internal(SpriteNames.WORKER.getSpriteName())),//25
             new Texture(Gdx.files.internal(SpriteNames.HERO.getSpriteName())),//26
             new Texture(Gdx.files.internal(SpriteNames.BUTTON_SPEARFIGHTER.getSpriteName())),//27
-            new Texture(Gdx.files.internal(SpriteNames.BUTTON_SWORDFIGHTER.getSpriteName()))//28
+            new Texture(Gdx.files.internal(SpriteNames.BUTTON_SWORDFIGHTER.getSpriteName())),//28
+            new Texture(Gdx.files.internal(SpriteNames.BUTTON_GREY.getSpriteName())),//29
+            new Texture(Gdx.files.internal(SpriteNames.BUTTON_GOLD.getSpriteName())),//30
+            new Texture(Gdx.files.internal(SpriteNames.BUTTON_BLUE.getSpriteName())),//31
+
     };
     //endregion
 
@@ -828,13 +832,13 @@ public class GameScreen implements Screen, InputProcessor{
         TextButton.TextButtonStyle style = null;
 
         //TODO change Textureindex
-        tmp = new NinePatch(textures[22], 0, 0, 0, 0);
+        tmp = new NinePatch(textures[29], 0, 0, 0, 0);
         skin.add("defaultIcon",tmp);
-        tmp = new NinePatch(textures[22], 0, 0, 0, 0);
+        tmp = new NinePatch(textures[29], 0, 0, 0, 0);
         skin.add("steelIcon",tmp);
-        tmp = new NinePatch(textures[22], 0, 0, 0, 0);
+        tmp = new NinePatch(textures[31], 0, 0, 0, 0);
         skin.add("magicIcon",tmp);
-        tmp = new NinePatch(textures[22], 0, 0, 0, 0);
+        tmp = new NinePatch(textures[30], 0, 0, 0, 0);
         skin.add("cultureIcon",tmp);
 
         treeTable = new Table();
@@ -846,7 +850,7 @@ public class GameScreen implements Screen, InputProcessor{
         //Steel
         style = new TextButton.TextButtonStyle(skin.get("default",TextButton.TextButtonStyle.class));
         style.up = skin.getDrawable("steelIcon");
-        style.fontColor = Color.LIGHT_GRAY;
+        style.fontColor = Color.WHITE;
         steelButtonLv1 = new TextButton("St.1",style);
         steelButtonLv2 = new TextButton("St.2",style);
         steelButtonLv2.setVisible(false);
@@ -864,7 +868,7 @@ public class GameScreen implements Screen, InputProcessor{
         //MagicButtons
         style = new TextButton.TextButtonStyle(skin.get("default",TextButton.TextButtonStyle.class));
         style.up = skin.getDrawable("magicIcon");
-        style.fontColor = Color.ROYAL;
+        style.fontColor = Color.WHITE;
         magicButtonLv1 = new TextButton("St.1",style);
         magicButtonLv2 = new TextButton("St.2",style);
         magicButtonLv2.setVisible(false);
@@ -882,7 +886,7 @@ public class GameScreen implements Screen, InputProcessor{
         //CultureButtons
         style = new TextButton.TextButtonStyle(skin.get("default",TextButton.TextButtonStyle.class));
         style.up = skin.getDrawable("cultureIcon");
-        style.fontColor = Color.GOLD;
+        style.fontColor = Color.WHITE;
         cultureButtonLv1 = new TextButton("St.1",style);
         cultureButtonLv2 = new TextButton("St.2",style);
         cultureButtonLv2.setVisible(false);
