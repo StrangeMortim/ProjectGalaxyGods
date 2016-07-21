@@ -39,7 +39,9 @@ public class MenuScreen implements Screen{
     private TextButton optionButton;
     private TextButton exitButton;
     private TextButton newGameButton;
-
+    Texture bg = new Texture(Gdx.files.internal("assets/stone.png"));
+    ParticleEffect pe;
+    ParticleEffect pe2;
 
     public MenuScreen(Game pGame){
         game=pGame;
@@ -123,7 +125,7 @@ public class MenuScreen implements Screen{
 
 
         /////////////////////Bauen der Tabelle////////////////////////////////////////
-        table.padTop(30);
+        table.padTop(150);
         table.row().padBottom(10).fill().width(150).height(50);
         table.add(networkButton);
         table.row().padBottom(10).fill().width(150).height(50);
@@ -139,8 +141,20 @@ public class MenuScreen implements Screen{
 
         ////////////////////Stage sprites setzen///////////////////////////////////////
         batch = new SpriteBatch();
-        backGround = new Sprite(new Texture(Gdx.files.internal("assets/splash.jpg")));
-        backGround.setBounds(0, (stage.getHeight()* 3/4), stage.getWidth(), stage.getHeight()/4);
+        backGround = new Sprite(new Texture(Gdx.files.internal("assets/splash.png")));
+        backGround.setBounds(stage.getWidth()/2-512, (stage.getHeight()-320), 1024, 300);
+
+
+        bg.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+
+        pe = new ParticleEffect();
+        pe.load(Gdx.files.internal("assets/torch.party"), Gdx.files.internal(""));
+        pe.getEmitters().first().setPosition(backGround.getX()+40, backGround.getY()+95);
+        pe.start();
+        pe2 = new ParticleEffect();
+        pe2.load(Gdx.files.internal("assets/torch.party"), Gdx.files.internal(""));
+        pe2.getEmitters().first().setPosition(backGround.getX()+backGround.getWidth()-50, backGround.getY()+95);
+        pe2.start();
 
         ////////////////////Input Regeln///////////////////////////////////////////////
         Gdx.input.setInputProcessor(stage);
@@ -161,9 +175,16 @@ public class MenuScreen implements Screen{
     public void render(float delta) {
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+        pe.update(Gdx.graphics.getDeltaTime());
+        pe2.update(Gdx.graphics.getDeltaTime());
         batch.begin();
+        batch.draw(bg, 0, 0, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        if(pe.isComplete())pe.reset();
+
+
         backGround.draw(batch);
+        pe.draw(batch);
+        pe2.draw(batch);
         batch.end();
 
         stage.act(delta);
