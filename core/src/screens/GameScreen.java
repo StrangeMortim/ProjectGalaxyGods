@@ -118,6 +118,11 @@ public class GameScreen implements Screen, InputProcessor{
             new Texture(Gdx.files.internal(SpriteNames.BUTTON_GREY.getSpriteName())),//29
             new Texture(Gdx.files.internal(SpriteNames.BUTTON_GOLD.getSpriteName())),//30
             new Texture(Gdx.files.internal(SpriteNames.BUTTON_BLUE.getSpriteName())),//31
+            new Texture(Gdx.files.internal(SpriteNames.SPEARFIGHTERBACK.getSpriteName())),//32
+            new Texture(Gdx.files.internal(SpriteNames.SWORDFIGHTERBACK.getSpriteName())),//33
+            new Texture(Gdx.files.internal(SpriteNames.WORKERBACK.getSpriteName())),//34
+            new Texture(Gdx.files.internal(SpriteNames.HEROBACK.getSpriteName())),//35
+
 
     };
     //endregion
@@ -401,6 +406,18 @@ public class GameScreen implements Screen, InputProcessor{
                             break;
                         case "assets/sprites/hero.png":
                             textureIndex = 26;
+                            break;
+                        case "assets/sprites/spearfighterBack.png":
+                            textureIndex = 32;
+                            break;
+                        case "assets/sprites/swordfighterBack.png":
+                            textureIndex = 33;
+                            break;
+                        case "assets/sprites/workerBack.png":
+                            textureIndex = 34;
+                            break;
+                        case "assets/sprites/heroBack.png":
+                            textureIndex = 35;
                             break;
                         default:
                             textureIndex = 0;
@@ -1556,6 +1573,7 @@ public class GameScreen implements Screen, InputProcessor{
                            pe.scaleEffect(3);
                            pe.start();
                        }catch(Exception e){}//zur Sicherheit
+                        if(unit.getField().getYPos()<target.getYPos()){unit.setDirection(1);}else{unit.setDirection(0);}
                         unit.getField().setCurrent(null);
                         target.setCurrent(unit);
                         unit.setMovePointsLeft(unit.getMovePointsLeft()-diff);
@@ -1594,14 +1612,14 @@ public class GameScreen implements Screen, InputProcessor{
                {if(map[unit.getField().getXPos()-x][unit.getField().getYPos()].getCurrent().getOwner()!=session.getActive()){
                    final Unit enemy=map[unit.getField().getXPos()-x][unit.getField().getYPos()].getCurrent();
                    if(enemy.getRange()>=x)both=true;
-                   fightAnimation(unit, enemy,100,50,both);
+                   fightAnimation(unit, enemy,0,50,both);
                    break;}}}catch(Exception e){}
                //positive x direction
                try{if(map[unit.getField().getXPos()+x][unit.getField().getYPos()].getCurrent()instanceof Unit)
                {if(map[unit.getField().getXPos()+x][unit.getField().getYPos()].getCurrent().getOwner()!=session.getActive()){
                    final Unit enemy=map[unit.getField().getXPos()+x][unit.getField().getYPos()].getCurrent();
                    if(enemy.getRange()>=x)both=true;
-                   fightAnimation(unit, enemy,0,50,both);
+                   fightAnimation(unit, enemy,100,50,both);
                    break;}}}catch(Exception e){}
            }
     }

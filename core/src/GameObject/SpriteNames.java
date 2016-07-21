@@ -11,7 +11,7 @@ public enum  SpriteNames {
     CHEST_ICON, GOLD_ICON, MANA_ICON, IRON_ICON, WOOD_ICON,
     BUTTON_BG, BUTTON_WORKER, MENU_BG, BUTTON_SPEARFIGHTER, BUTTON_SWORDFIGHTER,BUTTON_GREY,BUTTON_GOLD,BUTTON_BLUE,
     MARKETPLACE, TECHTREE,
-    ARCHER, SPEARFIGHTER, SWORDFIGHTER, WORKER, HERO;
+    ARCHER,ARCHERBACK, SPEARFIGHTER,SPEARFIGHTERBACK, SWORDFIGHTER,SWORDFIGHTERBACK, WORKER,WORKERBACK, HERO,HEROBACK;
 
     public String getSpriteName(){
         String folder = "assets/sprites/";
@@ -58,14 +58,24 @@ public enum  SpriteNames {
                 return folder+"marketplace.png";
             case ARCHER:
                 return folder+"archer.png";
+            case ARCHERBACK:
+                return folder+"archer.png";
             case SPEARFIGHTER:
                 return folder+"spearfighter.png";
+            case SPEARFIGHTERBACK:
+                return folder+"spearfighterBack.png";
             case SWORDFIGHTER:
                 return folder+"swordfighter.png";
+            case SWORDFIGHTERBACK:
+                return folder+"swordfighterBack.png";
             case WORKER:
                 return folder+"worker.png";
+            case WORKERBACK:
+                return folder+"workerBack.png";
             case HERO:
                 return folder+"hero.png";
+            case HEROBACK:
+                return folder+"heroBack.png";
             case MENU_BG:
                 return folder+"menuBackground.png";
             case BUTTON_SPEARFIGHTER:

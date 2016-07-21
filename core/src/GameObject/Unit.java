@@ -143,7 +143,6 @@ public class Unit implements IUnit,Serializable {
     public void setSpriteName(String spriteName) {
         if(spriteName.equals(""))
             throw new IllegalArgumentException("SpriteName is empty");
-
         this.spriteName = spriteName;
     }
 
@@ -191,6 +190,8 @@ public class Unit implements IUnit,Serializable {
     }
     @Override
     public void setDirection(int direction) throws RemoteException {
+        if(direction==0)setSpriteName(type.getSpriteName());
+        if(direction==1)if(direction==1)setSpriteName( SpriteNames.valueOf(getType()+"BACK").getSpriteName());
         this.direction=direction;
     }
 }
