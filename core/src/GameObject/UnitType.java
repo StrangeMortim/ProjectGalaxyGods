@@ -101,11 +101,11 @@ public enum UnitType implements IUnitType,Serializable {
     public int getRange() {
         switch (this){
             case BASE:
-                return 5;
+                return 1;
             case SPEARFIGHTER:
-                return 3;
+                return 2;
             case ARCHER:
-                return 5;
+                return 3;
             case SWORDFIGHTER:
                 return 1;
             default:

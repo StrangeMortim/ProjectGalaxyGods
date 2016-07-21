@@ -4,6 +4,7 @@ import Action.Buff;
 import Player.Player;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class Unit implements IUnit,Serializable {
     protected Player owner;
     protected Field currentField = null;
     protected int[] ressources = new int[4];
+    protected int direction=0;
 
     public Unit(UnitType type, Player owner){
         if(type == null || owner == null)
@@ -181,5 +183,14 @@ public class Unit implements IUnit,Serializable {
     @Override
     public Field getField() {
         return currentField;
+    }
+
+    @Override
+    public int getDirection() throws RemoteException {
+        return direction;
+    }
+    @Override
+    public void setDirection(int direction) throws RemoteException {
+        this.direction=direction;
     }
 }

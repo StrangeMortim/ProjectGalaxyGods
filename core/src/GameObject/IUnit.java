@@ -60,4 +60,8 @@ public interface IUnit extends Remote {
     public void setField(Field field)throws RemoteException;
 
     public Field getField()throws RemoteException;
+
+    public int getDirection() throws RemoteException;
+
+    public void setDirection(int direction) throws RemoteException;
 }

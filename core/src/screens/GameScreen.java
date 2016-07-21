@@ -7,9 +7,7 @@ import chat.Chat;
 import chat.Message;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.NinePatch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -124,6 +122,7 @@ public class GameScreen implements Screen, InputProcessor{
     };
     //endregion
 
+    ParticleEffect pe; //For fighting scenes
 
     public  GameScreen(Game game, GameSession session, Player player){
 
@@ -143,12 +142,19 @@ public class GameScreen implements Screen, InputProcessor{
 
         try{
             map = session.getMap().getFields();
-
+//TODO: Irgendwann entfernen
             Unit testUnit = new Unit(UnitType.SPEARFIGHTER, this.player);
             testUnit.setMovePointsLeft(8);
             testUnit.setSpriteName(SpriteNames.SPEARFIGHTER.getSpriteName());
             testUnit.setOwner(this.player);
             map[5][5].setCurrent(testUnit);
+
+            Unit testUnit2 = new Unit(UnitType.SWORDFIGHTER, new Player(this.player.getAccount()));
+            testUnit2.setMovePointsLeft(8);
+            testUnit2.setSpriteName(SpriteNames.SWORDFIGHTER.getSpriteName());
+            testUnit2.setOwner(new Player(this.player.getAccount()));
+            map[3][10].setCurrent(testUnit2);
+
         } catch (NullPointerException e){
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -194,6 +200,14 @@ public class GameScreen implements Screen, InputProcessor{
         int batchHeight = Constants.FIELDYLENGTH*100;
         int i=0;
         int j=0;
+
+        if(pe!=null) {
+            pe.update(Gdx.graphics.getDeltaTime());
+
+            if (pe.isComplete()){
+            pe.dispose();
+            pe=null;}
+        }
 
         batch.setProjectionMatrix(camera.combined);
         shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
@@ -413,7 +427,8 @@ public class GameScreen implements Screen, InputProcessor{
         //endregion
 
 //testweise
-
+        if(pe!=null)
+        pe.draw(batch);
 
         batch.end();
 
@@ -1529,18 +1544,96 @@ public class GameScreen implements Screen, InputProcessor{
             Unit unit = ((Unit) selected);
             Field target = (Field) obj;
             int radius = unit.getMovePointsLeft();
+            if(unit.getOwner()==player)
             try {
                   int diff=Math.max(Math.abs(unit.getField().getXPos() - target.getXPos()), Math.abs(unit.getField().getYPos() - target.getYPos()));
                     if (target.getWalkable()&&diff <= unit.getMovePointsLeft()) {
+                       try {
+                           pe = new ParticleEffect();
+                           pe.load(Gdx.files.internal("assets/sprites/fight.party"), Gdx.files.internal(""));
+                           pe.getEmitters().first().setPosition(unit.getField().getXPos() * 100 + 50, unit.getField().getYPos() * 100 + 50);
+                           pe.setDuration(-2800);
+                           pe.scaleEffect(3);
+                           pe.start();
+                       }catch(Exception e){}//zur Sicherheit
                         unit.getField().setCurrent(null);
                         target.setCurrent(unit);
                         unit.setMovePointsLeft(unit.getMovePointsLeft()-diff);
                         unrendered=true;
+                        fight();
+
                     }
             }catch(Exception e){}
         }
 
     }
+
+    /**
+     * This method checks if enemies are nearby and let them fight.
+     */
+    public void fight(){
+            Unit unit = ((Unit) selected);
+        boolean both=false;
+           for(int x = 0;x<=unit.getRange();x++){
+               //positive y direction
+               try{if(map[unit.getField().getXPos()][unit.getField().getYPos()+x].getCurrent()instanceof Unit)
+               {if(map[unit.getField().getXPos()][unit.getField().getYPos()+x].getCurrent().getOwner()!=session.getActive()){
+                   final Unit enemy=map[unit.getField().getXPos()][unit.getField().getYPos()+x].getCurrent();
+                   if(enemy.getRange()>=x)both=true;
+                   fightAnimation(unit, enemy,50,100,both);
+                   break;}}}catch(Exception e){}
+               //negative y direction
+               try{if(map[unit.getField().getXPos()][unit.getField().getYPos()-x].getCurrent()instanceof Unit)
+               {if(map[unit.getField().getXPos()][unit.getField().getYPos()-x].getCurrent().getOwner()!=session.getActive()){
+                   final Unit enemy=map[unit.getField().getXPos()][unit.getField().getYPos()-x].getCurrent();
+                   if(enemy.getRange()>=x)both=true;
+                   fightAnimation(unit, enemy,50,0,both);
+                   break;}}}catch(Exception e){}
+               //negative x direction
+               try{if(map[unit.getField().getXPos()-x][unit.getField().getYPos()].getCurrent()instanceof Unit)
+               {if(map[unit.getField().getXPos()-x][unit.getField().getYPos()].getCurrent().getOwner()!=session.getActive()){
+                   final Unit enemy=map[unit.getField().getXPos()-x][unit.getField().getYPos()].getCurrent();
+                   if(enemy.getRange()>=x)both=true;
+                   fightAnimation(unit, enemy,100,50,both);
+                   break;}}}catch(Exception e){}
+               //positive x direction
+               try{if(map[unit.getField().getXPos()+x][unit.getField().getYPos()].getCurrent()instanceof Unit)
+               {if(map[unit.getField().getXPos()+x][unit.getField().getYPos()].getCurrent().getOwner()!=session.getActive()){
+                   final Unit enemy=map[unit.getField().getXPos()+x][unit.getField().getYPos()].getCurrent();
+                   if(enemy.getRange()>=x)both=true;
+                   fightAnimation(unit, enemy,0,50,both);
+                   break;}}}catch(Exception e){}
+           }
+    }
+
+    /**
+     * Show a fighting scene
+     * @param unit
+     * @param enemy
+     */
+    private void fightAnimation(Unit unit,Unit enemy, int x,int y, boolean both){
+        unit.setMovePointsLeft(0);
+        Timer.schedule(new Timer.Task(){
+            @Override
+            public void run() {
+                selected=unit.getField();
+                enemy.setCurrentHp(enemy.getCurrentHp() - enemy.getDef() - unit.getAtk());
+                if (enemy.getCurrentHp() <= 0) enemy.getField().setCurrent(null);
+                if(both){
+                unit.setCurrentHp(unit.getCurrentHp() - unit.getDef() - enemy.getAtk());
+                if (unit.getCurrentHp() <= 0) unit.getField().setCurrent(null);
+                }
+            }
+        }, 2);
+        pe = new ParticleEffect();
+        pe.load(Gdx.files.internal("assets/sprites/fightAnimation.party"), Gdx.files.internal("assets/sprites/"));
+        pe.setDuration(1);
+        pe.scaleEffect(2);
+        pe.getEmitters().first().setPosition(unit.getField().getXPos() * 100+x, unit.getField().getYPos() * 100+y);
+        pe.start();
+
+    }
+
 
 
 }
