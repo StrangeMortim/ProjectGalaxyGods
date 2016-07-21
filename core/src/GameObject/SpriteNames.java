@@ -88,6 +88,8 @@ public enum  SpriteNames {
                 return folder+"buttonTreeGold.png";
             case BUTTON_BLUE:
                 return folder+"buttonTreeBlue.png";
+            case TECHTREE:
+                return folder+"treeBackground.png";
             default:
                 return "";
         }

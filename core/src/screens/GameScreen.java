@@ -122,6 +122,7 @@ public class GameScreen implements Screen, InputProcessor{
             new Texture(Gdx.files.internal(SpriteNames.SWORDFIGHTERBACK.getSpriteName())),//33
             new Texture(Gdx.files.internal(SpriteNames.WORKERBACK.getSpriteName())),//34
             new Texture(Gdx.files.internal(SpriteNames.HEROBACK.getSpriteName())),//35
+            new Texture(Gdx.files.internal(SpriteNames.TECHTREE.getSpriteName())),//36
 
 
     };
@@ -635,6 +636,8 @@ public class GameScreen implements Screen, InputProcessor{
         skin.add("spearfighterIcon",tmp);
         tmp = new NinePatch(textures[28], 10, 10, 10, 10);
         skin.add("swordfighterIcon",tmp);
+        tmp = new NinePatch(textures[36], 10, 10, 10, 10);
+        skin.add("treeBackground",tmp);
 
 
         ////Grundlegende Tabelle////
@@ -978,7 +981,7 @@ public class GameScreen implements Screen, InputProcessor{
         treeTable.add();
         treeTable.add(treeCloseButton);
 
-        treeTable.setBackground(skin.getDrawable("background"));
+        treeTable.setBackground(skin.getDrawable("treeBackground"));
         treeTable.setVisible(false);
         stage.addActor(treeTable);
 
