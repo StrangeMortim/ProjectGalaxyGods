@@ -2,7 +2,7 @@ package GameObject;
 
 import Action.Action;
 import Player.Player;
-
+import Action.*;
 import java.io.Serializable;
 
 /**
@@ -21,6 +21,8 @@ public class Hero extends Unit implements IHero,Serializable {
             throw new IllegalArgumentException("You must name your hero");
 
         this.name = name;
+        setLeftHand(new Heal(this,this,getOwner()));
+        setRightHand(new Shield(this,this,getOwner()));
     }
 
     /**
