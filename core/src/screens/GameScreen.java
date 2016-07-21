@@ -1638,10 +1638,10 @@ public class GameScreen implements Screen, InputProcessor{
             @Override
             public void run() {
                 selected=unit.getField();
-                enemy.setCurrentHp(enemy.getCurrentHp() - enemy.getDef() - unit.getAtk());
+                enemy.setCurrentHp(enemy.getCurrentHp() - (unit.getAtk()-enemy.getDef()));
                 if (enemy.getCurrentHp() <= 0) enemy.getField().setCurrent(null);
                 if(both){
-                unit.setCurrentHp(unit.getCurrentHp() - unit.getDef() - enemy.getAtk());
+                unit.setCurrentHp(unit.getCurrentHp() - (enemy.getAtk()-unit.getDef()));
                 if (unit.getCurrentHp() <= 0) unit.getField().setCurrent(null);
                 }
             }
