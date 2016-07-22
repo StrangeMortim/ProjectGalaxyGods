@@ -1,7 +1,6 @@
 package Player;
 
 
-import Action.Buff;
 import GameObject.Research;
 
 import java.rmi.Remote;
@@ -9,6 +8,8 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 public interface IPlayer extends Remote {
+
+    public boolean advanceOnTechTree(TreeElement element);
 
     /**
     Getter und Setter fuer die Attribute

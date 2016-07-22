@@ -9,16 +9,16 @@ public interface ITechnologyTree extends Remote {
     /*
     Getter und Setter
      */
-    public void setSteel(Boolean achieved[])throws RemoteException;
+    public void setSteel(boolean achieved[])throws RemoteException;
 
-    public Boolean[] getSteel()throws RemoteException;
+    public boolean[] getSteel()throws RemoteException;
 
-    public void setMagic(Boolean achieved[])throws RemoteException;
+    public void setMagic(boolean achieved[])throws RemoteException;
 
-    public Boolean[] getMagic()throws RemoteException;
+    public boolean[] getMagic()throws RemoteException;
 
-    public void setCulture(Boolean achieved[])throws RemoteException;
+    public void setCulture(boolean achieved[])throws RemoteException;
 
-    public Boolean[] getCulture()throws RemoteException;
+    public boolean[] getCulture()throws RemoteException;
 
 }

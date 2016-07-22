@@ -5,39 +5,39 @@ import java.io.Serializable;
 
 public class TechnologyTree implements ITechnologyTree,Serializable {
 
-    private Boolean[] steel = new Boolean[5];
-    private Boolean[] magic = new Boolean[5];
-    private Boolean[] culture = new Boolean[5];
+    private boolean[] steel = new boolean[5];
+    private boolean[] magic = new boolean[5];
+    private boolean[] culture = new boolean[5];
 
     public TechnologyTree(){}
 
     @Override
-    public void setSteel(Boolean[] achieved) {
+    public void setSteel(boolean[] achieved) {
         this.steel = achieved;
     }
 
     @Override
-    public Boolean[] getSteel() {
+    public boolean[] getSteel() {
         return steel;
     }
 
     @Override
-    public void setMagic(Boolean[] achieved) {
+    public void setMagic(boolean[] achieved) {
         this.magic = achieved;
     }
 
     @Override
-    public Boolean[] getMagic() {
+    public boolean[] getMagic() {
         return magic;
     }
 
     @Override
-    public void setCulture(Boolean[] achieved) {
+    public void setCulture(boolean[] achieved) {
         this.culture = achieved;
     }
 
     @Override
-    public Boolean[] getCulture() {
+    public boolean[] getCulture() {
         return culture;
     }
 }

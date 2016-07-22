@@ -1,6 +1,5 @@
 package Player;
 
-import Action.Buff;
 import GameObject.Constants;
 import GameObject.Research;
 
@@ -29,6 +28,38 @@ public class Player implements IPlayer,Serializable {
             throw new IllegalArgumentException("Account must not be null");
 
         this.account = acc;
+    }
+
+    @Override
+    public boolean advanceOnTechTree(TreeElement element) {
+        switch (element.getTreePath()){
+            case "steel":
+                if(element.getPreRequisiteIndex() != -1 && !tree.getSteel()[element.getPreRequisiteIndex()])
+                    return false;
+
+                break;
+            case "magic":
+                if(element.getPreRequisiteIndex() != -1 && !tree.getMagic()[element.getPreRequisiteIndex()])
+                    return false;
+
+                break;
+            case "culture":
+                if(element.getPreRequisiteIndex() != -1 && !tree.getCulture()[element.getPreRequisiteIndex()])
+                    return false;
+
+                break;
+        }
+
+        for(int i=Constants.WOOD; i<=Constants.MANA; ++i)
+            if(ressources[i] < element.getRessourceCosts()[i])
+                return false;
+
+        for(int i=Constants.WOOD; i<=Constants.MANA; ++i)
+            ressources[i] -= element.getRessourceCosts()[i];
+
+        element.activate(this);
+
+        return true;
     }
 
     @Override

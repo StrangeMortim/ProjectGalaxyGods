@@ -3,6 +3,7 @@ package screens;
 import GameObject.*;
 import GameObject.Field;
 import Player.Player;
+import Player.TreeElement;
 import chat.Chat;
 import chat.Message;
 import com.badlogic.gdx.*;
@@ -546,7 +547,7 @@ public class GameScreen implements Screen, InputProcessor{
             }
         } catch (Exception e){
             System.out.println("Probably everything ok, just dummies missing: GameScreen - touchDown");
-            //e.printStackTrace();
+            e.printStackTrace();
         }
         return false;
     }
@@ -1065,7 +1066,6 @@ public class GameScreen implements Screen, InputProcessor{
                     pe.start();
                     unrendered=true;}
                 } else if(selected instanceof  Field){
-                    System.out.println("UpLeft-Field");
                     ((Field)selected).buildMine(player);
                 } else {
                     System.out.println(selected.getClass().getName());
@@ -1102,9 +1102,7 @@ public class GameScreen implements Screen, InputProcessor{
 
                         shield.start();
                         unrendered=true;}
-                    System.out.println("UpRight-Hero");
                 } else if(selected instanceof  Field){
-                    System.out.println("UpRight-Field");
                     ((Field)selected).buildBase(player);
                 }else {
                     System.out.println(selected.getClass().getName());
@@ -1295,8 +1293,6 @@ public class GameScreen implements Screen, InputProcessor{
             @Override
             public void clicked(InputEvent event, float x, float y){
                 treeTable.setVisible(!treeTable.isVisible());
-                System.out.println("Techtree kommt noch");
-                //TODO
             }
         });
 
@@ -1304,48 +1300,53 @@ public class GameScreen implements Screen, InputProcessor{
         steelButtonLv1.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                steelButtonLv2.setVisible(true);
-                steelButtonLv1.setVisible(false);
-                //TODO
+                if(player.advanceOnTechTree(TreeElement.STEEL1)) {
+                    steelButtonLv2.setVisible(true);
+                    steelButtonLv1.setVisible(false);
+                }
             }
         });
 
         steelButtonLv2.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                steelButtonLv3.setVisible(true);
-                steelButtonLv2.setVisible(false);
-                //TODO
+                if(player.advanceOnTechTree(TreeElement.STEEL2)) {
+                    steelButtonLv3.setVisible(true);
+                    steelButtonLv2.setVisible(false);
+                }
             }
         });
 
         steelButtonLv3.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                steelButtonLv4.setVisible(true);
-                steelButtonLv3.setVisible(false);
-                //TODO
+                if(player.advanceOnTechTree(TreeElement.STEEL3)) {
+                    steelButtonLv4.setVisible(true);
+                    steelButtonLv3.setVisible(false);
+                }
             }
         });
 
         steelButtonLv4.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                steelButtonLv5.setVisible(true);
-                steelButtonLv4.setVisible(false);
-                //TODO
+                if(player.advanceOnTechTree(TreeElement.STEEL4)) {
+                    steelButtonLv5.setVisible(true);
+                    steelButtonLv4.setVisible(false);
+                }
             }
         });
 
         steelButtonLv5.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                steelButtonLv5.setText("");
-                NinePatch tmp = null;
-                tmp = new NinePatch(textures[16], 0, 0, 0, 0);
-                skin.add("ironIcon",tmp);
-                steelButtonLv5.getStyle().up = skin.getDrawable("ironIcon");
-                //TODO
+                if(player.advanceOnTechTree(TreeElement.STEEL5)) {
+                    steelButtonLv5.setText("");
+                    NinePatch tmp = null;
+                    tmp = new NinePatch(textures[16], 0, 0, 0, 0);
+                    skin.add("ironIcon", tmp);
+                    steelButtonLv5.getStyle().up = skin.getDrawable("ironIcon");
+                }
             }
         });
         //endregion
@@ -1354,48 +1355,53 @@ public class GameScreen implements Screen, InputProcessor{
         magicButtonLv1.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                magicButtonLv2.setVisible(true);
-                magicButtonLv1.setVisible(false);
-                //TODO
+                if(player.advanceOnTechTree(TreeElement.MAGIC1)) {
+                    magicButtonLv2.setVisible(true);
+                    magicButtonLv1.setVisible(false);
+                }
             }
         });
 
         magicButtonLv2.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                magicButtonLv3.setVisible(true);
-                magicButtonLv2.setVisible(false);
-                //TODO
+                if(player.advanceOnTechTree(TreeElement.MAGIC2)) {
+                    magicButtonLv3.setVisible(true);
+                    magicButtonLv2.setVisible(false);
+                }
             }
         });
 
         magicButtonLv3.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                magicButtonLv4.setVisible(true);
-                magicButtonLv3.setVisible(false);
-                //TODO
+                if(player.advanceOnTechTree(TreeElement.MAGIC3)) {
+                    magicButtonLv4.setVisible(true);
+                    magicButtonLv3.setVisible(false);
+                }
             }
         });
 
         magicButtonLv4.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                magicButtonLv5.setVisible(true);
-                magicButtonLv4.setVisible(false);
-                //TODO
+                if(player.advanceOnTechTree(TreeElement.MAGIC4)) {
+                    magicButtonLv5.setVisible(true);
+                    magicButtonLv4.setVisible(false);
+                }
             }
         });
 
         magicButtonLv5.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                magicButtonLv5.setText("");
-                NinePatch tmp = null;
-                tmp = new NinePatch(textures[17], 0, 0, 0, 0);
-                skin.add("manaIcon",tmp);
-                magicButtonLv5.getStyle().up = skin.getDrawable("manaIcon");
-                //TODO
+                if(player.advanceOnTechTree(TreeElement.MAGIC5)) {
+                    magicButtonLv5.setText("");
+                    NinePatch tmp = null;
+                    tmp = new NinePatch(textures[17], 0, 0, 0, 0);
+                    skin.add("manaIcon", tmp);
+                    magicButtonLv5.getStyle().up = skin.getDrawable("manaIcon");
+                }
             }
         });
         //endregion
@@ -1404,48 +1410,53 @@ public class GameScreen implements Screen, InputProcessor{
         cultureButtonLv1.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                cultureButtonLv2.setVisible(true);
-                cultureButtonLv1.setVisible(false);
-                //TODO
+                if(player.advanceOnTechTree(TreeElement.CULTURE1)) {
+                    cultureButtonLv2.setVisible(true);
+                    cultureButtonLv1.setVisible(false);
+                }
             }
         });
 
         cultureButtonLv2.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                cultureButtonLv3.setVisible(true);
-                cultureButtonLv2.setVisible(false);
-                //TODO
+                if(player.advanceOnTechTree(TreeElement.CULTURE2)) {
+                    cultureButtonLv3.setVisible(true);
+                    cultureButtonLv2.setVisible(false);
+                }
             }
         });
 
         cultureButtonLv3.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                cultureButtonLv4.setVisible(true);
-                cultureButtonLv3.setVisible(false);
-                //TODO
+                if(player.advanceOnTechTree(TreeElement.CULTURE3)) {
+                    cultureButtonLv4.setVisible(true);
+                    cultureButtonLv3.setVisible(false);
+                }
             }
         });
 
         cultureButtonLv4.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                cultureButtonLv5.setVisible(true);
-                cultureButtonLv4.setVisible(false);
-                //TODO
+                if(player.advanceOnTechTree(TreeElement.CULTURE4)) {
+                    cultureButtonLv5.setVisible(true);
+                    cultureButtonLv4.setVisible(false);
+                }
             }
         });
 
         cultureButtonLv5.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                cultureButtonLv5.setText("");
-                NinePatch tmp = null;
-                tmp = new NinePatch(textures[14], 0, 0, 0, 0);
-                skin.add("goldIcon",tmp);
-                cultureButtonLv5.getStyle().up = skin.getDrawable("goldIcon");
-                //TODO
+                if(player.advanceOnTechTree(TreeElement.CULTURE5)) {
+                    cultureButtonLv5.setText("");
+                    NinePatch tmp = null;
+                    tmp = new NinePatch(textures[14], 0, 0, 0, 0);
+                    skin.add("goldIcon", tmp);
+                    cultureButtonLv5.getStyle().up = skin.getDrawable("goldIcon");
+                }
             }
         });
         //endregion
