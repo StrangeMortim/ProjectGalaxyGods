@@ -157,9 +157,9 @@ public class GameScreen implements Screen, InputProcessor{
             testUnit.setOwner(this.player);
             map[5][5].setCurrent(testUnit);
 
-            Hero testUnit2 = new Hero(UnitType.SPEARFIGHTER,this.player,"harald");
+            Hero testUnit2 = new Hero(UnitType.HERO,this.player,"harald");
             testUnit2.setMovePointsLeft(8);
-            testUnit2.setSpriteName(SpriteNames.SPEARFIGHTER.getSpriteName());
+            testUnit2.setSpriteName(SpriteNames.HERO.getSpriteName());
             testUnit2.setOwner(this.player);
             testUnit2.setCurrentHp(2);
             map[6][6].setCurrent(testUnit2);
