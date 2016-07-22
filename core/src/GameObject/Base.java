@@ -21,8 +21,8 @@ public class Base extends Unit implements IBase,Serializable {
 
     public Base(UnitType type, Player owner) {
         super(type, owner);
-        avaibleUnits.add(UnitType.ARCHER);
-        avaibleUnits.add(UnitType.SPEARFIGHTER);
+       // avaibleUnits.add(UnitType.ARCHER);
+        //avaibleUnits.add(UnitType.SPEARFIGHTER);
         avaibleUnits.add(UnitType.SWORDFIGHTER);
         avaibleUnits.add(UnitType.WORKER);
         /*TODO implement*/
@@ -245,6 +245,7 @@ public class Base extends Unit implements IBase,Serializable {
                 owner.getRessources()[j] -= ressourceCost[j];
 
             labRoundsRemaining = Building.LABOR.getBuildTime();
+            return true;
         }
                 /*TODO check*/
         return false;
@@ -289,6 +290,7 @@ public class Base extends Unit implements IBase,Serializable {
                 owner.getRessources()[j] -= ressourceCost[j];
 
             caserneRoundsRemaining = Building.CASERNE.getBuildTime();
+            return true;
         }
                 /*TODO check*/
         return false;

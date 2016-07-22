@@ -14,9 +14,9 @@ public enum Building implements IBuilding,Serializable {
         switch (this)
         {
             case LABOR:
-                return 3;
+                return 0;
             case CASERNE:
-                return 2;
+                return 0;
             case MINE:
                 return 8;
             default:
