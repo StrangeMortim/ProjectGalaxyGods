@@ -5,6 +5,7 @@ import GameObject.Constants;
 import GameObject.Research;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class Player implements IPlayer,Serializable {
     private Boolean market = false;
     private List<Research> permaBuffs = new ArrayList<>();
     private List<Research> avaibleTemporaryBuffs = new ArrayList<>();
+    private Team team;
 
     public Player(Account acc){
         if(acc == null)
@@ -102,6 +104,16 @@ public class Player implements IPlayer,Serializable {
     @Override
     public List<Research> getTemporaryBuffs() {
         return avaibleTemporaryBuffs;
+    }
+
+    @Override
+    public Team getTeam() throws RemoteException {
+        return team;
+    }
+
+    @Override
+    public void setTeam(Team t) throws RemoteException {
+        this.team=team;
     }
 
 
