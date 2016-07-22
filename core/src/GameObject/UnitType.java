@@ -4,7 +4,7 @@ package GameObject;
 import java.io.Serializable;
 
 public enum UnitType implements IUnitType,Serializable {
-    BASE, SPEARFIGHTER, ARCHER, SWORDFIGHTER, WORKER,/*TODO Add Types*/
+    BASE, SPEARFIGHTER, ARCHER, SWORDFIGHTER, WORKER,HERO/*TODO Add Types*/
     ;
 
     /**
@@ -24,6 +24,8 @@ public enum UnitType implements IUnitType,Serializable {
                 return ARCHER;
             case "swordfighter":
                 return SWORDFIGHTER;
+            case "hero":
+                return HERO;
             default:
                 System.out.println("getTypeByName got non existent unitName: " + name.toLowerCase());
         }
@@ -44,6 +46,8 @@ public enum UnitType implements IUnitType,Serializable {
                 return 15;
             case SWORDFIGHTER:
                 return 50;
+            case HERO:
+                return 200;
             default:
                 return 0;
         }
@@ -60,6 +64,8 @@ public enum UnitType implements IUnitType,Serializable {
                 return 20;
             case SWORDFIGHTER:
                 return 25;
+            case HERO:
+                return 40;
             default:
                 return 0;
         }
@@ -75,6 +81,8 @@ public enum UnitType implements IUnitType,Serializable {
             case ARCHER:
                 return 5;
             case SWORDFIGHTER:
+                return 10;
+            case HERO:
                 return 10;
             default:
                 return 0;
@@ -92,6 +100,8 @@ public enum UnitType implements IUnitType,Serializable {
                 return 5;
             case SWORDFIGHTER:
                 return 3;
+            case HERO:
+                return 5;
             default:
                 return 0;
         }
@@ -107,6 +117,8 @@ public enum UnitType implements IUnitType,Serializable {
             case ARCHER:
                 return 3;
             case SWORDFIGHTER:
+                return 1;
+            case HERO:
                 return 1;
             default:
                 return 0;
@@ -124,6 +136,8 @@ public enum UnitType implements IUnitType,Serializable {
                 return SpriteNames.SWORDFIGHTER.getSpriteName();
             case WORKER:
                 return SpriteNames.WORKER.getSpriteName();
+            case HERO:
+                return SpriteNames.HERO.getSpriteName();
             default:
                 return "";
         }

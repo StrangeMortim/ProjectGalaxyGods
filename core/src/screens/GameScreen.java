@@ -6,6 +6,7 @@ import Player.Player;
 import chat.Chat;
 import chat.Message;
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -131,6 +132,7 @@ public class GameScreen implements Screen, InputProcessor{
     //endregion
 
     ParticleEffect pe; //For fighting scenes
+    ParticleEffect shield;
 
     public  GameScreen(Game game, GameSession session, Player player){
 
@@ -157,12 +159,14 @@ public class GameScreen implements Screen, InputProcessor{
             testUnit.setOwner(this.player);
             map[5][5].setCurrent(testUnit);
 
-            Unit testUnit2 = new Unit(UnitType.SWORDFIGHTER, new Player(this.player.getAccount()));
+            Hero testUnit2 = new Hero(UnitType.HERO,this.player,"harald");
             testUnit2.setMovePointsLeft(8);
-            testUnit2.setSpriteName(SpriteNames.SWORDFIGHTER.getSpriteName());
-            testUnit2.setOwner(new Player(this.player.getAccount()));
-            map[3][10].setCurrent(testUnit2);
-
+            testUnit2.setSpriteName(SpriteNames.HERO.getSpriteName());
+            testUnit2.setOwner(this.player);
+            testUnit2.setCurrentHp(2);
+            map[6][6].setCurrent(testUnit2);
+            Sound testMusic = Gdx.audio.newSound(Gdx.files.internal("assets/sounds/song1.wav"));
+            testMusic.play();
         } catch (NullPointerException e){
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -216,6 +220,7 @@ public class GameScreen implements Screen, InputProcessor{
             pe.dispose();
             pe=null;}
         }
+        if(shield!=null)shield.update(Gdx.graphics.getDeltaTime());
 
         batch.setProjectionMatrix(camera.combined);
         shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
@@ -315,6 +320,7 @@ public class GameScreen implements Screen, InputProcessor{
                     selectionUpRight.getStyle().up = skin.getDrawable("defaultIcon");
                     selectionDownLeft.setVisible(false);
                     selectionDownRight.setVisible(false);
+                 if(shield!=null)shield.getEmitters().first().setPosition(((Hero) selected).getField().getXPos() * 100 + 50, ((Hero) selected).getField().getYPos() * 100 + 50);
                 } else if (selected instanceof Field) {
                     selectionUpLeft.setVisible(true);
                     selectionUpLeft.setText("Mine bauen");
@@ -478,7 +484,8 @@ public class GameScreen implements Screen, InputProcessor{
 //testweise
         if(pe!=null)
         pe.draw(batch);
-
+        if(shield!=null)
+        shield.draw(batch);
         batch.end();
 
         showMovementRange();
@@ -1049,8 +1056,14 @@ public class GameScreen implements Screen, InputProcessor{
                             unrendered = true;
                         }
                 } else if (selected instanceof Hero){
-                    ((Hero)selected).getLeftHand().execute();
-                    System.out.println("UpLeft-Hero");
+                   if(((Hero)selected).getLeftHand().execute())
+                    {pe = new ParticleEffect();
+                    pe.load(Gdx.files.internal("assets/sprites/heal.party"), Gdx.files.internal("assets/sprites/"));
+                    pe.getEmitters().first().setPosition(((Hero) selected).getField().getXPos() * 100 + 50, ((Hero) selected).getField().getYPos() * 100 + 50);
+                    pe.setDuration(1);
+                    pe.scaleEffect(1);
+                    pe.start();
+                    unrendered=true;}
                 } else if(selected instanceof  Field){
                     System.out.println("UpLeft-Field");
                     ((Field)selected).buildMine(player);
@@ -1080,7 +1093,15 @@ public class GameScreen implements Screen, InputProcessor{
                             unrendered = true;
                         }
                 } else if (selected instanceof Hero){
-                    ((Hero)selected).getRightHand().execute();
+                    if(((Hero)selected).getRightHand().execute())
+                    {
+                        shield = new ParticleEffect();
+                        shield.load(Gdx.files.internal("assets/sprites/shield.party"), Gdx.files.internal("assets/sprites/"));
+                        shield.getEmitters().first().setPosition(((Hero) selected).getField().getXPos() * 100 + 50, ((Hero) selected).getField().getYPos() * 100 + 50);
+                        shield.scaleEffect(2);
+
+                        shield.start();
+                        unrendered=true;}
                     System.out.println("UpRight-Hero");
                 } else if(selected instanceof  Field){
                     System.out.println("UpRight-Field");
