@@ -71,7 +71,10 @@ public class GameSession implements IGameSession, Serializable{
      * Der Marktplatz des Spiels.
      */
     private Market market;
-
+    /**
+     * Max Anzahl an Spielern
+     */
+    private int numberOfPlayers;
 
     public GameSession(){
         identities = new HashMap<>();
@@ -276,6 +279,16 @@ public class GameSession implements IGameSession, Serializable{
     @Override
     public Map getMap() {
         return level;
+    }
+
+    @Override
+    public int getNumberOfPlayers() throws RemoteException {
+        return numberOfPlayers;
+    }
+
+    @Override
+    public void setNumberOfPlayers(int number) throws RemoteException {
+       numberOfPlayers=number;
     }
 
     public Chat getSessionChat()throws RemoteException {
