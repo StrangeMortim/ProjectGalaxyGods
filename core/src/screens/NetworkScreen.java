@@ -1,9 +1,6 @@
 package screens;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -43,6 +40,7 @@ public class NetworkScreen implements Screen {
     private String selectedServer = servers[0];
     private ServerInterface serverObject;
     private Label selectedGame;
+    private String name="",password="";
 
     private Table lowerButtons;
     private TextButton homeButton;
@@ -55,7 +53,9 @@ public class NetworkScreen implements Screen {
     private Table gameTable;
 
 
-    public NetworkScreen(Game game){this.game = game;}
+    public NetworkScreen(Game game){this.game = game;
+
+    }
 
     /**
      * Called when this screen becomes the current screen for a {@link Game}.
@@ -64,6 +64,14 @@ public class NetworkScreen implements Screen {
     public void show() {
         skin = new Skin(Gdx.files.internal("assets/uiskin.json"));
         stage = new Stage(new ScreenViewport());
+        ////////////////////Stage sprites setzen///////////////////////////////////////
+        batch = new SpriteBatch();
+        backGround = new Sprite(new Texture(Gdx.files.internal("assets/splash.jpg")));
+        backGround.setBounds(0, (stage.getHeight()* 3/4), stage.getWidth(), stage.getHeight()/4);
+        checkAccount();
+    }
+
+    public void init(){
 
         lowerButtons = new Table();
         lowerButtons.setWidth(stage.getWidth());
@@ -140,10 +148,6 @@ public class NetworkScreen implements Screen {
         stage.addActor(lowerButtons);
 
 
-        ////////////////////Stage sprites setzen///////////////////////////////////////
-        batch = new SpriteBatch();
-        backGround = new Sprite(new Texture(Gdx.files.internal("assets/splash.jpg")));
-        backGround.setBounds(0, (stage.getHeight()* 3/4), stage.getWidth(), stage.getHeight()/4);
 
         ////////////////////Input Regeln///////////////////////////////////////////////
         Gdx.input.setInputProcessor(stage);
@@ -254,6 +258,49 @@ public class NetworkScreen implements Screen {
      */
     @Override
     public void dispose() {
+
+    }
+
+    private void checkAccount(){
+        try {
+            Registry reg = LocateRegistry.getRegistry();
+            ServerInterface stub = (ServerInterface) reg.lookup("ServerInterface");
+            if(!stub.checkAccount("test","1234")){
+                stub.registerAccount("test","1234");}
+        }catch(Exception e){}
+
+
+        Input.TextInputListener nameListener = new Input.TextInputListener()
+        {   @Override
+        public void input(String input) {name=input;
+            Input.TextInputListener passwordListener = new Input.TextInputListener()
+            {   @Override
+            public void input(String input) {password=input;
+                try{
+                    Registry reg = LocateRegistry.getRegistry();
+                    ServerInterface stub = (ServerInterface) reg.lookup("ServerInterface");
+                    if(!stub.checkAccount(name,password)){
+                        game.setScreen(new MenuScreen(game));
+                    }else{
+                        init();
+                    }
+                }catch(Exception e){
+                    System.out.println("Wahrscheinlich laeuft die Datenbank noch im Hintergrund.");
+                }
+            }
+                @Override
+                public void canceled() {
+                    game.setScreen(new MenuScreen(game));
+                }};
+            Gdx.input.getTextInput(passwordListener, "Bitte geben Sie ein Passwort ein.", "", "");
+        }
+            @Override
+            public void canceled() {
+                game.setScreen(new MenuScreen(game));
+            }};
+
+                Gdx.input.getTextInput(nameListener, "Bitte geben Sie einen Nutzernamen ein.", "", "");
+
 
     }
 }

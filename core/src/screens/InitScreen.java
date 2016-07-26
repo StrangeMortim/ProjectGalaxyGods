@@ -1,6 +1,7 @@
 package screens;
 
 import GameObject.GameSession;
+import Player.*;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -15,14 +16,17 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import projectgg.gag.GoldAndGreed;
+import server.DBManager;
 import server.ServerInterface;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 
 /**
  * Created by benja_000 on 30.06.2016.
@@ -33,20 +37,31 @@ public class InitScreen implements Screen {
     private Stage stage;
     private Skin skin;
     private Sprite backGround;
-    private Label lID,lPW,lTeam,lRunden,lSpielerzahl,lWunder,lPausen,lError;
+    private Label lID,lPW,lTeam,lRunden,lSpielerzahl,lError,lMessage;
     private TextButton bCancel,bApply,bHero;
     private TextArea tID,tPW;
-    private CheckBox cPause,cWunder;
     private SelectBox<Object> sTeam, sSpieler,sRunden;
-    private Table tLeft,tRight,tDown;
+    private Table tLeft,tRight,tDown,tInfo;
     private String name="",password="";
     private SpriteBatch batch;
     private boolean checkSession=true;
     private boolean checkAccount;
+    private Registry reg;
+    private ServerInterface stub;
+    private int counter=0;
+    private boolean lastCheck=false;
 
     public InitScreen(Game game, GameSession session){
         this.session=session;
-        this.game=game;}
+        this.game=game;
+        try {
+            reg = LocateRegistry.getRegistry();
+            stub = (ServerInterface) reg.lookup("ServerInterface");
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void show() {
@@ -68,22 +83,20 @@ public class InitScreen implements Screen {
         lTeam=new Label("Team",skin);
         lRunden=new Label("Rundenanzahl:",skin);
         lSpielerzahl=new Label("Spieleranzahl:",skin);
-        lWunder=new Label("Wunder aktivieren:",skin);
-        lPausen=new Label("Pausen zulassen:",skin);
         lError=new Label("",skin);
+        lMessage=new Label("",skin);
+        lMessage.setColor(Color.GREEN);
         lError.setColor(Color.RED);
         bCancel=new TextButton("Abbrechen",skin);
         bApply=new TextButton("Bestaetigen",skin);
         bHero=new TextButton("Held konfigurieren",skin);
         tID=new TextArea("",skin);
         tPW=new TextArea("",skin);
-        cWunder=new CheckBox("",skin);
-        cPause=new CheckBox("",skin);
         //instanziiert Auswahlmenues
         sTeam    = new SelectBox<>(skin);
         sSpieler = new SelectBox<>(skin);
         sRunden  = new SelectBox<>(skin);
-        sTeam.setItems((Object[]) new String[]{"Rot", "Blau", "Schwarz", "Weiß"});
+        sTeam.setItems((Object[]) new String[]{"Rot", "Blau", "Schwarz", "Weiss"});
         sSpieler.setItems((Object[]) new String[]{"2", "3", "4"});
         sRunden.setItems((Object[]) new String[]{"15", "20", "30", "40", "50", "75", "100", "Endlos"});
         sTeam.setVisible(false);
@@ -102,8 +115,6 @@ public class InitScreen implements Screen {
             tID.setDisabled(true);
             sTeam.setVisible(true);
             tPW.setDisabled(true);
-            cWunder.setDisabled(true);
-            cPause.setDisabled(true);
             sRunden.setDisabled(true);
             sSpieler.setDisabled(true);
         }
@@ -114,26 +125,45 @@ public class InitScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) { game.setScreen(new MenuScreen(game));}
         });
 
-        bApply.addListener(new ClickListener() {
+        boolean endlos = bApply.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                session=new GameSession();
+                session = new GameSession();
                 try {
                     session.setName(tID.getText());
 
                     session.setPassword(tPW.getText());
-                    if(!sRunden.getSelected().toString().equals("Endlos")){
-                    session.setTurn(Integer.parseInt(sRunden.getSelected().toString()));}else{
-                        session.setTurn(99999);
+                    if (!sRunden.getSelected().toString().equals("Endlos")) {
+                        session.setRound(Integer.parseInt(sRunden.getSelected().toString()));
+                    } else {
+                        session.setRound(99999);
                     }
-                    session.setMaxPlayersPerTeam(Integer.parseInt(sSpieler.getSelected().toString()));
-                    if(checkSession()&&checkSession){
-                        Registry reg = LocateRegistry.getRegistry();
+                    session.setNumberOfPlayers(Integer.parseInt(sSpieler.getSelected().toString()));
+                    ArrayList<Player> players = new ArrayList<Player>();
+                    Account account = new Account(name,password);
+                    Player player= new Player(account);
+                    if(!players.contains(player))
+                    players.add(player);
+                   /////////////////////////////////////////////////////////////////////////////////////////
+                    if(lastCheck) {
+                        if(session.getTeams().size()>0) {
+                            for (Team t : session.getTeams()) {
+                                if (t.getColor().equals(sTeam.getSelected().toString())) {
+                                    t.getPlayers().add(player);
+                                }
+                            }
+                        }else{session.addTeam(new Team(players,sTeam.getSelected().toString()));}
+                        stub.saveSession(session);
+                        game.setScreen(new GameScreen(game,session,player));
+                    }
+                   /////////////////////////////////////////////////////////////////////////////////////////////
+
+                    if (checkSession() && checkSession) {
                         try {
-                            ServerInterface stub = (ServerInterface) reg.lookup("ServerInterface");
                             stub.saveSession(session);
+                            lastCheck=true;
                             init();
-                        } catch (NotBoundException e) {
+                        } catch (Exception e) {
                             System.out.println("Session konnte nicht erstellt werden");
                             e.printStackTrace();
                         }
@@ -145,7 +175,7 @@ public class InitScreen implements Screen {
         });
 
 
-                                                                   //instanziiert Tables
+        //instanziiert Tables
         tLeft = new Table();
         tLeft.setWidth(stage.getWidth());
         tLeft.align(Align.topLeft);
@@ -158,7 +188,9 @@ public class InitScreen implements Screen {
         tDown.setWidth(stage.getWidth());
         tDown.align(Align.bottomRight);
         tDown.setPosition(0, 0);
-
+        tInfo=new Table();
+        tInfo.setWidth(200);
+        tInfo.setPosition(stage.getWidth()-200,stage.getHeight()*3/4);
 
         tLeft.padTop(100);
         tLeft.row().padBottom(40).fill().width(350).height(50);
@@ -177,28 +209,28 @@ public class InitScreen implements Screen {
         tLeft.add(lRunden);
         tLeft.add(sRunden);
         tLeft.row().padBottom(40).fill().width(350).height(50);
-        tLeft.add(lWunder);
-        tLeft.add(cWunder);
         tLeft.row().padBottom(40).fill().width(350).height(50);
-        tLeft.add(lPausen);
-        tLeft.add(cPause);
         tDown.pad(30);
         tDown.row().fill().width(150).height(50);
         tDown.add(bCancel).padLeft(10);
         tDown.add(bApply).padRight(10);
+        tInfo.add(lError);
+        tInfo.add(lMessage);
         stage.clear();
         stage.addActor(tLeft);
         stage.addActor(tDown);
-
+        stage.addActor(tInfo);
         Gdx.input.setInputProcessor(stage);
     }
 
         private boolean checkSession() throws RemoteException {
            boolean check=true;
+
             try {
-                ServerInterface tmp = (ServerInterface) GoldAndGreed.reg.lookup("ServerInterface");
-                if(tmp.loadSession(session.getName())!=null) {
-                    lError.setText(lError.getText() + " Ein Spiel mit dem Namen existiert bereits! "); check=false;}
+
+                if(stub.loadSession(session.getName())!=null) {
+                    lError.setText("Ein Spiel mit dem Namen \n existiert bereits! "); check=false;}
+
             } catch (Exception e) {
                 System.out.println("Fehler bei der Verbindung!");
             }
@@ -271,7 +303,20 @@ public class InitScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        counter++;
         batch.begin();
+        if(lastCheck)
+            lMessage.setText("Waehle ein Team!");
+        if(session!=null){
+            try {
+                String error="";
+                if(counter==200)
+                    if (checkSession())
+                lError.setText(error);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
         backGround.draw(batch);
         stage.act(delta);
         stage.draw();

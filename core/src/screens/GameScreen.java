@@ -22,8 +22,11 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.reflect.*;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import javafx.scene.text.Font;
+import server.ServerInterface;
 
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.*;
 import java.util.List;
 
@@ -651,6 +654,19 @@ public class GameScreen implements Screen, InputProcessor{
         });
         TextButton aufgeben = new TextButton("Aufgeben",skin);
         TextButton beenden = new TextButton("Beenden",skin);
+        beenden.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                try {
+                    Registry reg = LocateRegistry.getRegistry();
+                    ServerInterface stub = (ServerInterface) reg.lookup("ServerInterface");
+                    stub.saveSession(session);
+                }catch(Exception e){
+                    System.out.println(e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        });
         optionTable.add(einstellungen);
         optionTable.row();
         optionTable.add(aufgeben);

@@ -35,10 +35,11 @@ public class MenuScreen implements Screen{
 
     private Table table;
     private TextButton networkButton;
-    private TextButton chatButton;
+    private TextButton accountButton;
     private TextButton optionButton;
     private TextButton exitButton;
     private TextButton newGameButton;
+    private TextButton createGameButton;
     Texture bg = new Texture(Gdx.files.internal("assets/stone.png"));
     ParticleEffect pe;
     ParticleEffect pe2;
@@ -59,11 +60,11 @@ public class MenuScreen implements Screen{
 
         ///////////////////////Button Generierung///////////////////////////////////////
         networkButton = new TextButton("Start", skin);
-        chatButton = new TextButton("Chat", skin);
+        accountButton = new TextButton("Account erstellen", skin);
         optionButton = new TextButton("Optionen", skin);
         exitButton = new TextButton("Beenden", skin);
-        newGameButton = new TextButton("Neues Spiel", skin);
-
+        newGameButton = new TextButton("Demo", skin);
+        createGameButton=new TextButton("Erstelle Spiel",skin);
         //////////////////////Listener Generierung/////////////////////////////////////
 
         networkButton.addListener(new ClickListener() {
@@ -71,9 +72,9 @@ public class MenuScreen implements Screen{
             public void clicked(InputEvent event, float x, float y) { game.setScreen(new NetworkScreen(game));}
         });
 
-        chatButton.addListener(new ClickListener() {
+        accountButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) { game.setScreen(new ChatScreen(game));}
+            public void clicked(InputEvent event, float x, float y) { game.setScreen(new CreateAccountScreen(game));}
         });
 
         optionButton.addListener(new ClickListener(){
@@ -84,6 +85,13 @@ public class MenuScreen implements Screen{
         exitButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){ Gdx.app.exit();}
+        });
+
+        createGameButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                game.setScreen(new InitScreen(game,null));
+            }
         });
 
         newGameButton.addListener(new ClickListener(){
@@ -129,11 +137,13 @@ public class MenuScreen implements Screen{
         table.row().padBottom(10).fill().width(150).height(50);
         table.add(networkButton);
         table.row().padBottom(10).fill().width(150).height(50);
+        table.add(createGameButton);
+        table.row().padBottom(10).fill().width(150).height(50);
         table.add(newGameButton);
         table.row().padBottom(10).fill().width(150).height(50);
-        table.add(chatButton);
-        table.row().padBottom(10).fill().width(150).height(50);
         table.add(optionButton);
+        table.row().padBottom(10).fill().width(150).height(50);
+        table.add(accountButton);
         table.row().fill().width(150).height(50);
         table.add(exitButton);
         stage.addActor(table);

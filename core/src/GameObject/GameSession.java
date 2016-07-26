@@ -59,6 +59,11 @@ public class GameSession implements IGameSession, Serializable{
      * Die Spielrunde in der sich die Spieler befinden.
      */
     private int turn = 1;
+
+    /**
+     * DIe maximale Rundenanzahl
+     */
+    private int round = 0;
     /**
      * Die Anzahl der maximalen Spieler pro Team.
      */
@@ -71,6 +76,10 @@ public class GameSession implements IGameSession, Serializable{
      * Der Marktplatz des Spiels.
      */
     private Market market;
+    /**
+     * Max Anzahl an Spielern
+     */
+    private int numberOfPlayers;
 
     /**
      * Das Gewinnerteam
@@ -288,6 +297,16 @@ public class GameSession implements IGameSession, Serializable{
         return level;
     }
 
+    @Override
+    public int getNumberOfPlayers() throws RemoteException {
+        return numberOfPlayers;
+    }
+
+    @Override
+    public void setNumberOfPlayers(int number) throws RemoteException {
+       numberOfPlayers=number;
+    }
+
     public Chat getSessionChat()throws RemoteException {
         return sessionChat;
     }
@@ -387,6 +406,14 @@ public class GameSession implements IGameSession, Serializable{
         }else{
         this.name = name;
         }
+    }
+
+    public int getRound() {
+        return round;
+    }
+
+    public void setRound(int round) {
+        this.round = round;
     }
 
     public String getPassword() {

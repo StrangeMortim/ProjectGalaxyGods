@@ -91,4 +91,8 @@ public interface IGameSession extends Remote {
      */
     public Map getMap()throws RemoteException;
 
+    public int getNumberOfPlayers()throws RemoteException;
+
+    public void setNumberOfPlayers(int number)throws RemoteException;
+
 }
