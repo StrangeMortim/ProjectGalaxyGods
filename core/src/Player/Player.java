@@ -144,7 +144,7 @@ public class Player implements IPlayer,Serializable {
 
     @Override
     public void setTeam(Team t) throws RemoteException {
-        this.team=team;
+        this.team=t;
     }
 
 

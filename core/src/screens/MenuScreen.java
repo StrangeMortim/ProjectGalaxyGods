@@ -104,14 +104,24 @@ public class MenuScreen implements Screen{
                 ArrayList<Player> t1 = new ArrayList<Player>();
                 t1.add(p1);
                 Team teamRot = new Team(t1, "Rot");
+                teamRot.setCheck(new int[]{0,0,0});
+                try {
+                    p1.setTeam(teamRot);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
 
                 Account acc2 = new Account("Spieler 2","password2");
                 Player p2 = new Player(acc2);
                 ArrayList<Player> t2 = new ArrayList<Player>();
                 t2.add(p2);
                 Team teamBlau = new Team(t2, "Blau");
-
-                tmp.playerJoin(acc1, p1, teamRot, 0);
+                teamBlau.setCheck(new int[]{0,0,0});
+                try {
+                    p2.setTeam(teamBlau);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
 
                 Account acc3 = new Account("Spieler 3","password3");
                 Player p3 = new Player(acc3);
@@ -121,6 +131,7 @@ public class MenuScreen implements Screen{
                 Player p4 = new Player(acc4);
                 t2.add(p4);
 
+                tmp.playerJoin(acc1, p1, teamRot, 0);
                 tmp.playerJoin(acc3, p3, teamRot, 2);
                 tmp.playerJoin(acc4, p4, teamBlau, 3);
                 try {
