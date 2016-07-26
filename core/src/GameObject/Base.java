@@ -327,6 +327,7 @@ public class Base extends Unit implements IBase,Serializable {
             owner.getRessources()[Constants.WOOD] -= Building.MARKET.getRessourceCost()[Constants.WOOD];
             owner.getRessources()[Constants.GOLD] -= Building.MARKET.getRessourceCost()[Constants.GOLD];
             owner.setMarket(true);
+            owner.getRessourceBoni()[Constants.GOLD] += Constants.GOLD_BONI_VALUE; //The Goldbonus you get for having a market
             return true;
         }
         return false;

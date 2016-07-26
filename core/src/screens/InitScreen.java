@@ -93,7 +93,7 @@ public class InitScreen implements Screen {
             try {
                 tID.setText(session.getName());
                 tPW.setText(session.getPassword());
-                sRunden.setItems((Object[]) new String[]{session.getRound()+""});
+                sRunden.setItems((Object[]) new String[]{session.getTurn()+""});
                 sSpieler.setItems((Object[]) new String[]{session.getMaxPlayersPerTeam()+""});
 
             } catch (RemoteException e) {
@@ -123,8 +123,8 @@ public class InitScreen implements Screen {
 
                     session.setPassword(tPW.getText());
                     if(!sRunden.getSelected().toString().equals("Endlos")){
-                    session.setRound(Integer.parseInt(sRunden.getSelected().toString()));}else{
-                        session.setRound(99999);
+                    session.setTurn(Integer.parseInt(sRunden.getSelected().toString()));}else{
+                        session.setTurn(99999);
                     }
                     session.setMaxPlayersPerTeam(Integer.parseInt(sSpieler.getSelected().toString()));
                     if(checkSession()&&checkSession){

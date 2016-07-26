@@ -6,6 +6,7 @@ import Player.Player;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Map implements IMap,Serializable {
 
@@ -171,11 +172,20 @@ public class Map implements IMap,Serializable {
      */
     @Override
     public List<Buff> update() {
+        int timesSpawned = 0;
+        Random rng = new Random();
         List<Buff> result = new ArrayList<Buff>();
 
         for(Field[] f: fields)
-            for(Field f2: f)
+            for(Field f2: f) {
                 result.addAll(f2.update());
+
+                if(timesSpawned < 2 && rng.nextInt(100) < 5 && f2.getCurrent() == null && f2.getResType() == -1){
+                    f2.setResType(Constants.MANA);
+                    f2.setResValue(Constants.MANA_RES_VALUE);
+                    timesSpawned++;
+                }
+            }
 
         return result;
     }

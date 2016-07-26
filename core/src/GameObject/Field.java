@@ -79,7 +79,7 @@ public class Field implements IField,Serializable {
                 case Constants.WOOD:
                     for (Unit u : nearUnits) {
                         tmp = u.getOwner();
-                        if(tmp.getTurn()) {  //check player
+                        if(u.type == UnitType.WORKER && tmp.getTurn()) {  //check player
                             u.getRessources()[Constants.WOOD] += Constants.WOOD_RES_VALUE + tmp.getRessourceBoni()[Constants.WOOD];
                             resValue -= (Constants.WOOD_RES_VALUE + tmp.getRessourceBoni()[Constants.WOOD]);
                         }
@@ -89,7 +89,7 @@ public class Field implements IField,Serializable {
                     if(hasMine) {
                         for (Unit u : nearUnits) {
                             tmp = u.getOwner();
-                            if(tmp.getTurn()) { //check player
+                            if(u.type == UnitType.WORKER && tmp.getTurn()) { //check player
                                 u.getRessources()[Constants.IRON] += Constants.IRON_RES_VALUE + tmp.getRessourceBoni()[Constants.IRON];
                                 resValue -= (Constants.IRON_RES_VALUE + tmp.getRessourceBoni()[Constants.IRON]);
                             }

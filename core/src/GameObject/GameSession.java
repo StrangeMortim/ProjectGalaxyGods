@@ -58,7 +58,7 @@ public class GameSession implements IGameSession, Serializable{
     /**
      * Die Spielrunde in der sich die Spieler befinden.
      */
-    private int round = 0;
+    private int turn = 1;
     /**
      * Die Anzahl der maximalen Spieler pro Team.
      */
@@ -72,6 +72,10 @@ public class GameSession implements IGameSession, Serializable{
      */
     private Market market;
 
+    /**
+     * Das Gewinnerteam
+     */
+    private Team winner;
 
     public GameSession(){
         identities = new HashMap<>();
@@ -90,7 +94,7 @@ public class GameSession implements IGameSession, Serializable{
      */
     @Override
     public void update(){
-     level.update();
+        level.update();
     }
 
     /**
@@ -110,7 +114,7 @@ public class GameSession implements IGameSession, Serializable{
             tmp = new Buff(u, null, u.getOwner());
             tmp.setSource(r2);
             buffs.add(tmp);
-            /*TODO use global round counter?*/
+            /*TODO use global turn counter?*/
         }
     }
 
@@ -190,9 +194,14 @@ public class GameSession implements IGameSession, Serializable{
             p.setTurn(false);
             setActive(player.get(index));
 
+            //if it's not the first round distribute Gold to the next player
+            if(turn > player.size())
+                player.get(index).getRessources()[Constants.GOLD] += Constants.GOLD_RES_VALUE + player.get(index).getRessourceBoni()[Constants.GOLD];
+
             update();
             finish();
             save();
+            turn++;
         }
     }
 
@@ -266,6 +275,7 @@ public class GameSession implements IGameSession, Serializable{
     @Override
     public boolean finish()throws RemoteException {
     if(teams.size()==1){
+        winner = teams.get(0);
         return true;
     }
         return false;
@@ -286,12 +296,12 @@ public class GameSession implements IGameSession, Serializable{
         this.sessionChat = sessionChat;
     }
 
-    public int getRound()throws RemoteException {
-        return round;
+    public int getTurn()throws RemoteException {
+        return turn;
     }
 
-    public void setRound(int round)throws RemoteException {
-        this.round = round;
+    public void setTurn(int turn)throws RemoteException {
+        this.turn = turn;
     }
 
     public boolean isHasStarted()throws RemoteException {
