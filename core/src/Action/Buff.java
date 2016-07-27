@@ -7,17 +7,17 @@ import java.util.List;
 
 public class Buff extends Action implements IBuff{
 
-    private GameSession buffParent = null;      //the game session where this buff belongs to
-    private Research source;                   //the research which this buff realizes
-    private List<UnitType> appliesFor = null; //contains all unit types which get a bonus, null equals 'ALL'
-    private boolean permanent;
-    private int roundsLeft;
-    private int atk;
-    private int def;
-    private int hp;
-    private int range;
-    private int movePoints;
-    private boolean firstTime = true;
+    protected GameSession buffParent = null;      //the game session where this buff belongs to
+    protected Research source;                   //the research which this buff realizes
+    protected List<UnitType> appliesFor = null; //contains all unit types which get a bonus, null equals 'ALL'
+    protected boolean permanent;
+    protected int roundsLeft;
+    protected int atk;
+    protected int def;
+    protected int hp;
+    protected int range;
+    protected int movePoints;
+    protected boolean firstTime = true;
 
     public Buff(Unit origin, Unit target, Player player) {
         super(origin, target, player);

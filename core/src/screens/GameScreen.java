@@ -1,5 +1,7 @@
 package screens;
 
+import Action.Buff;
+import Action.ReduceUnitCosts;
 import GameObject.*;
 import GameObject.Field;
 import Player.Player;
@@ -56,12 +58,13 @@ public class GameScreen implements Screen, InputProcessor{
 
     //region Chat
     private Table chatTable;
-    private TextButton sendMessageButton;
+    private TextButton sendMessageButton, generalChat, teamChat;
     private TextField messageField;
     private Table backLog;
     private Label userName;
     private ScrollPane chatScroller;
-    private int lastMessageCount;
+    private int lastMessageCountGeneral, lastMessageCountTeam;
+    private boolean showTeamChat=false;
     //endregion
 
     private Label label1,label2,label3,label4,label5;
@@ -272,7 +275,7 @@ public class GameScreen implements Screen, InputProcessor{
                         selectionDownRight.getStyle().up = skin.getDrawable("workerIcon");
                     } else if(laborEntered) {
                         selectionUpLeft.setVisible(true);
-                        selectionUpLeft.setText("Buff oder so");
+                        selectionUpLeft.setText("Reduziere Einheitenkosten");
                         selectionUpLeft.setTouchable(Touchable.enabled);
                         selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
                         selectionUpRight.setVisible(true);
@@ -325,17 +328,13 @@ public class GameScreen implements Screen, InputProcessor{
                     selectionDownLeft.setVisible(false);
                     selectionDownRight.setVisible(false);
                  if(shield!=null)shield.getEmitters().first().setPosition(((Hero) selected).getField().getXPos() * 100 + 50, ((Hero) selected).getField().getYPos() * 100 + 50);
+
                 } else if (selected instanceof Field) {
-                    selectionUpLeft.setVisible(true);
+                    selectionUpLeft.setVisible(((Field) selected).getResType() == Constants.IRON);
                     selectionUpLeft.setText("Mine bauen");
                     selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
 
-                    if (((Field) selected).getResType() != Constants.IRON)
-                        selectionUpLeft.setTouchable(Touchable.disabled);
-                    else
-                        selectionUpLeft.setTouchable(Touchable.enabled);
-
-                    selectionUpRight.setVisible(true);
+                    selectionUpRight.setVisible(player.getTechTree().isCultureFull() && ((Field)selected).getCurrent() == null && ((Field)selected).getResType() == -1);
                     selectionUpRight.setText("Basis bauen");
                     selectionUpRight.getStyle().up = skin.getDrawable("defaultIcon");
                     selectionDownLeft.setVisible(false);
@@ -808,15 +807,23 @@ public class GameScreen implements Screen, InputProcessor{
         chatTable.align(Align.bottomLeft);
         sendMessageButton = new TextButton("Senden",skin);
         messageField = new TextArea("",skin);
+        generalChat = new TextButton("Spiel", skin);
+        teamChat = new TextButton("Team",skin);
 
         try {
-            lastMessageCount = session.getSessionChat().getBacklog().size();
+            lastMessageCountGeneral = session.getSessionChat().getBacklog().size();
+            lastMessageCountTeam = player.getTeam().getChat().getBacklog().size();
             session.getSessionChat().addParticipant(player); //TODO rausnehmen nicht vergessen
         } catch (RemoteException e){
             System.out.println(e.getMessage());
         }
 
         //backLog = new List(skin);
+        chatTable.row().fill().expandX();
+        chatTable.add(generalChat).width(chatTable.getWidth()/2);
+        generalChat.setVisible(false);
+        chatTable.add(teamChat).width(chatTable.getWidth()/2);
+        chatTable.row().fill();
         backLog = new Table();
         backLog.align(Align.left);
         backLog.row().fill().expandX().align(Align.left).height(skin.getFont("default-font").getLineHeight());
@@ -834,21 +841,43 @@ public class GameScreen implements Screen, InputProcessor{
 
     private void buildChatString(){
         try {
-            Chat chat = session.getSessionChat();
-            ArrayList<Message> backLogTmp = new ArrayList<>(chat.getBacklog());
-            if(backLogTmp.size() > lastMessageCount && (chat.getParticipants().isEmpty() || chat.getParticipants().contains(player))) {
-                Label tmp;
-                for(int i=lastMessageCount; i<backLogTmp.size(); ++i){
-                    if(backLogTmp.get(i).getVisibleForAll() || backLogTmp.get(i).getVisibleFor().contains(player)){
-                        tmp = new Label(backLogTmp.get(i).getContent(),skin);
-                        tmp.setWrap(true);
-                        backLog.add(tmp);
-                        backLog.row().fill().expandX().align(Align.left).height(tmp.getHeight());
-                        chatScroller.layout();
-                        chatScroller.setScrollPercentY(100);
+            Chat chat = null;
+            if(showTeamChat) {
+                chat = player.getTeam().getChat();
+
+                ArrayList<Message> backLogTmp = new ArrayList<>(chat.getBacklog());
+                if (backLogTmp.size() > lastMessageCountTeam && (chat.getParticipants().isEmpty() || chat.getParticipants().contains(player))) {
+                    Label tmp;
+                    for (int i = lastMessageCountTeam; i < backLogTmp.size(); ++i) {
+                        if (backLogTmp.get(i).getVisibleForAll() || backLogTmp.get(i).getVisibleFor().contains(player)) {
+                            tmp = new Label(backLogTmp.get(i).getContent(), skin);
+                            tmp.setWrap(true);
+                            backLog.row().fill().expandX().align(Align.left).height(tmp.getHeight());
+                            backLog.add(tmp);
+                            chatScroller.layout();
+                            chatScroller.setScrollPercentY(100);
+                        }
                     }
+                    lastMessageCountTeam = backLogTmp.size();
                 }
-                lastMessageCount = backLogTmp.size();
+            } else {
+                chat = session.getSessionChat();
+
+                ArrayList<Message> backLogTmp = new ArrayList<>(chat.getBacklog());
+                if (backLogTmp.size() > lastMessageCountGeneral && (chat.getParticipants().isEmpty() || chat.getParticipants().contains(player))) {
+                    Label tmp;
+                    for (int i = lastMessageCountGeneral; i < backLogTmp.size(); ++i) {
+                        if (backLogTmp.get(i).getVisibleForAll() || backLogTmp.get(i).getVisibleFor().contains(player)) {
+                            tmp = new Label(backLogTmp.get(i).getContent(), skin);
+                            tmp.setWrap(true);
+                            backLog.row().fill().expandX().align(Align.left).height(tmp.getHeight());
+                            backLog.add(tmp);
+                            chatScroller.layout();
+                            chatScroller.setScrollPercentY(100);
+                        }
+                    }
+                    lastMessageCountGeneral = backLogTmp.size();
+                }
             }
         } catch (RemoteException e){
             System.out.println(e.getMessage());
@@ -961,7 +990,7 @@ public class GameScreen implements Screen, InputProcessor{
         steelButtonLv5.setVisible(false);
         steelPath = new Label("Zweig des Stahl: ",skin);
         steelPath.setColor(Color.LIGHT_GRAY);
-        steelInfo = new Label("Jede Stufe erhoeht das gewonnene Eisen und Holz um 5%",skin);
+        steelInfo = new Label("Jede Stufe erhoeht das gewonnene Eisen und Holz um 5",skin);
         steelInfo.setColor(Color.LIGHT_GRAY);
 
         //MagicButtons
@@ -979,7 +1008,7 @@ public class GameScreen implements Screen, InputProcessor{
         magicButtonLv5.setVisible(false);
         magicPath = new Label("Zweig der Magie: ",skin);
         magicPath.setColor(Color.ROYAL);
-        magicInfo = new Label("Jede Stufe verringert den Mana-Verbrauch um 3%",skin);
+        magicInfo = new Label("Jede Stufe verringert den Mana-Verbrauch um 3",skin);
         magicInfo.setColor(Color.ROYAL);
 
         //CultureButtons
@@ -1060,6 +1089,13 @@ public class GameScreen implements Screen, InputProcessor{
                     if(baseRecruitButtons){
                         ((Base)selected).createUnit(UnitType.SWORDFIGHTER);
                     } else if(laborEntered) {
+                        try {
+                            Buff tmp = new ReduceUnitCosts(null,null,player);
+                            session.addSingleBuff(tmp);
+                            tmp.execute();
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
                         System.out.println("UpLeft in Labor");
                     }else {
                             if(((Base)selected).getLabRoundsRemaining() == Constants.FINISHED) {
@@ -1504,7 +1540,11 @@ public class GameScreen implements Screen, InputProcessor{
             @Override
             public void clicked(InputEvent event, float x, float y){
                 try{
-                    session.getSessionChat().addMessage(player.getAccount().getName() + ": ", messageField.getText());
+                    if(showTeamChat)
+                        player.getTeam().getChat().addMessage(player.getAccount().getName(), messageField.getText());
+                    else
+                    session.getSessionChat().addMessage(player.getAccount().getName(), messageField.getText());
+
                     messageField.setText("");
                 }catch (RemoteException e){
                     System.out.println(e.getMessage());
@@ -1517,12 +1557,38 @@ public class GameScreen implements Screen, InputProcessor{
             public void keyTyped(TextField textField, char c) {
                 if(c == '\n' || c == '\r'){
                     try{
-                        session.getSessionChat().addMessage(player.getAccount().getName(), messageField.getText());
+                        if(showTeamChat)
+                            player.getTeam().getChat().addMessage(player.getAccount().getName(), messageField.getText());
+                        else
+                            session.getSessionChat().addMessage(player.getAccount().getName(), messageField.getText());
+
                         messageField.setText("");
                     }catch (RemoteException e){
                         System.out.println(e.getMessage());
                     }
                 }
+            }
+        });
+
+        generalChat.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                backLog.clear();
+                lastMessageCountGeneral = 0;
+                showTeamChat = false;
+                generalChat.setVisible(false);
+                teamChat.setVisible(true);
+            }
+        });
+
+        teamChat.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                backLog.clear();
+                lastMessageCountTeam = 0;
+                showTeamChat = true;
+                teamChat.setVisible(false);
+                generalChat.setVisible(true);
             }
         });
         //endregion

@@ -24,7 +24,7 @@ public interface IPlayer extends Remote {
 
     public TechnologyTree getTechTree()throws RemoteException;
 
-    public void setTurn(Boolean b)throws RemoteException;
+    public void setTurn(boolean b)throws RemoteException;
 
     public Boolean getTurn()throws RemoteException;
 
@@ -32,7 +32,7 @@ public interface IPlayer extends Remote {
 
     public Account getAccount()throws RemoteException;
 
-    public void setMarket(Boolean access)throws RemoteException;
+    public void setMarket(boolean access)throws RemoteException;
 
     public Boolean getMarket()throws RemoteException;
 
@@ -47,4 +47,8 @@ public interface IPlayer extends Remote {
     public Team getTeam()throws RemoteException;
 
     public void setTeam(Team t)throws RemoteException;
+
+    public void setReducedUnitCost(boolean reducedUnitCost) throws RemoteException;
+
+    public boolean hasReducedUnitCosts() throws RemoteException;
 }

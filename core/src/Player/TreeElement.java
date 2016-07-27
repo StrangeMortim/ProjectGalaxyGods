@@ -1,5 +1,9 @@
 package Player;
 
+import GameObject.Constants;
+
+import java.rmi.RemoteException;
+
 /**
  * Created by Fabi on 22.07.2016.
  */
@@ -114,70 +118,105 @@ public enum TreeElement implements ITreeElement {
     public void activate(Player player){
         if (player == null)
             throw new IllegalArgumentException("Player is null");
-
-        switch (this) {
-            case STEEL1:
-                player.getTechTree().getSteel()[0] = true;
-                System.out.println(player.getAccount().getName() + ": erreicht Stahl Stufe 1");
-                break;
-            case STEEL2:
-                player.getTechTree().getSteel()[1] = true;
-                System.out.println(player.getAccount().getName() + ": erreicht Stahl Stufe 2");
-                break;
-            case STEEL3:
-                player.getTechTree().getSteel()[2] = true;
-                System.out.println(player.getAccount().getName() + ": erreicht Stahl Stufe 3");
-                break;
-            case STEEL4:
-                player.getTechTree().getSteel()[3] = true;
-                System.out.println(player.getAccount().getName() + ": erreicht Stahl Stufe 4");
-                break;
-            case STEEL5:
-                player.getTechTree().getSteel()[4] = true;
-                System.out.println(player.getAccount().getName() + ": erreicht Stahl Stufe 5");
-                break;
-            case MAGIC1:
-                player.getTechTree().getMagic()[0] = true;
-                System.out.println(player.getAccount().getName() + ": erreicht Magie Stufe 1");
-                break;
-            case MAGIC2:
-                player.getTechTree().getMagic()[1] = true;
-                System.out.println(player.getAccount().getName() + ": erreicht Magie Stufe 2");
-                break;
-            case MAGIC3:
-                player.getTechTree().getMagic()[2] = true;
-                System.out.println(player.getAccount().getName() + ": erreicht Magie Stufe 3");
-                break;
-            case MAGIC4:
-                player.getTechTree().getMagic()[3] = true;
-                System.out.println(player.getAccount().getName() + ": erreicht Magie Stufe 4");
-                break;
-            case MAGIC5:
-                player.getTechTree().getMagic()[4] = true;
-                System.out.println(player.getAccount().getName() + ": erreicht Magie Stufe 5");
-                break;
-            case CULTURE1:
-                player.getTechTree().getCulture()[0] = true;
-                System.out.println(player.getAccount().getName() + ": erreicht Culture Stufe 1");
-                break;
-            case CULTURE2:
-                player.getTechTree().getCulture()[1] = true;
-                System.out.println(player.getAccount().getName() + ": erreicht Culture Stufe 2");
-                break;
-            case CULTURE3:
-                player.getTechTree().getCulture()[2] = true;
-                System.out.println(player.getAccount().getName() + ": erreicht Culture Stufe 3");
-                break;
-            case CULTURE4:
-                player.getTechTree().getCulture()[3] = true;
-                System.out.println(player.getAccount().getName() + ": erreicht Culture Stufe 4");
-                break;
-            case CULTURE5:
-                player.getTechTree().getCulture()[4] = true;
-                System.out.println(player.getAccount().getName() + ": erreicht Culture Stufe 5");
-                break;
-            default:
-                break;
+        try {
+            switch (this) {
+                case STEEL1:
+                    player.getTechTree().getSteel()[0] = true;
+                    activateSteelDefault(player);
+                    System.out.println(player.getAccount().getName() + ": erreicht Stahl Stufe 1");
+                    break;
+                case STEEL2:
+                    player.getTechTree().getSteel()[1] = true;
+                    activateSteelDefault(player);
+                    System.out.println(player.getAccount().getName() + ": erreicht Stahl Stufe 2");
+                    break;
+                case STEEL3:
+                    player.getTechTree().getSteel()[2] = true;
+                    activateSteelDefault(player);
+                    System.out.println(player.getAccount().getName() + ": erreicht Stahl Stufe 3");
+                    break;
+                case STEEL4:
+                    player.getTechTree().getSteel()[3] = true;
+                    activateSteelDefault(player);
+                    System.out.println(player.getAccount().getName() + ": erreicht Stahl Stufe 4");
+                    break;
+                case STEEL5:
+                    player.getTechTree().getSteel()[4] = true;
+                    activateSteelDefault(player);
+                    player.getTechTree().setSteelFull(true);
+                    System.out.println(player.getAccount().getName() + ": erreicht Stahl Stufe 5");
+                    break;
+                case MAGIC1:
+                    player.getTechTree().getMagic()[0] = true;
+                    activateMagicDefault(player);
+                    System.out.println(player.getAccount().getName() + ": erreicht Magie Stufe 1");
+                    break;
+                case MAGIC2:
+                    player.getTechTree().getMagic()[1] = true;
+                    activateMagicDefault(player);
+                    System.out.println(player.getAccount().getName() + ": erreicht Magie Stufe 2");
+                    break;
+                case MAGIC3:
+                    player.getTechTree().getMagic()[2] = true;
+                    activateMagicDefault(player);
+                    System.out.println(player.getAccount().getName() + ": erreicht Magie Stufe 3");
+                    break;
+                case MAGIC4:
+                    player.getTechTree().getMagic()[3] = true;
+                    activateMagicDefault(player);
+                    System.out.println(player.getAccount().getName() + ": erreicht Magie Stufe 4");
+                    break;
+                case MAGIC5:
+                    player.getTechTree().getMagic()[4] = true;
+                    activateMagicDefault(player);
+                    player.getTechTree().setMagicFull(true);
+                    System.out.println(player.getAccount().getName() + ": erreicht Magie Stufe 5");
+                    break;
+                case CULTURE1:
+                    player.getTechTree().getCulture()[0] = true;
+                    activateCultureDefault(player);
+                    System.out.println(player.getAccount().getName() + ": erreicht Culture Stufe 1");
+                    break;
+                case CULTURE2:
+                    player.getTechTree().getCulture()[1] = true;
+                    activateCultureDefault(player);
+                    System.out.println(player.getAccount().getName() + ": erreicht Culture Stufe 2");
+                    break;
+                case CULTURE3:
+                    player.getTechTree().getCulture()[2] = true;
+                    activateCultureDefault(player);
+                    System.out.println(player.getAccount().getName() + ": erreicht Culture Stufe 3");
+                    break;
+                case CULTURE4:
+                    player.getTechTree().getCulture()[3] = true;
+                    activateCultureDefault(player);
+                    System.out.println(player.getAccount().getName() + ": erreicht Culture Stufe 4");
+                    break;
+                case CULTURE5:
+                    player.getTechTree().getCulture()[4] = true;
+                    activateCultureDefault(player);
+                    player.getTechTree().setCultureFull(true);
+                    System.out.println(player.getAccount().getName() + ": erreicht Culture Stufe 5");
+                    break;
+                default:
+                    break;
+            }
+        }catch (RemoteException e){
+            e.printStackTrace();
         }
+    }
+
+
+    private void activateSteelDefault(Player p){
+        p.getRessourceBoni()[Constants.WOOD] += Constants.WOOD_BONI_VALUE;
+        p.getRessourceBoni()[Constants.IRON] += Constants.IRON_BONI_VALUE;
+    }
+
+    private void activateMagicDefault(Player p){
+        p.getRessourceBoni()[Constants.MANA] += Constants.MANA_BONI_VALUE;
+    }
+
+    private void activateCultureDefault(Player p){
+        p.getRessourceBoni()[Constants.GOLD] += Constants.GOLD_BONI_VALUE;
     }
 }

@@ -21,4 +21,16 @@ public interface ITechnologyTree extends Remote {
 
     public boolean[] getCulture()throws RemoteException;
 
+    public boolean isSteelFull() throws RemoteException;
+
+    public void setSteelFull(boolean full) throws RemoteException;
+
+    public boolean isMagicFull() throws RemoteException;
+
+    public void  setMagicFull(boolean full) throws RemoteException;
+
+    public boolean isCultureFull() throws RemoteException;
+
+    public void setCultureFull(boolean full) throws RemoteException;
+
 }

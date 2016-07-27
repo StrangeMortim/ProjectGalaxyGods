@@ -175,4 +175,21 @@ public enum UnitType implements IUnitType,Serializable {
                 return new int[]{0,0,0,0};
         }
     }
+
+    @Override
+    public int[] getReducedCost() {
+
+        switch (this){
+            case BASE:
+                return new int[]{80,80,30,0};
+            case SPEARFIGHTER:
+                return new int[]{10,0,15,0};
+            case ARCHER:
+                return new int[]{10,0,5,0};
+            case SWORDFIGHTER:
+                return new int[]{0,5,15,0};
+            default:
+                return new int[]{0,0,0,0};
+        }
+    }
 }

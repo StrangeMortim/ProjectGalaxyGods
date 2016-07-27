@@ -48,6 +48,8 @@ public interface IGameSession extends Remote {
      * @param b
      */
     public void addBuffs(List<Buff> b)throws RemoteException;
+
+    public void addSingleBuff(Buff b) throws RemoteException;
     /**
      *
      * @param b
