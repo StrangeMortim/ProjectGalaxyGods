@@ -1,11 +1,11 @@
 package screens;
 
+import Action.Heal2;
 import Action.Buff;
 import Action.ReduceUnitCosts;
 import GameObject.*;
 import GameObject.Field;
-import Player.Player;
-import Player.TreeElement;
+import Player.*;
 import chat.Chat;
 import chat.Message;
 import com.badlogic.gdx.*;
@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.Timer;
@@ -86,6 +87,13 @@ public class GameScreen implements Screen, InputProcessor{
     private TextButton buyButton, sellButton, closeButton;
     //endregion
 
+    //region TeamBox
+    private Table teamTable;
+    private Label tWood,tIron,tGold;
+    private TextField addWood,addIron,addGold;
+    private TextButton addButton,tBcloseButton;
+    //endregion
+
     //region Techtree
     private Table treeTable;
     private TextButton steelButtonLv1,steelButtonLv2,steelButtonLv3,steelButtonLv4,steelButtonLv5,
@@ -133,6 +141,7 @@ public class GameScreen implements Screen, InputProcessor{
             new Texture(Gdx.files.internal(SpriteNames.WORKERBACK.getSpriteName())),//34
             new Texture(Gdx.files.internal(SpriteNames.HEROBACK.getSpriteName())),//35
             new Texture(Gdx.files.internal(SpriteNames.TECHTREE.getSpriteName())),//36
+            new Texture(Gdx.files.internal(SpriteNames.TEAMBOX_OPEN.getSpriteName())),//37
 
 
     };
@@ -167,13 +176,14 @@ public class GameScreen implements Screen, InputProcessor{
             map[5][5].setCurrent(testUnit);
 
             Hero testUnit2 = new Hero(UnitType.HERO,this.player,"harald");
-            testUnit2.setMovePointsLeft(8);
+            testUnit2.setMovePointsLeft(30);
             testUnit2.setSpriteName(SpriteNames.HERO.getSpriteName());
             testUnit2.setOwner(this.player);
+            testUnit2.setAtk(2000);
             testUnit2.setCurrentHp(2);
             map[6][6].setCurrent(testUnit2);
-            Sound testMusic = Gdx.audio.newSound(Gdx.files.internal("assets/sounds/song1.wav"));
-            testMusic.play();
+         //   Sound testMusic = Gdx.audio.newSound(Gdx.files.internal("assets/sounds/song1.wav"));
+         //   testMusic.play();
         } catch (NullPointerException e){
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -200,6 +210,7 @@ public class GameScreen implements Screen, InputProcessor{
         showChat();
         showMarket();
         showTechtree();
+        showTeamBox();
         buildListeners();
 
         InputMultiplexer im = new InputMultiplexer(stage, this);
@@ -624,10 +635,33 @@ public class GameScreen implements Screen, InputProcessor{
         label4 = new Label(player.getRessources()[3]+"", skin);label4.setColor(Color.WHITE);
         group.addActor(image4);
         group.addActor(label4);
-        label5 = new Label("9000", skin);label4.setColor(Color.WHITE);
-        Image image5 =new Image(textures[18]);//Teamkasse
-        group.addActor(image5);
-        group.addActor(label5);
+
+        NinePatch tmp = new NinePatch(textures[18],0,0,0,0);
+        skin.add("teamBox",tmp);
+        tmp = new NinePatch(textures[37],0,0,0,0);
+        skin.add("teamBoxOpen",tmp);
+
+        ImageButtonStyle buttonStyle = new ImageButtonStyle();
+        buttonStyle.up = skin.getDrawable("teamBox");
+        buttonStyle.over = skin.getDrawable("teamBoxOpen");
+        ImageButton teamBox = new ImageButton(buttonStyle);
+        teamBox.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                teamTable.setVisible(true);
+                try {
+                    if(player.getTeam()!=null){
+                        tWood = new Label("Holz: "+player.getTeam().getCheck()[0],skin);
+                        tIron = new Label("Eisen: "+player.getTeam().getCheck()[1],skin);
+                        tGold = new Label("Gold: "+player.getTeam().getCheck()[2],skin);
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        group.addActor(teamBox);
         group.space(10);
         table.add(group);
         Table optionTable= new Table();
@@ -659,16 +693,27 @@ public class GameScreen implements Screen, InputProcessor{
                 try {
                     Registry reg = LocateRegistry.getRegistry();
                     ServerInterface stub = (ServerInterface) reg.lookup("ServerInterface");
+                    session.getMap().setFields(map);
                     stub.saveSession(session);
+                    game.setScreen(new MenuScreen(game));
                 }catch(Exception e){
                     System.out.println(e.getMessage());
                     e.printStackTrace();
                 }
             }
         });
+        TextButton debug = new TextButton("Debug",skin);
+        debug.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+               session.showSessionDetails();
+            }
+        });
         optionTable.add(einstellungen);
         optionTable.row();
         optionTable.add(aufgeben);
+        optionTable.row();
+        optionTable.add(debug);
         optionTable.row();
         optionTable.add(beenden);
         optionTable.setPosition(Gdx.graphics.getWidth()-70,Gdx.graphics.getHeight()-80);
@@ -700,7 +745,6 @@ public class GameScreen implements Screen, InputProcessor{
         skin.add("swordfighterIcon",tmp);
         tmp = new NinePatch(textures[36], 10, 10, 10, 10);
         skin.add("treeBackground",tmp);
-
 
         ////Grundlegende Tabelle////
         bottomTable=new Table();
@@ -772,7 +816,6 @@ public class GameScreen implements Screen, InputProcessor{
         marketPlace = new TextButton("",style);
         marketPlace.getStyle().up = skin.getDrawable("marketIcon");
         marketPlace.getStyle().down = skin.getDrawable("marketIcon");
-        marketPlace.setTouchable(Touchable.disabled);
         marketPlace.setVisible(false);
         style = new TextButton.TextButtonStyle(skin.get("default",TextButton.TextButtonStyle.class));
         techTree = new TextButton("Technologiebaum",style);
@@ -954,6 +997,107 @@ public class GameScreen implements Screen, InputProcessor{
         marketTable.setVisible(false);
         stage.addActor(marketTable);
     }
+    private void showTeamBox(){
+       teamTable = new Table();
+        teamTable.align(Align.left);
+        teamTable.setPosition(stage.getWidth()/3, stage.getHeight()/2);
+        teamTable.setWidth(stage.getWidth()/3);
+        teamTable.setHeight(stage.getHeight()/2);
+        teamTable.setBackground(skin.getDrawable("treeBackground"));
+        try {
+            if(player.getTeam()==null){
+                for(Team t :session.getTeams()){
+                    if(t.getPlayers().contains(player)){
+                        player.setTeam(t);
+                    }
+                }
+
+            }
+            if (player.getTeam()!=null) {
+
+                tWood = new Label("Holz: "+player.getTeam().getCheck()[0]+"",skin);
+
+                tIron = new Label("Eisen: "+player.getTeam().getCheck()[1]+"",skin);
+
+                tGold = new Label("Gold: "+player.getTeam().getCheck()[2]+"",skin);
+
+            }else{
+
+
+                System.out.println("Das Team von "+player+" wurde nicht gesetzt!");}
+
+            addWood = new TextField("0", skin);
+            addIron = new TextField("0", skin);
+            addGold = new TextField("0", skin);
+
+            addButton = new TextButton("Einzahlen",skin);
+            addButton.addListener(new ClickListener(){
+                @Override
+                public void clicked(InputEvent event, float x, float y){
+                    try{
+                        int wood=Integer.parseInt(addWood.getText());
+                        int iron=Integer.parseInt(addIron.getText());;
+                        int gold=Integer.parseInt(addGold.getText());;
+                        if(wood<0||iron<0||gold<0) {
+                            addWood.setText("Die Zahlen muessen positiv sein!");return;
+                        }
+                        if(wood>player.getRessources()[0]) {
+                            addWood.setText("Du besitzt nicht genug Holz"); return;
+                        }
+                        if(iron>player.getRessources()[1]) {
+                            addIron.setText("Du besitzt nicht genug Eisen"); return;
+                        }
+                        if(gold>player.getRessources()[2]) {
+                            addGold.setText("Du besitzt nicht genug Gold"); return;
+                        }
+                        if(player.getTeam()!=null){
+                            player.getTeam().getCheck()[0]+=wood;
+                            player.getTeam().getCheck()[1]+=iron;
+                            player.getTeam().getCheck()[2]+=gold;
+                            player.getRessources()[0]-=wood;
+                            player.getRessources()[1]-=iron;
+                            player.getRessources()[2]-=gold;
+                            tWood.setText("Holz: "+player.getTeam().getCheck()[0]+"");
+                            tIron.setText("Eisen: "+player.getTeam().getCheck()[1]+"");
+                            tGold.setText("Gold: "+player.getTeam().getCheck()[2]+"");
+                        }
+
+                    }catch(Exception e){
+                        addWood.setText("Nur Zahlen  eingeben!");
+                    }
+                }
+            });
+
+            tBcloseButton = new TextButton("Schliessen",skin);
+            tBcloseButton.addListener(new ClickListener(){
+                @Override
+                public void clicked(InputEvent event, float x, float y){
+                    teamTable.setVisible(false);
+                }
+            });
+
+        teamTable.row().pad(10).fill().space(10);
+            teamTable.add(addWood);
+            teamTable.add(tWood);
+            teamTable.row().pad(10).fill().space(10);
+            teamTable.add(addIron);
+            teamTable.add(tIron);
+            teamTable.row().pad(10).fill().space(10);
+            teamTable.add(addGold);
+            teamTable.add(tGold);
+            teamTable.row().pad(10).fill().space(100);
+            teamTable.add(addButton);
+            teamTable.add(tBcloseButton);
+            teamTable.setVisible(false);
+            stage.addActor(teamTable);
+
+
+        }catch(Exception e){
+            System.out.println("Bei der Teamkasse ist was schiefgegangen:");
+            e.printStackTrace();
+        }
+    }
+
 
     private void showTechtree(){
         NinePatch tmp = null;
@@ -1116,6 +1260,32 @@ public class GameScreen implements Screen, InputProcessor{
                     pe.setDuration(1);
                     pe.scaleEffect(1);
                     pe.start();
+                        List <Unit> units= new ArrayList<>();
+                        boolean heal2=false;
+                        for (int x1 = 0 - 2; x1 < 2 + 1; x1++) {
+                            for (int y1 = 0 - 2; y1 < 2 + 1; y1++) {
+                                try{
+                                   Field f = map[((Hero) selected).getField().getXPos()+x1][((Hero) selected).getField().getYPos()+y1];
+                                    if(f.getCurrent() instanceof Unit && f.getCurrent().getOwner()==((Hero) selected).getOwner()
+                                            &&f.getCurrent()!=selected){
+                                        units.add(f.getCurrent());
+                                        heal2=true;
+                                    }
+                                }catch(Exception e){}
+                            }
+                        }
+                        Unit[]uArray=new Unit[units.size()];
+                        for(Unit u : units){
+                            uArray[units.indexOf(u)]=u;
+                        }
+                        if(heal2){
+                            pe.load(Gdx.files.internal("assets/sprites/heal2.party"), Gdx.files.internal("assets/sprites/"));
+                            pe.getEmitters().first().setPosition(((Hero) selected).getField().getXPos() * 100 + 50, ((Hero) selected).getField().getYPos() * 100 + 50);
+                            pe.setDuration(1);
+                            pe.scaleEffect(2);
+                            pe.start();
+                            new Heal2((Unit)selected,(Unit)selected,player, uArray).execute();
+                        }
                     unrendered=true;}
                 } else if(selected instanceof  Field){
                     ((Field)selected).buildMine(player);
@@ -1196,6 +1366,7 @@ public class GameScreen implements Screen, InputProcessor{
                                 boolean success = ((Base)selected).buildMarket();
                                 if(success) {
                                     marketPlace.setVisible(true);
+                                    unrendered = true;
                                 }
                             } catch (RemoteException e) {
                                 e.printStackTrace();
@@ -1804,7 +1975,15 @@ public class GameScreen implements Screen, InputProcessor{
             public void run() {
                 selected=unit.getField();
                 enemy.setCurrentHp(enemy.getCurrentHp() - (unit.getAtk()-enemy.getDef()));
-                if (enemy.getCurrentHp() <= 0) enemy.getField().setCurrent(null);
+
+                if (enemy.getCurrentHp() <= 0) {
+                    if(enemy instanceof Base){
+                     enemy.setOwner(player);
+                        enemy.setCurrentHp(enemy.getMaxHp());
+                        return;
+                    }
+                    enemy.getField().setCurrent(null);
+                }
                 if(both){
                 unit.setCurrentHp(unit.getCurrentHp() - (enemy.getAtk()-unit.getDef()));
                 if (unit.getCurrentHp() <= 0) unit.getField().setCurrent(null);
@@ -1819,6 +1998,8 @@ public class GameScreen implements Screen, InputProcessor{
         pe.start();
 
     }
+
+
 
 
 

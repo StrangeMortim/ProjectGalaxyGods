@@ -10,6 +10,7 @@ import java.io.Serializable;
  */
 public class Hero extends Unit implements IHero,Serializable {
 
+    private static final long serialVersionUID = -7787413125681105826L;
     private Action leftHand;
     private Action rightHand;
     private String name;

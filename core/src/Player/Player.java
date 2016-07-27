@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class Player implements IPlayer,Serializable {
 
+    private static final long serialVersionUID = 4714946459418095704L;
     private int[] ressources = new int[]{Constants.PLAYER_START_WOOD,Constants.PLAYER_START_IRON,Constants.PLAYER_START_GOLD,Constants.PLAYER_START_MANA};
     private int[] ressourcesBoni = new int[4];
     private TechnologyTree tree = new TechnologyTree();

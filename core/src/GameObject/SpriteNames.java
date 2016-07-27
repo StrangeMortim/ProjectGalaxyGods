@@ -10,7 +10,7 @@ public enum  SpriteNames {
     BASE_UP_LEFT,BASE_UP_RIGHT,BASE_DOWN_LEFT_CASERNE,BASE_DOWN_LEFT_EMPTY,BASE_DOWN_RIGHT_EMPTY,BASE_DOWN_RIGHT_CASERNE,BASE_DOWN_RIGHT_LAB,BASE_DOWN_RIGHT_FULL,
     CHEST_ICON, GOLD_ICON, MANA_ICON, IRON_ICON, WOOD_ICON,
     BUTTON_BG, BUTTON_WORKER, MENU_BG, BUTTON_SPEARFIGHTER, BUTTON_SWORDFIGHTER,BUTTON_GREY,BUTTON_GOLD,BUTTON_BLUE,
-    MARKETPLACE, TECHTREE,
+    MARKETPLACE, TECHTREE,TEAMBOX_OPEN,
     ARCHER,ARCHERBACK, SPEARFIGHTER,SPEARFIGHTERBACK, SWORDFIGHTER,SWORDFIGHTERBACK, WORKER,WORKERBACK, HERO,HEROBACK;
 
     public String getSpriteName(){
@@ -90,6 +90,8 @@ public enum  SpriteNames {
                 return folder+"buttonTreeBlue.png";
             case TECHTREE:
                 return folder+"treeBackground.png";
+            case TEAMBOX_OPEN:
+                return folder+"chestOpen.png";
             default:
                 return "";
         }

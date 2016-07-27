@@ -10,6 +10,7 @@ import java.util.List;
 
 public class Unit implements IUnit,Serializable {
 
+    private static final long serialVersionUID = -8623318700146833448L;
     protected UnitType type;
     protected int maxHp;
     protected int currentHp;

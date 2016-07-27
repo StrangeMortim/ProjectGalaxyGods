@@ -51,9 +51,11 @@ public class InitScreen implements Screen {
     private int counter=0;
     private boolean lastCheck=false;
 
+
     public InitScreen(Game game, GameSession session){
         this.session=session;
         this.game=game;
+
         try {
             reg = LocateRegistry.getRegistry();
             stub = (ServerInterface) reg.lookup("ServerInterface");
@@ -71,7 +73,10 @@ public class InitScreen implements Screen {
         batch = new SpriteBatch();
         backGround = new Sprite(new Texture(Gdx.files.internal("assets/splash.jpg")));
         backGround.setBounds(0, (stage.getHeight()* 3/4), stage.getWidth(), stage.getHeight()/4);
-       checkAccount();
+
+
+            checkAccount();
+
 
     }
 
@@ -128,7 +133,23 @@ public class InitScreen implements Screen {
         boolean endlos = bApply.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                session = new GameSession();
+               if(session==null) {session = new GameSession();}
+                   if(lastCheck){
+                       try {
+                           for(Team t : session.getTeams()){
+                              for(Player p: t.getPlayers()){
+                                  if(p.getAccount().getName().equals(name)){
+                                      game.setScreen(new GameScreen(game,session,p));
+                                      return;
+                                  }
+                              }
+                           }
+                       } catch (RemoteException e) {
+                           e.printStackTrace();
+                       }
+
+                   }
+
                 try {
                     session.setName(tID.getText());
 
@@ -221,6 +242,8 @@ public class InitScreen implements Screen {
         stage.addActor(tDown);
         stage.addActor(tInfo);
         Gdx.input.setInputProcessor(stage);
+
+        if(session!=null)lastCheck=true;
     }
 
         private boolean checkSession() throws RemoteException {
@@ -303,7 +326,7 @@ public class InitScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        counter++;
+
         batch.begin();
         if(lastCheck)
             lMessage.setText("Waehle ein Team!");
@@ -311,8 +334,9 @@ public class InitScreen implements Screen {
             try {
                 String error="";
                 if(counter==200)
-                    if (checkSession())
-                lError.setText(error);
+                    if (checkSession()){
+                        lError= new Label("",skin);
+                lError.setText(error);}
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

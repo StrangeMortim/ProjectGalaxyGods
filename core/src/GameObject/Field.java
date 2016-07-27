@@ -13,6 +13,7 @@ import java.util.Random;
 
 public class Field implements IField,Serializable {
 
+    private static final long serialVersionUID = -7532038227070675590L;
     private int resType = Constants.NONE_OR_NOT_SET;
     private int resValue = 0;
     private int xPos = Constants.NONE_OR_NOT_SET;

@@ -10,6 +10,8 @@ import java.util.List;
  * Created by Fabi on 11.06.2016.
  */
 public class Team implements ITeam,Serializable {
+
+    private static final long serialVersionUID = -1231492845712879611L;
     private List<Player> players;
     private Chat chat = new Chat();
     private String color;

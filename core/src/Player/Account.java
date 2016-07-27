@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 public class Account implements IAccount,Serializable {
 
+    private static final long serialVersionUID = -2953331051227985322L;
     private String name;
     private String password;
 

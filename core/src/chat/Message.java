@@ -12,6 +12,8 @@ import java.util.List;
  * einer Nachricht im Chat verkörpert.
  */
 public class Message implements IMessage,Serializable {
+
+    private static final long serialVersionUID = -7904810564348423122L;
     /**
      * Inhalt der Nachricht.
      */
