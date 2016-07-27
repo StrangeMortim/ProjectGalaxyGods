@@ -18,6 +18,8 @@ import java.util.List;
  * damit die Speicherung und Verwaltung des gesamten Spielzustandes.
  */
 public class GameSession implements IGameSession, Serializable{
+
+    private static final long serialVersionUID = -3697414040192093513L;
     /**
      * Name der GameSession.
      */
@@ -80,6 +82,7 @@ public class GameSession implements IGameSession, Serializable{
      * Max Anzahl an Spielern
      */
     private int numberOfPlayers;
+
 
     /**
      * Das Gewinnerteam
@@ -265,6 +268,38 @@ public class GameSession implements IGameSession, Serializable{
         identities.put(a, p);
         level.addBase(p, playerPos);
         return p;
+    }
+
+    public void showSessionDetails(){
+        GameSession session=this;
+
+        String stats="";
+        try {
+            stats+="\n"+"Name: "+session.getName();
+            stats+="\n"+"Passwort: "+session.getPassword();
+            stats+="\n"+"Anzahl der Spieler: "+session.getNumberOfPlayers();
+            stats+="\n"+"--------------------------------------------------"
+                    +"\n"+"Nachrichten: ";
+            for(Message m: session.getSessionChat().getBacklog()){
+                stats+="\n"+m.getContent();
+            }
+            stats+="\n"+"--------------------------------------------------"
+                    +"\n"+"Teams: ";
+            for(Team t : session.getTeams()){
+                stats+="\n Team-Name: "+t.getColor();
+                for(Player p: t.getPlayers()){
+                    stats+="  \n Spielername: "+p.getAccount().getName();
+                    stats+="  Holz : "+p.getRessources()[0];
+                    stats+="  Eisen : "+p.getRessources()[1];
+                    stats+="  Gold : "+p.getRessources()[2];
+                    stats+="  Hat Markt: "+p.getMarket();
+                }
+            }
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        System.out.println(stats);
     }
 
 

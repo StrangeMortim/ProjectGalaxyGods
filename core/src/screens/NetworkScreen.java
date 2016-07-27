@@ -1,6 +1,9 @@
 package screens;
 
 import GameObject.GameSession;
+import Player.Player;
+import Player.Team;
+import chat.Message;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -122,7 +125,7 @@ public class NetworkScreen implements Screen {
                     ServerInterface stub = (ServerInterface) reg.lookup("ServerInterface");
                     System.out.println("--"+selectedGame.getText()+"--");
                   GameSession session =stub.loadSession(selectedGame.getText()+"");
-                    System.out.println(session.getName()+"++");
+
                    game.setScreen(new InitScreen(game,session));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -313,4 +316,6 @@ public class NetworkScreen implements Screen {
 
 
     }
+
+
 }

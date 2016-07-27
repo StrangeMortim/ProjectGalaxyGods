@@ -10,6 +10,8 @@ import java.rmi.RemoteException;
  * Realisiert den Marktplatz auf dem Spieler Ressourcen kaufen und verkaufen koennen.
  */
 public class Market implements IMarket,Serializable{
+
+    private static final long serialVersionUID = -8470908004440665355L;
     /**
      *  Verfügbares Holz.
      */

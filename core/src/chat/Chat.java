@@ -15,6 +15,8 @@ import java.util.List;
  * Die Chat-Klasse ermoeglicht den Nachrichtenaustausch zwischen den Spielern.
  */
 public class Chat implements ChatInterface,Serializable {
+
+    private static final long serialVersionUID = 1987963162254788571L;
     /**
      * Nachrichtenverlauf dieses Chats.
      */

@@ -1,5 +1,6 @@
 package screens;
 
+import Action.Heal2;
 import GameObject.*;
 import GameObject.Field;
 import Player.*;
@@ -702,9 +703,18 @@ public class GameScreen implements Screen, InputProcessor{
                 }
             }
         });
+        TextButton debug = new TextButton("Debug",skin);
+        debug.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+               session.showSessionDetails();
+            }
+        });
         optionTable.add(einstellungen);
         optionTable.row();
         optionTable.add(aufgeben);
+        optionTable.row();
+        optionTable.add(debug);
         optionTable.row();
         optionTable.add(beenden);
         optionTable.setPosition(Gdx.graphics.getWidth()-70,Gdx.graphics.getHeight()-80);
@@ -1215,6 +1225,32 @@ public class GameScreen implements Screen, InputProcessor{
                     pe.setDuration(1);
                     pe.scaleEffect(1);
                     pe.start();
+                        List <Unit> units= new ArrayList<>();
+                        boolean heal2=false;
+                        for (int x1 = 0 - 2; x1 < 2 + 1; x1++) {
+                            for (int y1 = 0 - 2; y1 < 2 + 1; y1++) {
+                                try{
+                                   Field f = map[((Hero) selected).getField().getXPos()+x1][((Hero) selected).getField().getYPos()+y1];
+                                    if(f.getCurrent() instanceof Unit && f.getCurrent().getOwner()==((Hero) selected).getOwner()
+                                            &&f.getCurrent()!=selected){
+                                        units.add(f.getCurrent());
+                                        heal2=true;
+                                    }
+                                }catch(Exception e){}
+                            }
+                        }
+                        Unit[]uArray=new Unit[units.size()];
+                        for(Unit u : units){
+                            uArray[units.indexOf(u)]=u;
+                        }
+                        if(heal2){
+                            pe.load(Gdx.files.internal("assets/sprites/heal2.party"), Gdx.files.internal("assets/sprites/"));
+                            pe.getEmitters().first().setPosition(((Hero) selected).getField().getXPos() * 100 + 50, ((Hero) selected).getField().getYPos() * 100 + 50);
+                            pe.setDuration(1);
+                            pe.scaleEffect(2);
+                            pe.start();
+                            new Heal2((Unit)selected,(Unit)selected,player, uArray).execute();
+                        }
                     unrendered=true;}
                 } else if(selected instanceof  Field){
                     ((Field)selected).buildMine(player);
@@ -1900,6 +1936,8 @@ public class GameScreen implements Screen, InputProcessor{
         pe.start();
 
     }
+
+
 
 
 

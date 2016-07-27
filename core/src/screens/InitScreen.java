@@ -133,7 +133,23 @@ public class InitScreen implements Screen {
         boolean endlos = bApply.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                session = new GameSession();
+               if(session==null) {session = new GameSession();}
+                   if(lastCheck){
+                       try {
+                           for(Team t : session.getTeams()){
+                              for(Player p: t.getPlayers()){
+                                  if(p.getAccount().getName().equals(name)){
+                                      game.setScreen(new GameScreen(game,session,p));
+                                      return;
+                                  }
+                              }
+                           }
+                       } catch (RemoteException e) {
+                           e.printStackTrace();
+                       }
+
+                   }
+
                 try {
                     session.setName(tID.getText());
 
