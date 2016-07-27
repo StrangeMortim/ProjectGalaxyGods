@@ -1246,7 +1246,7 @@ public class GameScreen implements Screen, InputProcessor{
                         if(heal2){
                             pe.load(Gdx.files.internal("assets/sprites/heal2.party"), Gdx.files.internal("assets/sprites/"));
                             pe.getEmitters().first().setPosition(((Hero) selected).getField().getXPos() * 100 + 50, ((Hero) selected).getField().getYPos() * 100 + 50);
-                            pe.setDuration(1);
+                            pe.setDuration(1/2);
                             pe.scaleEffect(2);
                             pe.start();
                             new Heal2((Unit)selected,(Unit)selected,player, uArray).execute();
