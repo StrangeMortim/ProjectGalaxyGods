@@ -175,8 +175,16 @@ public class Base extends Unit implements IBase,Serializable {
     public boolean createUnit(UnitType type) {
         if(avaibleUnits.contains(type))
         {
+            int[] cost = null;
+            try {
+                if(owner.hasReducedUnitCosts())
+                    cost = type.getReducedCost();
+                else
+                 cost = type.getRessourceCost();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
 
-            int[] cost = type.getRessourceCost();
             int[] ressourcesAvailable = owner.getRessources();
 
             //Check if enough ressources, if not return result(null)

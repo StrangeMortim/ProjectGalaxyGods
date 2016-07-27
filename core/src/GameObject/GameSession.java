@@ -180,6 +180,14 @@ public class GameSession implements IGameSession, Serializable{
         buffs.addAll(b);
     }
 
+    @Override
+    public void addSingleBuff(Buff b) throws RemoteException {
+        if(b == null)
+            throw new IllegalArgumentException("Buff ist null - addSingleBuff");
+
+        buffs.add(b);
+    }
+
     /**
      * Entfernt Buff aus der Liste von Buffs.
      * @param b Buff der entfernt werden soll.

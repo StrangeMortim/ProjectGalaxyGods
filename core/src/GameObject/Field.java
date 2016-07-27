@@ -5,6 +5,7 @@ import Player.Player;
 import com.badlogic.gdx.graphics.Texture;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -180,28 +181,35 @@ public class Field implements IField,Serializable {
      */
     @Override
     public boolean buildBase(Player player) {
-        if(current == null && !hasMine){
-            int[] baseCost = UnitType.BASE.getRessourceCost();
-            int[] availableRessources = player.getRessources();
-            //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
-            for(int j = Constants.WOOD; j<=Constants.MANA; ++j)
-                if (baseCost[j] > availableRessources[j])
-                    return false;
+        if(player == null)
+            throw new IllegalArgumentException("Player is null in Buildbase");
 
-            List<Unit> nearUnits = this.getNearUnits();
-            for(Unit u: nearUnits){
-                if(u.getOwner() == player){
-                    baseBuilding = true;
-                    roundsRemain = UnitType.BASE.getRecruitingTime();
-                    //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
-                    for(int k = Constants.WOOD; k<=Constants.MANA; ++k)
-                        player.getRessources()[k] -= baseCost[k];
+        try {
+            if(current == null && !hasMine && player.getTechTree().isCultureFull()){
+                int[] baseCost = UnitType.BASE.getRessourceCost();
+                int[] availableRessources = player.getRessources();
+                //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
+                for(int j = Constants.WOOD; j<=Constants.MANA; ++j)
+                    if (baseCost[j] > availableRessources[j])
+                        return false;
 
-                    builder = player;
-                    walkable = false;
-                    return true;
+                List<Unit> nearUnits = this.getNearUnits();
+                for(Unit u: nearUnits){
+                    if(u.getOwner() == player){
+                        baseBuilding = true;
+                        roundsRemain = UnitType.BASE.getRecruitingTime();
+                        //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
+                        for(int k = Constants.WOOD; k<=Constants.MANA; ++k)
+                            player.getRessources()[k] -= baseCost[k];
+
+                        builder = player;
+                        walkable = false;
+                        return true;
+                    }
                 }
             }
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
         /*TODO check*/
         return false;

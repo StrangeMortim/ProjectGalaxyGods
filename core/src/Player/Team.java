@@ -3,6 +3,7 @@ package Player;
 import chat.Chat;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.List;
 
 /**
@@ -22,6 +23,13 @@ public class Team implements ITeam,Serializable {
             throw new IllegalArgumentException("Players is null or color is empty");
 
         this.players = players;
+        for(Player p: this.players)
+            try {
+                p.setTeam(this);
+                chat.addParticipant(p);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         this.color = color;
     }
 

@@ -17,12 +17,13 @@ public class Player implements IPlayer,Serializable {
     private int[] ressources = new int[]{Constants.PLAYER_START_WOOD,Constants.PLAYER_START_IRON,Constants.PLAYER_START_GOLD,Constants.PLAYER_START_MANA};
     private int[] ressourcesBoni = new int[4];
     private TechnologyTree tree = new TechnologyTree();
-    private Boolean turn = false;
+    private boolean turn = false;
     private Account account;
-    private Boolean market = false;
+    private boolean market = false;
     private List<Research> permaBuffs = new ArrayList<>();
     private List<Research> avaibleTemporaryBuffs = new ArrayList<>();
     private Team team;
+    private boolean hasReducedUnitCosts = false;
 
     public Player(Account acc){
         if(acc == null)
@@ -89,7 +90,7 @@ public class Player implements IPlayer,Serializable {
     }
 
     @Override
-    public void setTurn(Boolean isTurn) {
+    public void setTurn(boolean isTurn) {
         this.turn = isTurn;
     }
 
@@ -109,7 +110,7 @@ public class Player implements IPlayer,Serializable {
     }
 
     @Override
-    public void setMarket(Boolean access) {
+    public void setMarket(boolean access) {
         this.market = access;
     }
 
@@ -146,6 +147,16 @@ public class Player implements IPlayer,Serializable {
     @Override
     public void setTeam(Team t) throws RemoteException {
         this.team=t;
+    }
+
+    @Override
+    public void setReducedUnitCost(boolean reducedUnitCost) throws RemoteException {
+        this.hasReducedUnitCosts = reducedUnitCost;
+    }
+
+    @Override
+    public boolean hasReducedUnitCosts() throws RemoteException {
+        return hasReducedUnitCosts;
     }
 
 

@@ -27,4 +27,5 @@ public interface IUnitType extends Remote {
     public String getSpriteName()throws RemoteException;
     public int getRecruitingTime()throws RemoteException;
     public int[] getRessourceCost()throws RemoteException;
+    public int[] getReducedCost() throws RemoteException;
 }
