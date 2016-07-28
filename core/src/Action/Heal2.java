@@ -4,8 +4,6 @@ import GameObject.Constants;
 import GameObject.Unit;
 import Player.Player;
 
-import java.util.ArrayList;
-
 /**
  * Created by benja_000 on 21.07.2016.
  */
@@ -28,19 +26,15 @@ public class Heal2 extends Action{
      */
     @Override
     public boolean execute() {
-  if(target.getCurrentHp()==target.getMaxHp()||target.getOwner()!=player||player.getRessources()[Constants.MANA]<30){return false;}
-         target.setCurrentHp(target.getMaxHp());
+  if(target.getCurrentHp()==target.getMaxHp()||target.getOwner()!=player||player.getRessources()[Constants.MANA]< BuffInfo.HEAL.getBuffCost()[Constants.MANA]){return false;}
+        // target.setCurrentHp(target.getCurrentHp() + BuffInfo.HEAL.getPower()); //wird schon bei Heal1 gemacht
        if(additionalTargets!=null)
         for(Unit u :additionalTargets){
             if(u.getOwner()==player) {
-             if(u.getMaxHp()>u.getCurrentHp()+20) {
-                 u.setCurrentHp(u.getCurrentHp() + 20);
-             }else{
-              u.setCurrentHp(u.getMaxHp());
-             }
+                 u.setCurrentHp(u.getCurrentHp() + BuffInfo.HEAL.getPower());
             }
         }
-        player.getRessources()[Constants.MANA]-=30;
+        player.getRessources()[Constants.MANA]-= BuffInfo.HEAL.getBuffCost()[Constants.MANA];
         return true;
     }
 }

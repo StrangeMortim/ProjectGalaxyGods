@@ -94,7 +94,7 @@ public class Base extends Unit implements IBase,Serializable {
         Buff current = null;
         Unit currentUnit = null;
                 if(toRegister.isPermanet()){
-                    current = new Buff(null, null, owner);
+                    current = new Buff(null, null, owner, toRegister.getInfo());
                     current.setSource(toRegister);
                     for(Field[] fArray: tmp){
                         for(Field f: fArray){
@@ -111,7 +111,7 @@ public class Base extends Unit implements IBase,Serializable {
                         for(Field f: fArray){
                             currentUnit = f.getCurrent();
                             if(currentUnit != null){
-                                current = new Buff(currentUnit,null,owner);
+                                current = new Buff(currentUnit,null,owner, toRegister.getInfo());
                                 current.setSource(toRegister);
                                 result.add(current);
                             }

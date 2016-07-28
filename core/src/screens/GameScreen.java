@@ -1,8 +1,6 @@
 package screens;
 
-import Action.Heal2;
-import Action.Buff;
-import Action.ReduceUnitCosts;
+import Action.*;
 import GameObject.*;
 import GameObject.Field;
 import Player.*;
@@ -56,6 +54,8 @@ public class GameScreen implements Screen, InputProcessor{
     int[][] fields = new int[26][24];
     ShapeRenderer shapeRenderer = new ShapeRenderer();
     private Table table;
+    private boolean archerOrBuff = false;
+    private boolean spearfighterOrBuff = false;
 
     //region Chat
     private Table chatTable;
@@ -290,13 +290,23 @@ public class GameScreen implements Screen, InputProcessor{
                         selectionUpLeft.setTouchable(Touchable.enabled);
                         selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
                         selectionUpRight.setVisible(true);
-                        selectionUpRight.setText("anderer Buff oder so");
+                        selectionUpRight.setText("Schildkroetenstil");
                         selectionUpRight.getStyle().up = skin.getDrawable("defaultIcon");
                         selectionDownLeft.setVisible(true);
+
+                        if(archerOrBuff)
+                            selectionDownLeft.setText("Fernkampfstil");
+                        else
                         selectionDownLeft.setText("Bogenschuetze erforschen");
+
                         selectionDownLeft.getStyle().up = skin.getDrawable("defaultIcon");
                         selectionDownRight.setVisible(true);
+
+                        if(spearfighterOrBuff)
+                            selectionDownRight.setText("Hornissenstil");
+                        else
                         selectionDownRight.setText("Speerkaempfer erforschen");
+
                         selectionDownRight.getStyle().up = skin.getDrawable("defaultIcon");
                     } else  {
                         selectionUpLeft.setVisible(true);
@@ -1300,8 +1310,15 @@ public class GameScreen implements Screen, InputProcessor{
             public void clicked(InputEvent event, float x, float y) {
                 if(selected instanceof Base){
                     if(baseRecruitButtons){
-                        ((Base)selected).createUnit(UnitType.SPEARFIGHTER);
+                        System.out.println(((Base)selected).createUnit(UnitType.SPEARFIGHTER));
                     } else if(laborEntered) {
+                        try {
+                            Buff tmp = new EmpowerShield(player.getHero(),null,player);
+                            session.addSingleBuff(tmp);
+                        tmp.execute();
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
                         System.out.println("UpRight in Labor");
                     }else{
                             if(((Base)selected).getCaserneRoundsRemaining() == Constants.FINISHED) {
@@ -1339,6 +1356,20 @@ public class GameScreen implements Screen, InputProcessor{
                     if(baseRecruitButtons){
                         ((Base)selected).createUnit(UnitType.ARCHER);
                     } else if(laborEntered){
+                        if(archerOrBuff){
+                            try {
+                                Buff tmp = new Buff(null,null,player, BuffInfo.RANGED_STYLE);
+                                session.addSingleBuff(tmp);
+                                tmp.execute();
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
+                        }else {
+                            if(Research.RESEARCH_ARCHER.research((Base) selected)) {
+                                archerOrBuff = true;
+                                unrendered = true;
+                            }
+                        }
                         System.out.println("DownLeft in Labor");
                     }
                 } else if (selected instanceof Hero){
@@ -1360,6 +1391,20 @@ public class GameScreen implements Screen, InputProcessor{
                     if(baseRecruitButtons){
                         ((Base)selected).createUnit(UnitType.WORKER);
                     } else if(laborEntered) {
+                        if(spearfighterOrBuff){
+                            try {
+                                Buff tmp = new Buff(null,null,player, BuffInfo.HORNET_STYLE);
+                                session.addSingleBuff(tmp);
+                                tmp.execute();
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
+                        }else {
+                            if(Research.RESEARCH_SPEARFIGHTER.research((Base) selected)) {
+                                spearfighterOrBuff = true;
+                                unrendered = true;
+                            }
+                        }
                         System.out.println("DownRIght in Labor");
                     }else {
                             try {

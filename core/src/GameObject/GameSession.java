@@ -117,13 +117,13 @@ public class GameSession implements IGameSession, Serializable{
     public void registerUnit(Unit u) {
         Buff tmp = null;
         for(Research r: u.getOwner().getPermaBuffs()){
-            tmp = new Buff(u, null, u.getOwner());
+            tmp = new Buff(u, null, u.getOwner(),r.getInfo());
             tmp.setSource(r);
             tmp.execute();
         }
 
         for(Research r2: u.getOwner().getTemporaryBuffs()){
-            tmp = new Buff(u, null, u.getOwner());
+            tmp = new Buff(u, null, u.getOwner(),r2.getInfo());
             tmp.setSource(r2);
             buffs.add(tmp);
             /*TODO use global turn counter?*/

@@ -1,6 +1,7 @@
 package Player;
 
 
+import GameObject.Hero;
 import GameObject.Research;
 
 import java.rmi.Remote;
@@ -51,4 +52,8 @@ public interface IPlayer extends Remote {
     public void setReducedUnitCost(boolean reducedUnitCost) throws RemoteException;
 
     public boolean hasReducedUnitCosts() throws RemoteException;
+
+    public void setHero(Hero hero) throws RemoteException;
+
+    public Hero getHero() throws RemoteException;
 }

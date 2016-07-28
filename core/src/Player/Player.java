@@ -1,6 +1,7 @@
 package Player;
 
 import GameObject.Constants;
+import GameObject.Hero;
 import GameObject.Research;
 
 import java.io.Serializable;
@@ -24,6 +25,7 @@ public class Player implements IPlayer,Serializable {
     private List<Research> avaibleTemporaryBuffs = new ArrayList<>();
     private Team team;
     private boolean hasReducedUnitCosts = false;
+    private Hero hero;
 
     public Player(Account acc){
         if(acc == null)
@@ -157,6 +159,16 @@ public class Player implements IPlayer,Serializable {
     @Override
     public boolean hasReducedUnitCosts() throws RemoteException {
         return hasReducedUnitCosts;
+    }
+
+    @Override
+    public void setHero(Hero hero) throws RemoteException {
+        this.hero = hero;
+    }
+
+    @Override
+    public Hero getHero() throws RemoteException {
+        return hero;
     }
 
 

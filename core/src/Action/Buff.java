@@ -18,9 +18,19 @@ public class Buff extends Action implements IBuff{
     protected int range;
     protected int movePoints;
     protected boolean firstTime = true;
+    protected BuffInfo info;
 
-    public Buff(Unit origin, Unit target, Player player) {
+    public Buff(Unit origin, Unit target, Player player, BuffInfo info) {
         super(origin, target, player);
+
+        permanent = info.isPermanent();
+        roundsLeft = info.getRounds();
+        atk = info.getAtk();
+        def = info.getDef();
+        hp = info.getHp();
+        range = info.getRange();
+        movePoints = info.getMovepoints();
+        this.info = info;
     }
 
     @Override
@@ -80,7 +90,7 @@ public class Buff extends Action implements IBuff{
 
     @Override
     public Buff getPersonalCopy(Unit u){
-        Buff result = new Buff(u, null, this.player);
+        Buff result = new Buff(u, null, this.player,BuffInfo.NONE);
         result.setSource(this.source);
         result.setRoundsLeft(this.roundsLeft);
         result.setGameSession(this.buffParent);
@@ -208,5 +218,10 @@ public class Buff extends Action implements IBuff{
     @Override
     public void setFirstTime(boolean firstTime){
         this.firstTime = firstTime;
+    }
+
+    @Override
+    public BuffInfo getBuffInfo(){
+        return info;
     }
 }

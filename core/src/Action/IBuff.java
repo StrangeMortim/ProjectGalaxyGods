@@ -55,4 +55,6 @@ public interface IBuff extends Remote {
     public Buff getPersonalCopy(Unit u)throws RemoteException;
 
     public void setFirstTime(boolean firstTime)throws RemoteException;
+
+    public BuffInfo getBuffInfo() throws RemoteException;
 }
