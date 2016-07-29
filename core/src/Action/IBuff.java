@@ -8,6 +8,7 @@ import GameObject.UnitType;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 public interface IBuff extends Remote {
 
@@ -16,7 +17,7 @@ public interface IBuff extends Remote {
      */
     public void setPermanent(Boolean permanent)throws RemoteException;
 
-    public Boolean getPermanent()throws RemoteException;
+    public boolean isPermanent()throws RemoteException;
 
     public void setRoundsLeft(int rounds)throws RemoteException;
 
@@ -46,15 +47,17 @@ public interface IBuff extends Remote {
 
     public GameSession getGameSession()throws RemoteException;
 
-    public void setSource(Research source)throws RemoteException;
+    public void setSource(Buff source)throws RemoteException;
 
     public Research getSource()throws RemoteException;
 
-    public boolean appliesForUnit(UnitType unit)throws RemoteException;
+    public boolean appliesForUnit(Unit unit)throws RemoteException;
 
     public Buff getPersonalCopy(Unit u)throws RemoteException;
 
     public void setFirstTime(boolean firstTime)throws RemoteException;
 
     public BuffInfo getBuffInfo() throws RemoteException;
+
+    public List<UnitType> getTargets() throws RemoteException;
 }

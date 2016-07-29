@@ -67,18 +67,22 @@ public class Base extends Unit implements IBase,Serializable {
         /*TODO add research*/
         //count all researches down and if finished add them to the return list
         it = researching.entrySet().iterator();
-        Research current = null;
+        Buff current = null;
         while (it.hasNext()){
             Map.Entry<Research,Integer> entry = (Map.Entry)it.next();
             entry.setValue(entry.getValue()-1);
             if(entry.getValue() <= Constants.FINISHED){
-                current = entry.getKey();
-                if(current.isPermanet()) {
+                current = new Buff(null,null,owner,entry.getKey().getInfo());
+                if(current.isPermanent()) {
                     owner.getPermaBuffs().add(current);
                 } else {
                     owner.getTemporaryBuffs().add(current);
                 }
-                result.addAll(this.registerNewBuff(current));
+                try {
+                    currentField.getMap().getSession().registerBuff(current);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
                 //result.add(entry.getKey());
                 it.remove();  //remove if finished
             }
@@ -87,7 +91,8 @@ public class Base extends Unit implements IBase,Serializable {
         return result;
     }
 
-    private List<Buff> registerNewBuff(Research toRegister){
+    //region Deprecated
+  /*  private List<Buff> registerNewBuff(Research toRegister){
         Field tmp[][] = currentField.getMap().getFields();
         List<Buff> result = new ArrayList<>();
 
@@ -120,7 +125,8 @@ public class Base extends Unit implements IBase,Serializable {
                 }
         return result;
 
-    }
+    }*/
+    //endregion
 
     /**
      * Hilfsmethode zum spawnen von einheiten, iteriert solange durch bis ein freies feld gefunden wurde

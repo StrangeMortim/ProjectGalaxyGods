@@ -11,14 +11,14 @@ public class Shield extends Buff {
 
 
     public Shield(Hero origin, Unit target, Player player) {
-        super(origin, target, player, BuffInfo.NONE);
+        super(origin, target, player, BuffInfo.SHIELD);
         def = BuffInfo.SHIELD.getPower();
         roundsLeft = BuffInfo.SHIELD.getRounds();//TODO enum benutzen
     }
 
     @Override
     public boolean execute() {
-        Buff bu= new Buff(origin,target,player,BuffInfo.NONE);
+        Buff bu= new Buff(origin,target,player,BuffInfo.SHIELD);
         bu.setDef(this.def);
         bu.setRoundsLeft(this.roundsLeft);
         try {
@@ -26,5 +26,10 @@ public class Shield extends Buff {
             bu.execute();
         }catch (Exception e){return false;}
             return true;
+    }
+
+    @Override
+    public boolean appliesForUnit(Unit unit){
+        return unit instanceof Hero && unit.getOwner() == player;
     }
 }

@@ -1245,8 +1245,7 @@ public class GameScreen implements Screen, InputProcessor{
                     } else if(laborEntered) {
                         try {
                             Buff tmp = new ReduceUnitCosts(null,null,player);
-                            session.addSingleBuff(tmp);
-                            tmp.execute();
+                            session.registerBuff(tmp);
                         } catch (RemoteException e) {
                             e.printStackTrace();
                         }
@@ -1260,7 +1259,7 @@ public class GameScreen implements Screen, InputProcessor{
                             else
                                 ((Base) selected).buildLab();
 
-                            unrendered = true;
+
                         }
                 } else if (selected instanceof Hero){
                    if(((Hero)selected).getLeftHand().execute())
@@ -1295,13 +1294,13 @@ public class GameScreen implements Screen, InputProcessor{
                             pe.scaleEffect(2);
                             pe.start();
                             new Heal2((Unit)selected,(Unit)selected,player, uArray).execute();
-                        }
-                    unrendered=true;}
+                        }}
                 } else if(selected instanceof  Field){
                     ((Field)selected).buildMine(player);
                 } else {
                     System.out.println(selected.getClass().getName());
                 }
+                unrendered = true;
             }
         });
 
@@ -1314,8 +1313,7 @@ public class GameScreen implements Screen, InputProcessor{
                     } else if(laborEntered) {
                         try {
                             Buff tmp = new EmpowerShield(player.getHero(),null,player);
-                            session.addSingleBuff(tmp);
-                        tmp.execute();
+                            session.registerBuff(tmp);
                         } catch (RemoteException e) {
                             e.printStackTrace();
                         }
@@ -1329,7 +1327,7 @@ public class GameScreen implements Screen, InputProcessor{
                             else
                                 ((Base)selected).buildCaserne();
 
-                            unrendered = true;
+
                         }
                 } else if (selected instanceof Hero){
                     if(((Hero)selected).getRightHand().execute())
@@ -1339,13 +1337,13 @@ public class GameScreen implements Screen, InputProcessor{
                         shield.getEmitters().first().setPosition(((Hero) selected).getField().getXPos() * 100 + 50, ((Hero) selected).getField().getYPos() * 100 + 50);
                         shield.scaleEffect(2);
 
-                        shield.start();
-                        unrendered=true;}
+                        shield.start();}
                 } else if(selected instanceof  Field){
                     ((Field)selected).buildBase(player);
                 }else {
                     System.out.println(selected.getClass().getName());
                 }
+                unrendered = true;
             }
         });
 
@@ -1359,15 +1357,13 @@ public class GameScreen implements Screen, InputProcessor{
                         if(archerOrBuff){
                             try {
                                 Buff tmp = new Buff(null,null,player, BuffInfo.RANGED_STYLE);
-                                session.addSingleBuff(tmp);
-                                tmp.execute();
+                                session.registerBuff(tmp);
                             } catch (RemoteException e) {
                                 e.printStackTrace();
                             }
                         }else {
                             if(Research.RESEARCH_ARCHER.research((Base) selected)) {
                                 archerOrBuff = true;
-                                unrendered = true;
                             }
                         }
                         System.out.println("DownLeft in Labor");
@@ -1381,6 +1377,7 @@ public class GameScreen implements Screen, InputProcessor{
                 }else {
                     System.out.println(selected.getClass().getName());
                 }
+                unrendered = true;
             }
         });
 
@@ -1394,15 +1391,13 @@ public class GameScreen implements Screen, InputProcessor{
                         if(spearfighterOrBuff){
                             try {
                                 Buff tmp = new Buff(null,null,player, BuffInfo.HORNET_STYLE);
-                                session.addSingleBuff(tmp);
-                                tmp.execute();
+                                session.registerBuff(tmp);
                             } catch (RemoteException e) {
                                 e.printStackTrace();
                             }
                         }else {
                             if(Research.RESEARCH_SPEARFIGHTER.research((Base) selected)) {
                                 spearfighterOrBuff = true;
-                                unrendered = true;
                             }
                         }
                         System.out.println("DownRIght in Labor");
@@ -1426,6 +1421,7 @@ public class GameScreen implements Screen, InputProcessor{
                 }else {
                     System.out.println(selected.getClass().getName());
                 }
+                unrendered = true;
             }
         });
         //endregion

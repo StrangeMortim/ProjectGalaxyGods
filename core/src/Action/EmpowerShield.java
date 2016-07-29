@@ -9,7 +9,7 @@ import Player.Player;
  */
 public class EmpowerShield extends Buff {
     public EmpowerShield(Hero origin, Unit target, Player player) {
-        super(origin, target, player, BuffInfo.NONE);
+        super(origin, target, player, BuffInfo.EMPOWER_SHIELD);
         roundsLeft = BuffInfo.EMPOWER_SHIELD.getRounds();
     }
 
@@ -21,6 +21,7 @@ public class EmpowerShield extends Buff {
 
             if(firstTime){
                 ((Shield)tmp).setDef(BuffInfo.SHIELD.getPower() + BuffInfo.EMPOWER_SHIELD.getPower());
+                firstTime = false;
             }
 
             roundsLeft--;
@@ -34,5 +35,10 @@ public class EmpowerShield extends Buff {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean appliesForUnit(Unit unit){
+        return unit instanceof Hero && unit.getOwner() == player;
     }
 }
