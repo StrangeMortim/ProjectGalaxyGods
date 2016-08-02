@@ -83,7 +83,7 @@ public class Unit implements IUnit,Serializable {
 
     @Override
     public void setCurrentHp(int currentHp) {
-        this.currentHp = currentHp;
+        this.currentHp = currentHp>maxHp ? maxHp : currentHp;
     }
 
     @Override

@@ -1,6 +1,8 @@
 package Player;
 
 
+import Action.Buff;
+import GameObject.Hero;
 import GameObject.Research;
 
 import java.rmi.Remote;
@@ -36,13 +38,13 @@ public interface IPlayer extends Remote {
 
     public Boolean getMarket()throws RemoteException;
 
-    public void setPermaBuffs(List<Research> permaBuffs)throws RemoteException;
+    public void setPermaBuffs(List<Buff> permaBuffs)throws RemoteException;
 
-    public List<Research> getPermaBuffs()throws RemoteException;
+    public List<Buff> getPermaBuffs()throws RemoteException;
 
-    public void setTemporaryBuffs(List<Research> temporaryBuffs)throws RemoteException;
+    public void setTemporaryBuffs(List<Buff> temporaryBuffs)throws RemoteException;
 
-    public List<Research> getTemporaryBuffs()throws RemoteException;
+    public List<Buff> getTemporaryBuffs()throws RemoteException;
 
     public Team getTeam()throws RemoteException;
 
@@ -51,4 +53,12 @@ public interface IPlayer extends Remote {
     public void setReducedUnitCost(boolean reducedUnitCost) throws RemoteException;
 
     public boolean hasReducedUnitCosts() throws RemoteException;
+
+    public void setHero(Hero hero) throws RemoteException;
+
+    public Hero getHero() throws RemoteException;
+
+    public void addPermaBuff(Buff b) throws RemoteException;
+
+    public void addTemporaryBuff(Buff b) throws RemoteException;
 }

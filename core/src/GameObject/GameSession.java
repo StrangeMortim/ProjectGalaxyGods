@@ -43,7 +43,7 @@ public class GameSession implements IGameSession, Serializable{
     /**
      * Liste mit Buffs, die aktiv sind.
      */
-    private List<Buff>buffs;
+    private List<Buff> buffs;
     /**
      * Liste mit den Accounts und zugehoerigen Spielern.
      */
@@ -92,7 +92,7 @@ public class GameSession implements IGameSession, Serializable{
     public GameSession(){
         identities = new HashMap<>();
         market = new Market();
-        buffs = new ArrayList<>();
+        buffs  = new ArrayList<Buff>();
         teams = new ArrayList<>();
         currentTurn = new ActionProcessor(this);
         sessionChat = new Chat();
@@ -107,6 +107,22 @@ public class GameSession implements IGameSession, Serializable{
     @Override
     public void update(){
         level.update();
+
+        Iterator<Buff> it = buffs.iterator();
+        while (it.hasNext())
+            if(it.next().execute())
+                it.remove();
+
+        for(Team t: teams)
+            for(Player p: t.getPlayers()){
+                it = p.getTemporaryBuffs().iterator();
+                while (it.hasNext())
+                    if(it.next().execute())
+                        it.remove();
+            }
+
+        //Currently not used
+        buffs.addAll(currentTurn.execute());
     }
 
     /**
@@ -116,16 +132,15 @@ public class GameSession implements IGameSession, Serializable{
     @Override
     public void registerUnit(Unit u) {
         Buff tmp = null;
-        for(Research r: u.getOwner().getPermaBuffs()){
-            tmp = new Buff(u, null, u.getOwner());
-            tmp.setSource(r);
+        for(Buff b: u.getOwner().getPermaBuffs()){
+            tmp = b.getPersonalCopy(u);
             tmp.execute();
         }
 
-        for(Research r2: u.getOwner().getTemporaryBuffs()){
-            tmp = new Buff(u, null, u.getOwner());
-            tmp.setSource(r2);
+        for(Buff b2: u.getOwner().getTemporaryBuffs()){
+            tmp = b2.getPersonalCopy(u);
             buffs.add(tmp);
+            tmp.execute();
             /*TODO use global turn counter?*/
         }
     }
@@ -348,6 +363,51 @@ public class GameSession implements IGameSession, Serializable{
     @Override
     public void setNumberOfPlayers(int number) throws RemoteException {
        numberOfPlayers=number;
+    }
+
+    @Override
+    public boolean registerBuff(Buff b) throws RemoteException {
+        Field tmp[][] = level.getFields();
+
+        for(int i=Constants.WOOD; i<=Constants.MANA; ++i)
+           if(b.getPlayer().getRessources()[i] < b.getBuffInfo().getBuffCost()[i])
+               return false;
+
+        for(int j=Constants.WOOD; j<=Constants.MANA;++j)
+            b.getPlayer().getRessources()[j] -= b.getBuffInfo().getBuffCost()[j];
+
+        if(b.getClass().isAssignableFrom(Buff.class)) {
+            Buff current = null;
+            Unit currentUnit = null;
+            if (b.isPermanent()) {
+                b.getPlayer().addPermaBuff(b);
+                for (Field[] fArray : tmp) {
+                    for (Field f : fArray) {
+                        currentUnit = f.getCurrent();
+                        if (currentUnit != null && b.appliesForUnit(currentUnit)) {
+                            current = b.getPersonalCopy(currentUnit);
+                            current.execute();
+                        }
+                    }
+                }
+            } else {
+                b.getPlayer().addTemporaryBuff(b);
+                for (Field[] fArray : tmp) {
+                    for (Field f : fArray) {
+                        currentUnit = f.getCurrent();
+                        if (currentUnit != null && b.appliesForUnit(currentUnit)) {
+                            current = b.getPersonalCopy(currentUnit);
+                            current.execute();
+                            buffs.add(current);
+                        }
+                    }
+                }
+            }
+        } else {
+            b.execute();
+        }
+
+        return true;
     }
 
     public Chat getSessionChat()throws RemoteException {

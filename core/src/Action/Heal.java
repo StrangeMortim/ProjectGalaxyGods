@@ -23,9 +23,10 @@ public class Heal extends Action{
      */
     @Override
     public boolean execute() {
-  if(target.getCurrentHp()==target.getMaxHp()||target.getOwner()!=player||player.getRessources()[Constants.MANA]<30){return false;}
-         target.setCurrentHp(target.getMaxHp());
-        player.getRessources()[Constants.MANA]-=30;
+        //HEAL costs only mana
+  if(target.getCurrentHp()==target.getMaxHp()||target.getOwner()!=player||player.getRessources()[Constants.MANA]< BuffInfo.HEAL.getBuffCost()[Constants.MANA]){return false;}
+         target.setCurrentHp(target.getCurrentHp()+ BuffInfo.HEAL.getPower());
+        player.getRessources()[Constants.MANA]-= BuffInfo.HEAL.getBuffCost()[Constants.MANA];
         return true;
     }
 }

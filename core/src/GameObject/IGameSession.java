@@ -97,4 +97,6 @@ public interface IGameSession extends Remote {
 
     public void setNumberOfPlayers(int number)throws RemoteException;
 
+    public boolean registerBuff(Buff b) throws RemoteException;
+
 }

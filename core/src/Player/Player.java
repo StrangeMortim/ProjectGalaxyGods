@@ -1,6 +1,8 @@
 package Player;
 
+import Action.Buff;
 import GameObject.Constants;
+import GameObject.Hero;
 import GameObject.Research;
 
 import java.io.Serializable;
@@ -20,10 +22,11 @@ public class Player implements IPlayer,Serializable {
     private boolean turn = false;
     private Account account;
     private boolean market = false;
-    private List<Research> permaBuffs = new ArrayList<>();
-    private List<Research> avaibleTemporaryBuffs = new ArrayList<>();
+    private List<Buff> permaBuffs = new ArrayList<>();
+    private List<Buff> avaibleTemporaryBuffs = new ArrayList<>();
     private Team team;
     private boolean hasReducedUnitCosts = false;
+    private Hero hero;
 
     public Player(Account acc){
         if(acc == null)
@@ -120,22 +123,22 @@ public class Player implements IPlayer,Serializable {
     }
 
     @Override
-    public void setPermaBuffs(List<Research> permaBuffs) {
+    public void setPermaBuffs(List<Buff> permaBuffs) {
         this.permaBuffs = permaBuffs;
     }
 
     @Override
-    public List<Research> getPermaBuffs() {
+    public List<Buff> getPermaBuffs() {
         return permaBuffs;
     }
 
     @Override
-    public void setTemporaryBuffs(List<Research> temporaryBuffs) {
+    public void setTemporaryBuffs(List<Buff> temporaryBuffs) {
         this.avaibleTemporaryBuffs = temporaryBuffs;
     }
 
     @Override
-    public List<Research> getTemporaryBuffs() {
+    public List<Buff> getTemporaryBuffs() {
         return avaibleTemporaryBuffs;
     }
 
@@ -157,6 +160,28 @@ public class Player implements IPlayer,Serializable {
     @Override
     public boolean hasReducedUnitCosts() throws RemoteException {
         return hasReducedUnitCosts;
+    }
+
+    @Override
+    public void setHero(Hero hero) throws RemoteException {
+        this.hero = hero;
+    }
+
+    @Override
+    public Hero getHero() throws RemoteException {
+        return hero;
+    }
+
+    @Override
+    public void addPermaBuff(Buff b) throws RemoteException {
+        if(b != null && !permaBuffs.contains(b))
+            permaBuffs.add(b);
+    }
+
+    @Override
+    public void addTemporaryBuff(Buff b) throws RemoteException {
+        if(b != null)
+            avaibleTemporaryBuffs.add(b);
     }
 
 

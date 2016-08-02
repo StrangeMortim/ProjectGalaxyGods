@@ -4,6 +4,7 @@ import Action.Action;
 import Player.Player;
 import Action.*;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 
 /**
  * Created by Fabi on 11.06.2016.
@@ -17,6 +18,11 @@ public class Hero extends Unit implements IHero,Serializable {
 
     public Hero(UnitType type, Player owner, String name) {
         super(type, owner);
+        try {
+            owner.setHero(this);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
 
         if(name.equals(""))
             throw new IllegalArgumentException("You must name your hero");

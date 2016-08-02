@@ -3,6 +3,7 @@ package Action;
 import GameObject.*;
 import Player.Player;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 public class Buff extends Action implements IBuff{
@@ -18,13 +19,42 @@ public class Buff extends Action implements IBuff{
     protected int range;
     protected int movePoints;
     protected boolean firstTime = true;
+    protected BuffInfo info;
 
-    public Buff(Unit origin, Unit target, Player player) {
+    public Buff(Unit origin, Unit target, Player player, BuffInfo info) {
         super(origin, target, player);
+
+        permanent = info.isPermanent();
+        roundsLeft = info.getRounds();
+        atk = info.getAtk();
+        def = info.getDef();
+        hp = info.getHp();
+        range = info.getRange();
+        movePoints = info.getMovepoints();
+        this.info = info;
     }
 
     @Override
     public boolean execute(){
+
+               /*
+        if the buff is not permanent, count down the remaining rounds
+        and if they reach 0, remove all the values an return true, so it can be removed
+         */
+        if(!permanent && !firstTime) {
+            roundsLeft--;
+            if(roundsLeft <= 0){
+                if(origin != null){
+                    origin.setAtk(origin.getAtk()-this.atk);
+                    origin.setDef(origin.getDef()-this.def);
+                    origin.setMaxHp(origin.getMaxHp()-this.hp);
+                    origin.setRange(origin.getRange()-this.range);
+                    origin.setMovePoints(origin.getMovePoints()-this.movePoints);
+                }
+                return true;
+            }
+        }
+
         //if first time executed, do stuff
         if(firstTime){//TODO: check Null
 
@@ -33,11 +63,10 @@ public class Buff extends Action implements IBuff{
             returns true after that because once it's done, the buff can be removed
              */
             if(atk == 0 && def == 0 && hp == 0 && range == 0 && movePoints == 0){
-                if(origin != null && origin instanceof Base) {
+                if(origin != null && origin instanceof Base && appliesFor != null) {
                     ((Base) origin).getAvaibleUnits().add(appliesFor.get(0));
                     return true;
-                }else
-                    throw new IllegalArgumentException("A research buff must be create from a not null Base");
+                }
             } else {
                //usual case, buff applies it's values
                 if(origin != null){
@@ -48,27 +77,7 @@ public class Buff extends Action implements IBuff{
                     origin.setMovePoints(origin.getMovePoints()+this.movePoints);
                     firstTime = false;   //set to false so it's not done again
                 } else {
-                    throw new IllegalArgumentException("Origin is null");
-                }
-            }
-        }
-
-        /*
-        if the buff is not permanent, count down the remaining rounds
-        and if they reach 0, remove all the values an return true, so it can be removed
-         */
-        if(!permanent) {
-            roundsLeft--;
-            if(roundsLeft <= 0){
-                if(origin != null){
-                    origin.setAtk(origin.getAtk()-this.atk);
-                    origin.setDef(origin.getDef()-this.def);
-                    origin.setMaxHp(origin.getMaxHp()-this.hp);
-                    origin.setRange(origin.getRange()-this.range);
-                    origin.setMovePoints(origin.getMovePoints()-this.movePoints);
                     return true;
-                } else {
-                    throw new IllegalArgumentException("Origin is null");
                 }
             }
         }
@@ -80,8 +89,8 @@ public class Buff extends Action implements IBuff{
 
     @Override
     public Buff getPersonalCopy(Unit u){
-        Buff result = new Buff(u, null, this.player);
-        result.setSource(this.source);
+        Buff result = new Buff(u, null, this.player,BuffInfo.NONE);
+        result.setSource(this);
         result.setRoundsLeft(this.roundsLeft);
         result.setGameSession(this.buffParent);
 
@@ -99,7 +108,7 @@ public class Buff extends Action implements IBuff{
     }
 
     @Override
-    public Boolean getPermanent() {
+    public boolean isPermanent() {
         return permanent;
     }
 
@@ -175,19 +184,17 @@ public class Buff extends Action implements IBuff{
 
     //sets all the values according to the given research
     @Override
-    public void setSource(Research source) {
-            this.source = source;
-            this.permanent = source.isPermanet();
+    public void setSource(Buff source) {
+            this.permanent = source.isPermanent();
 
-            int[] modifier = source.getValues();
-            this.atk = modifier[0];
-            this.def = modifier[1];
-            this.hp = modifier[2];
-            this.range = modifier[3];
-            this.movePoints = modifier[4];
-            this.roundsLeft = modifier[5];
+            this.atk = source.getAtk();
+            this.def = source.getDef();
+            this.hp = source.getHp();
+            this.range = source.getRange();
+            this.movePoints = source.getMovePoints();
+            this.roundsLeft = source.getRoundsLeft();
 
-            this.appliesFor = source.getTargets();
+            this.appliesFor = source.appliesFor;
         /*TODO absolut und relativ werte verarbeiten?*/
     }
 
@@ -198,15 +205,22 @@ public class Buff extends Action implements IBuff{
 
     //checks if this buff applies for a unit
     @Override
-    public boolean appliesForUnit(UnitType unit){
-        if(this.appliesFor == null)
-            return true;
-        else
-            return this.appliesFor.contains(unit);
+    public boolean appliesForUnit(Unit unit){
+        return (player == unit.getOwner() && (appliesFor == null || appliesFor.contains(unit.getType())) && unit.getType() != UnitType.BASE);
     }
 
     @Override
     public void setFirstTime(boolean firstTime){
         this.firstTime = firstTime;
+    }
+
+    @Override
+    public BuffInfo getBuffInfo(){
+        return info;
+    }
+
+    @Override
+    public List<UnitType> getTargets() throws RemoteException {
+        return appliesFor;
     }
 }
