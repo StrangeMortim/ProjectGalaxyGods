@@ -19,11 +19,12 @@ public class ReduceUnitCosts extends Buff {
     @Override
     public boolean execute(){
         for(int i = Constants.WOOD; i<=Constants.MANA; ++i)
-            if(player.getRessources()[i] < BuffInfo.REDUCED_UNIT_COST.getBuffCost()[i])
+            if(player.getRessources()[i] < (BuffInfo.REDUCED_UNIT_COST.getBuffCost()[i]-player.getRessourceBoni()[i]))
                 return true;
 
-        for(int i=Constants.WOOD; i<Constants.MANA; ++i)
-            player.getRessources()[i] -= BuffInfo.REDUCED_UNIT_COST.getBuffCost()[i];
+        for(int i=Constants.WOOD; i<=Constants.MANA; ++i)
+            player.getRessources()[i] -= (BuffInfo.REDUCED_UNIT_COST.getBuffCost()[i] - player.getRessourceBoni()[i]);
+
 
         if(firstTime)
             try {

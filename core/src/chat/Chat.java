@@ -32,12 +32,15 @@ public class Chat implements ChatInterface,Serializable {
 
     public Chat(){  }
 
-    public void addMessage(String player, String msg) throws RemoteException{
+    public void addMessage(Player player, String msg) throws RemoteException{
         if(player == null)
             throw new IllegalArgumentException("addMessage: Player is null");
 
+        if(!participants.contains(player) || readOnly.contains(player))
+            throw new IllegalArgumentException("Spieler ist nicht zum Schreiben berechtigt");
+
         Message m = new Message();
-        m.SetContent(player +": "+ msg);
+        m.SetContent(player.getAccount().getName() +": "+ msg);
         backLog.add(m);
     }
 
@@ -89,6 +92,14 @@ public class Chat implements ChatInterface,Serializable {
          throw new IllegalArgumentException("blockPlayer: player is null");
 
         readOnly.add(p);
+    }
+
+    @Override
+    public void unblockPlayer(Player p) throws RemoteException {
+        if(p == null)
+            throw new IllegalArgumentException("blockPlayer: player is null");
+
+        readOnly.remove(p);
     }
 
     /**

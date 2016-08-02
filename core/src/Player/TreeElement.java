@@ -80,35 +80,35 @@ public enum TreeElement implements ITreeElement {
     public int[] getRessourceCosts(){
         switch (this) {
             case STEEL1:
-                return new int[]{0, 0, 0, 0};
+                return new int[]{5, 5, 0, 0};
             case STEEL2:
-                return new int[]{0, 0, 0, 0};
+                return new int[]{5, 5, 0, 0};
             case STEEL3:
-                return new int[]{0, 0, 0, 0};
+                return new int[]{5, 5, 0, 0};
             case STEEL4:
-                return new int[]{0, 0, 0, 0};
+                return new int[]{5, 5, 0, 0};
             case STEEL5:
-                return new int[]{0, 0, 0, 0};
+                return new int[]{5, 5, 0, 0};
             case MAGIC1:
-                return new int[]{0, 0, 0, 0};
+                return new int[]{0, 0, 5, 0};
             case MAGIC2:
-                return new int[]{0, 0, 0, 0};
+                return new int[]{0, 0, 5, 0};
             case MAGIC3:
-                return new int[]{0, 0, 0, 0};
+                return new int[]{0, 0, 5, 0};
             case MAGIC4:
-                return new int[]{0, 0, 0, 0};
+                return new int[]{0, 0, 5, 0};
             case MAGIC5:
-                return new int[]{0, 0, 0, 0};
+                return new int[]{0, 0, 5, 0};
             case CULTURE1:
-                return new int[]{0, 0, 0, 0};
+                return new int[]{0, 0, 0, 5};
             case CULTURE2:
-                return new int[]{0, 0, 0, 0};
+                return new int[]{0, 0, 0, 5};
             case CULTURE3:
-                return new int[]{0, 0, 0, 0};
+                return new int[]{0, 0, 0, 5};
             case CULTURE4:
-                return new int[]{0, 0, 0, 0};
+                return new int[]{0, 0, 0, 5};
             case CULTURE5:
-                return new int[]{0, 0, 0, 0};
+                return new int[]{0, 0, 0, 5};
             default:
                 return new int[4];
         }

@@ -1,4 +1,4 @@
-package tests;
+package tests.ServerTest;
 
 
 import GameObject.GameSession;

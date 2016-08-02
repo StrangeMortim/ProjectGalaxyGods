@@ -30,9 +30,9 @@ public interface IMarket extends Remote {
     public boolean sell(Player p, int type, int amount)throws RemoteException;
 
     //Getter Setter
-    public void setIron(int price)throws RemoteException;
+    public void setIron(int amount)throws RemoteException;
     public int getIron() throws RemoteException;
-    public void setWood(int price)throws RemoteException;
+    public void setWood(int amount)throws RemoteException;
     public int getWood() throws RemoteException;
     public int ironPrice()throws RemoteException;
     public int woodPrice()throws RemoteException;

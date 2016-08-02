@@ -1,5 +1,6 @@
 package Action;
 
+import GameObject.Constants;
 import GameObject.Hero;
 import GameObject.Unit;
 import Player.Player;
@@ -18,6 +19,13 @@ public class Shield extends Buff {
 
     @Override
     public boolean execute() {
+        for(int i = Constants.WOOD; i<=Constants.MANA; ++i)
+            if(player.getRessources()[i] < (BuffInfo.SHIELD.getBuffCost()[i]-player.getRessourceBoni()[i]))
+                return false;
+
+        for(int i=Constants.WOOD; i<=Constants.MANA; ++i)
+            player.getRessources()[i] -= (BuffInfo.SHIELD.getBuffCost()[i] - player.getRessourceBoni()[i]);
+
         Buff bu= new Buff(origin,target,player,BuffInfo.SHIELD);
         bu.setDef(this.def);
         bu.setRoundsLeft(this.roundsLeft);

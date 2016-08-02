@@ -18,7 +18,7 @@ public interface ChatInterface extends Remote{
      * @param msg Inhalt der Nachricht
      * @throws RemoteException
      */
-    public void addMessage(String player, String msg) throws RemoteException;
+    public void addMessage(Player player, String msg) throws RemoteException;
     /**
      * Diese Methode ermoeglicht das Loeschen einer Nachricht.
      * @param m zu loeschende Message
@@ -40,6 +40,8 @@ public interface ChatInterface extends Remote{
      * @param p zu blockierender Spieler
      */
     public void blockPlayer(Player p)throws RemoteException;
+
+    public void unblockPlayer(Player p) throws RemoteException;
     /**
      * Loescht den Chat.
      */

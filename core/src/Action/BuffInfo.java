@@ -27,7 +27,7 @@ public enum BuffInfo implements IBuffInfo {
     public int getRounds(){
         switch (this){
             case REDUCED_UNIT_COST:
-                return 20;
+                return 3;
             case SHIELD:
                 return 2;
             case EMPOWER_SHIELD:

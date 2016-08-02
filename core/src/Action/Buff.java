@@ -4,13 +4,14 @@ import GameObject.*;
 import Player.Player;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Buff extends Action implements IBuff{
 
     protected GameSession buffParent = null;      //the game session where this buff belongs to
     protected Research source;                   //the research which this buff realizes
-    protected List<UnitType> appliesFor = null; //contains all unit types which get a bonus, null equals 'ALL'
+    protected List<UnitType> appliesFor = new ArrayList<>(); //contains all unit types which get a bonus, null equals 'ALL'
     protected boolean permanent;
     protected int roundsLeft;
     protected int atk;
@@ -206,7 +207,7 @@ public class Buff extends Action implements IBuff{
     //checks if this buff applies for a unit
     @Override
     public boolean appliesForUnit(Unit unit){
-        return (player == unit.getOwner() && (appliesFor == null || appliesFor.contains(unit.getType())) && unit.getType() != UnitType.BASE);
+        return (player == unit.getOwner() && (appliesFor.isEmpty() || appliesFor.contains(unit.getType())) && unit.getType() != UnitType.BASE);
     }
 
     @Override

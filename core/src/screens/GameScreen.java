@@ -1753,9 +1753,9 @@ public class GameScreen implements Screen, InputProcessor{
             public void clicked(InputEvent event, float x, float y){
                 try{
                     if(showTeamChat)
-                        player.getTeam().getChat().addMessage(player.getAccount().getName(), messageField.getText());
+                        player.getTeam().getChat().addMessage(player, messageField.getText());
                     else
-                    session.getSessionChat().addMessage(player.getAccount().getName(), messageField.getText());
+                    session.getSessionChat().addMessage(player, messageField.getText());
 
                     messageField.setText("");
                 }catch (RemoteException e){
@@ -1770,9 +1770,9 @@ public class GameScreen implements Screen, InputProcessor{
                 if(c == '\n' || c == '\r'){
                     try{
                         if(showTeamChat)
-                            player.getTeam().getChat().addMessage(player.getAccount().getName(), messageField.getText());
+                            player.getTeam().getChat().addMessage(player, messageField.getText());
                         else
-                            session.getSessionChat().addMessage(player.getAccount().getName(), messageField.getText());
+                            session.getSessionChat().addMessage(player, messageField.getText());
 
                         messageField.setText("");
                     }catch (RemoteException e){

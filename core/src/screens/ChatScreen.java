@@ -138,7 +138,7 @@ public class ChatScreen implements Screen{
 
 
         playB.setPosition(Gdx.graphics.getWidth()/2 - Gdx.graphics.getWidth()/8 , 300);
-        button.addListener(new ClickListener(){
+      /*  button.addListener(new ClickListener(){
                                @Override
                                public void clicked(InputEvent event, float x, float y){
 
@@ -147,7 +147,7 @@ public class ChatScreen implements Screen{
                     liste[i]=(String)chatMessagesList.getItems().get(i);
                 }
                 liste[liste.length-1]=textMessage.getText();
-                chatMessagesList.setItems(liste);*/
+                chatMessagesList.setItems(liste);/
 
                                    if(chat != null) {
                                        try {
@@ -161,7 +161,7 @@ public class ChatScreen implements Screen{
                                }
                            }
 
-        );
+        );*/
 
 
 

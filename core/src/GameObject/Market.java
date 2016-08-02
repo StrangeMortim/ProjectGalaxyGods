@@ -117,8 +117,8 @@ public class Market implements IMarket,Serializable{
 
     //Getter Setter
     @Override
-    public void setIron(int price) {
-iron=price;
+    public void setIron(int amount) {
+iron=amount;
     }
 
     @Override
@@ -127,8 +127,8 @@ iron=price;
     }
 
     @Override
-    public void setWood(int price) {
-wood=price;
+    public void setWood(int amount) {
+wood=amount;
     }
 
     @Override
