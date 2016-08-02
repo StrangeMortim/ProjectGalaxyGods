@@ -10,7 +10,7 @@ import java.util.Random;
 
 public class Map implements IMap,Serializable {
 
-    private static final long serialVersionUID = 1069218016788334349L;
+  //  private static final long serialVersionUID = 1069218016788334349L;
     private Field[][] fields = new Field[Constants.FIELDXLENGTH][Constants.FIELDYLENGTH];
     private int maxPlayers = 4;
     private int minPlayers = 2;

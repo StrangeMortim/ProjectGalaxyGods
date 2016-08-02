@@ -11,7 +11,7 @@ import java.rmi.RemoteException;
  */
 public class Market implements IMarket,Serializable{
 
-    private static final long serialVersionUID = -8470908004440665355L;
+   // private static final long serialVersionUID = -8470908004440665355L;
     /**
      *  Verfügbares Holz.
      */
