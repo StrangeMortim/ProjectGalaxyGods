@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class GameSession implements IGameSession, Serializable{
 
-    private static final long serialVersionUID = -3697414040192093513L;
+   // private static final long serialVersionUID = -3697414040192093513L;
     /**
      * Name der GameSession.
      */

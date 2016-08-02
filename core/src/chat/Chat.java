@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class Chat implements ChatInterface,Serializable {
 
-    private static final long serialVersionUID = 1987963162254788571L;
+   // private static final long serialVersionUID = 1987963162254788571L;
     /**
      * Nachrichtenverlauf dieses Chats.
      */

@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class Message implements IMessage,Serializable {
 
-    private static final long serialVersionUID = -7904810564348423122L;
+  //  private static final long serialVersionUID = -7904810564348423122L;
     /**
      * Inhalt der Nachricht.
      */

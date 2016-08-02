@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class Base extends Unit implements IBase,Serializable {
 
-    private static final long serialVersionUID = 5924482865156690756L;
+   // private static final long serialVersionUID = 5924482865156690756L;
 
     private int labRoundsRemaining=Constants.NONE_OR_NOT_SET;
     private int caserneRoundsRemaining=Constants.NONE_OR_NOT_SET;
