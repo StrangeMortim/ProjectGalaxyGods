@@ -867,7 +867,7 @@ public class GameScreen implements Screen, InputProcessor{
             lastMessageCountGeneral = session.getSessionChat().getBacklog().size();
             lastMessageCountTeam = player.getTeam().getChat().getBacklog().size();
             session.getSessionChat().addParticipant(player); //TODO rausnehmen nicht vergessen
-        } catch (RemoteException e){
+        } catch (Exception e){
             System.out.println(e.getMessage());
         }
 

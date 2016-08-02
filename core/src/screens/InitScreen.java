@@ -101,7 +101,7 @@ public class InitScreen implements Screen {
         sTeam    = new SelectBox<>(skin);
         sSpieler = new SelectBox<>(skin);
         sRunden  = new SelectBox<>(skin);
-        sTeam.setItems((Object[]) new String[]{"Rot", "Blau", "Schwarz", "Weiss"});
+        sTeam.setItems((Object[]) new String[]{"Rot", "Blau"});
         sSpieler.setItems((Object[]) new String[]{"2", "3", "4"});
         sRunden.setItems((Object[]) new String[]{"15", "20", "30", "40", "50", "75", "100", "Endlos"});
         sTeam.setVisible(false);
@@ -163,17 +163,21 @@ public class InitScreen implements Screen {
                     ArrayList<Player> players = new ArrayList<Player>();
                     Account account = new Account(name,password);
                     Player player= new Player(account);
-                    if(!players.contains(player))
-                    players.add(player);
                    /////////////////////////////////////////////////////////////////////////////////////////
                     if(lastCheck) {
                         if(session.getTeams().size()>0) {
                             for (Team t : session.getTeams()) {
-                                if (t.getColor().equals(sTeam.getSelected().toString())) {
-                                    t.getPlayers().add(player);
+                                if (t.getColor().equals(sTeam.getSelected().toString())&&!t.getPlayers().contains(player)) {
+                                    session.playerJoin(account,player,t);
                                 }
                             }
-                        }else{session.addTeam(new Team(players,sTeam.getSelected().toString()));}
+                        }else{session.addTeam(new Team(players,sTeam.getSelected().toString()));
+                            for (Team t : session.getTeams()) {
+                                if (t.getColor().equals(sTeam.getSelected().toString())&&!t.getPlayers().contains(player)) {
+                                    session.playerJoin(account,player,t);
+                                }
+                            }
+                        }
                         stub.saveSession(session);
                         game.setScreen(new GameScreen(game,session,player));
                     }

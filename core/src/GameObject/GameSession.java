@@ -96,7 +96,9 @@ public class GameSession implements IGameSession, Serializable{
         teams = new ArrayList<>();
         currentTurn = new ActionProcessor(this);
         sessionChat = new Chat();
-
+        ArrayList<Player> players= new ArrayList<>();
+        teams.add(new Team(players,"Rot"));
+        teams.add(new Team(players,"Blau"));
             level = new Map("NoName", 4, 2, this);
             level.init();
     }
@@ -268,7 +270,7 @@ public class GameSession implements IGameSession, Serializable{
      * @return true, wenn er hinzugefuegt werden konnte, sonst false.
      */
     @Override
-    public Player playerJoin(Account a, Player p, Team t, int playerPos) {
+    public Player playerJoin(Account a, Player p, Team t) {
         if(a == null)
             throw new IllegalArgumentException("Account ist null");
 
@@ -276,20 +278,30 @@ public class GameSession implements IGameSession, Serializable{
             return identities.get(a);
         else if(p == null || t == null)
             throw new IllegalArgumentException("Player or Team is null");
-
+        int pCounter=0;
         for(Team t2: teams){
+            for(Player pCount:t2.getPlayers()){
+                pCounter++;
+            }
             if(t2 == t){
+                try {
+                    p.setTeam(t2);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
                 t2.getPlayers().add(p);
                 identities.put(a, p);
-                level.addBase(p, playerPos);
+                level.addBase(p, pCounter);
                 return p;
             }
+
         }
 
         teams.add(t);
         t.getPlayers().add(p);
+
         identities.put(a, p);
-        level.addBase(p, playerPos);
+        level.addBase(p, pCounter);
         return p;
     }
 
@@ -409,6 +421,7 @@ public class GameSession implements IGameSession, Serializable{
 
         return true;
     }
+
 
     public Chat getSessionChat()throws RemoteException {
         return sessionChat;

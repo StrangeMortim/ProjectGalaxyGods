@@ -71,7 +71,7 @@ public interface IGameSession extends Remote {
      * @param t
      * @return
      */
-    public Player playerJoin(Account a, Player p, Team t, int playerPos)throws RemoteException;
+    public Player playerJoin(Account a, Player p, Team t)throws RemoteException;
     /**
      *
      * @param p

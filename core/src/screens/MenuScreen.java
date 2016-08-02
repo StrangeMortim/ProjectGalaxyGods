@@ -131,15 +131,15 @@ public class MenuScreen implements Screen{
                 Player p4 = new Player(acc4);
                 t2.add(p4);
 
-                tmp.playerJoin(acc1, p1, teamRot, 0);
-                tmp.playerJoin(acc3, p3, teamRot, 2);
-                tmp.playerJoin(acc4, p4, teamBlau, 3);
+                tmp.playerJoin(acc1, p1, teamRot);
+                tmp.playerJoin(acc3, p3, teamRot);
+                tmp.playerJoin(acc4, p4, teamBlau);
                 try {
                     tmp.setActive(p2);
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-                game.setScreen(new GameScreen(game, tmp, tmp.playerJoin(acc2, p2, teamBlau, 1) ));
+                game.setScreen(new GameScreen(game, tmp, tmp.playerJoin(acc2, p2, teamBlau) ));
             }});
 
 
