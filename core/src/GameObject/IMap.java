@@ -57,7 +57,7 @@ public interface IMap extends Remote {
 
     public String getLevelName()throws RemoteException;
 
-    public GameSession getSession()throws RemoteException;
+    public IGameSession getSession()throws RemoteException;
 
     public boolean addBase(Player player, int playerNumber);
 

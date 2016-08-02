@@ -3,6 +3,7 @@ package screens;
 import Action.*;
 import GameObject.*;
 import GameObject.Field;
+import GameObject.Map;
 import Player.*;
 import chat.Chat;
 import chat.Message;
@@ -40,7 +41,7 @@ import java.util.List;
 public class GameScreen implements Screen, InputProcessor{
 
     private Game game;
-    private GameSession session;
+    private IGameSession session;
     private Field[][] map = null;
     private boolean unrendered = true;
     private Object selected;
@@ -150,7 +151,7 @@ public class GameScreen implements Screen, InputProcessor{
     ParticleEffect pe; //For fighting scenes
     ParticleEffect shield;
 
-    public  GameScreen(Game game, GameSession session, Player player){
+    public  GameScreen(Game game, IGameSession session, Player player){
 
         this.player=player;
         batch=new SpriteBatch();
@@ -167,7 +168,7 @@ public class GameScreen implements Screen, InputProcessor{
         camera.setToOrtho(false,x,y);
 
         try{
-            map = session.getMap().getFields();
+            map = ((IMap)session.getMap()).getFields();
 //TODO: Irgendwann entfernen
             Unit testUnit = new Unit(UnitType.SPEARFIGHTER, this.player);
             testUnit.setMovePointsLeft(8);
@@ -192,6 +193,8 @@ public class GameScreen implements Screen, InputProcessor{
             for(int i=0;i<Constants.FIELDXLENGTH;++i)
                 for(int j=0;j<Constants.FIELDYLENGTH;++j)
                     fields[i][j] = r.nextInt(2);
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
 
 
@@ -367,7 +370,7 @@ public class GameScreen implements Screen, InputProcessor{
                     selectionDownRight.setVisible(false);
                 }
             }
-        unrendered = false;
+        unrendered = true;
 
 
         }catch(Exception e){
@@ -716,7 +719,11 @@ public class GameScreen implements Screen, InputProcessor{
         debug.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-               session.showSessionDetails();
+                try {
+                    session.showSessionDetails();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
         });
         optionTable.add(einstellungen);

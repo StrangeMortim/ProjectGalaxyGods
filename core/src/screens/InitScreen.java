@@ -1,6 +1,7 @@
 package screens;
 
 import GameObject.GameSession;
+import GameObject.IGameSession;
 import Player.*;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
  */
 public class InitScreen implements Screen {
     private Game game;
-    private GameSession session;
+    private IGameSession session;
     private Stage stage;
     private Skin skin;
     private Sprite backGround;
@@ -52,7 +53,7 @@ public class InitScreen implements Screen {
     private boolean lastCheck=false;
 
 
-    public InitScreen(Game game, GameSession session){
+    public InitScreen(Game game, IGameSession session){
         this.session=session;
         this.game=game;
 
@@ -107,14 +108,13 @@ public class InitScreen implements Screen {
         sTeam.setVisible(false);
 
         if(session!=null){
-            bApply.setText("Spielen");
             try {
+                bApply.setText("Spielen");
                 tID.setText(session.getName());
                 tPW.setText(session.getPassword());
-                sRunden.setItems((Object[]) new String[]{session.getTurn()+""});
-                sSpieler.setItems((Object[]) new String[]{session.getMaxPlayersPerTeam()+""});
-
-            } catch (RemoteException e) {
+                sRunden.setItems((Object[]) new String[]{session.getTurn() + ""});
+                sSpieler.setItems((Object[]) new String[]{session.getMaxPlayersPerTeam() + ""});
+            } catch (RemoteException e){
                 e.printStackTrace();
             }
             tID.setDisabled(true);
@@ -133,25 +133,37 @@ public class InitScreen implements Screen {
         boolean endlos = bApply.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-               if(session==null) {session = new GameSession();}
+               if(session==null) {
+                   try {
+                       String name = stub.createSession(tID.getText());
+                       if(!name.equals(""))
+                       session = (IGameSession)reg.lookup(name);
+                   } catch (RemoteException e) {
+                       e.printStackTrace();
+                       return;
+                   } catch (NotBoundException e) {
+                       e.printStackTrace();
+                       return;
+                   }
+               }
                    if(lastCheck){
                        try {
-                           for(Team t : session.getTeams()){
-                              for(Player p: t.getPlayers()){
-                                  if(p.getAccount().getName().equals(name)){
-                                      game.setScreen(new GameScreen(game,session,p));
-                                      return;
-                                  }
-                              }
+                           for (Team t : session.getTeams()) {
+                               for (Player p : t.getPlayers()) {
+                                   if (p.getAccount().getName().equals(name)) {
+                                       game.setScreen(new GameScreen(game, session, p));
+                                       return;
+                                   }
+                               }
                            }
-                       } catch (RemoteException e) {
+                       } catch (RemoteException e){
                            e.printStackTrace();
                        }
 
                    }
 
                 try {
-                    session.setName(tID.getText());
+                    //session.setName(tID.getText());
 
                     session.setPassword(tPW.getText());
                     if (!sRunden.getSelected().toString().equals("Endlos")) {

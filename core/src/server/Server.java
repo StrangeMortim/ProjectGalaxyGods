@@ -1,13 +1,18 @@
 package server;
 
 import GameObject.GameSession;
+import GameObject.IGameSession;
 import chat.Chat;
 import chat.ChatInterface;
 
+import java.rmi.AccessException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Fabi on 07.05.2016.
@@ -15,6 +20,7 @@ import java.rmi.server.UnicastRemoteObject;
 public class Server implements ServerInterface {
 
     static Registry reg;
+    private List<GameSession> sessions = new ArrayList<>();
 
 
     public  Server(){}
@@ -52,8 +58,30 @@ public class Server implements ServerInterface {
      * @return
      */
     @Override
-    public GameSession loadSession(String sessionName) throws RemoteException {
-        return new DBManager().loadSession(sessionName);
+    public IGameSession loadSession(String sessionName){
+        try{
+            return (IGameSession)reg.lookup(sessionName);
+        } catch (NotBoundException e) {
+            GameSession tmp = new DBManager().loadSession(sessionName);
+            sessions.add(tmp);
+            try {
+                IGameSession stub = (IGameSession) UnicastRemoteObject.exportObject(tmp, 0);
+                reg.rebind(sessionName,stub);
+                return (IGameSession)reg.lookup(sessionName);
+            } catch (NotBoundException e1) {
+                e1.printStackTrace();
+                System.out.println("LoadSession: rebind of GameSession seems to not have worked");
+            } catch (AccessException e1) {
+                e1.printStackTrace();
+            } catch (RemoteException e1) {
+                e1.printStackTrace();
+            }
+        } catch (AccessException e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -63,8 +91,35 @@ public class Server implements ServerInterface {
      * @return true ,wenn das Speichern funktioniert hat, sonst false.
      */
     @Override
-    public boolean saveSession(GameSession session) throws RemoteException {
-        return new DBManager().saveSession(session);
+    public boolean saveSession(IGameSession session) {
+        for(GameSession s: sessions)
+            try {
+                if(s.getName().equals(session.getName()))
+                         return new DBManager().saveSession(s);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
+        return false;
+    }
+
+    @Override
+    public String createSession(String name){
+        GameSession tmp = new GameSession();
+        tmp.setName(name);
+        if(new DBManager().saveSession(tmp)){
+            sessions.add(tmp);
+            IGameSession stub = null;
+            try {
+                stub = (IGameSession) UnicastRemoteObject.exportObject(tmp, 0);
+                reg.rebind(name,stub);
+                return name;
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return "";
     }
 
     /**

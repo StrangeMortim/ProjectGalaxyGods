@@ -6,6 +6,7 @@ import chat.*;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -91,12 +92,71 @@ public interface IGameSession extends Remote {
     /**
      * Getter für die Map
      */
-    public Map getMap()throws RemoteException;
+    public IMap getMap()throws RemoteException;
 
     public int getNumberOfPlayers()throws RemoteException;
 
     public void setNumberOfPlayers(int number)throws RemoteException;
 
     public boolean registerBuff(Buff b) throws RemoteException;
+
+    public String getName() throws RemoteException;
+
+    public void setName(String name) throws RemoteException;
+
+    public String getPassword() throws RemoteException;
+
+    public Market getMarket() throws RemoteException;
+
+    public Player getActive() throws RemoteException;
+
+    public void setActive(Player p) throws RemoteException;
+
+    public List<Buff> getBuffs() throws RemoteException;
+
+    public List<Team> getTeams() throws RemoteException;
+
+    public boolean isHasStarted() throws RemoteException;
+
+    public void setHasStarted(boolean b) throws RemoteException;
+
+    public Chat getSessionChat() throws RemoteException;
+
+    public void showSessionDetails() throws RemoteException;
+
+    public void setSessionChat(Chat sessionChat)throws RemoteException;
+
+    public int getTurn()throws RemoteException;
+
+    public void setTurn(int turn)throws RemoteException;
+
+    public int getMaxPlayersPerTeam()throws RemoteException;
+
+    public void setMaxPlayersPerTeam(int maxPlayersPerTeam)throws RemoteException;
+
+    public void setTeams(List<Team> teams)throws RemoteException;
+
+    public IMap getLevel()throws RemoteException;
+
+    public void setLevel(Map level)throws RemoteException;
+
+    public void setBuffs(List<Buff> buffs)throws RemoteException;
+
+    public HashMap<Account, Player> getIdentities()throws RemoteException;
+
+    public void setIdentities(HashMap<Account, Player> identities)throws RemoteException;
+
+    public ActionProcessor getCurrentTurn()throws RemoteException;
+
+    public void setCurrentTurn(ActionProcessor currentTurn)throws RemoteException;
+
+    public void setMarket(Market market)throws RemoteException;
+
+    public void setPassword(String password) throws RemoteException;
+
+    public int getRound() throws RemoteException;
+
+    public void setRound(int round) throws RemoteException;
+
 
 }

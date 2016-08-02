@@ -36,12 +36,13 @@ public class Movement extends Action implements IMovement{
 
     @Override
     public boolean execute(){
-        Field originField = origin.getField();
+    /*    Field originField = origin.getField();
         Field destination = parent.getSession().getMap().getField(originField.getXPos()+xAmount, originField.getYPos()+yAmount);
         originField.setCurrent(null);
         destination.setCurrent(origin);
 
-        return true;
+        return true;*/
         /* TODO validate action in screens(using map.checkMovement with destination position)*/
+        return true;
     }
 }

@@ -15,7 +15,7 @@ public class Map implements IMap,Serializable {
     private int maxPlayers = 4;
     private int minPlayers = 2;
     private String levelName = "";
-    private GameSession session = null;
+    private IGameSession session = null;
     private int currentPlayers = 0;
     private int[] baseXPositions = new int[]{12, 12, 1, 23};
     private int[] baseYPositions = new int[]{2,22,13,13};
@@ -271,7 +271,7 @@ public class Map implements IMap,Serializable {
     }
 
     @Override
-    public GameSession getSession(){
+    public IGameSession getSession(){
         return this.session;
     }
 

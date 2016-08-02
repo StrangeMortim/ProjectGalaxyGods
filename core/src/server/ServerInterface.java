@@ -1,6 +1,7 @@
 package server;
 
 import GameObject.GameSession;
+import GameObject.IGameSession;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -25,14 +26,17 @@ public interface ServerInterface extends Remote{
      * @param sessionName Name der GameSession
      * @return
      */
-    public GameSession loadSession(String sessionName) throws RemoteException;
+    public IGameSession loadSession(String sessionName) throws RemoteException;
 
     /**
      * Speichert eine GameSession.
      * @param session GameSession die gespeichert werdenn soll
      * @return true ,wenn das Speichern funktioniert hat, sonst false.
      */
-    public boolean saveSession(GameSession session) throws RemoteException;
+    public boolean saveSession(IGameSession session) throws RemoteException;
+
+    public String createSession(String name) throws RemoteException;
+
 
     /**
      * Diese Methode realisiert die Registration eines neuen Accounts.

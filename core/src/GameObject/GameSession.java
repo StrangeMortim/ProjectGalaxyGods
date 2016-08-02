@@ -35,7 +35,7 @@ public class GameSession implements IGameSession, Serializable{
     /**
      * Realisiert das Spielfeld.
      */
-    private Map level;
+    private IMap level;
     /**
      * Spieler der am Zug ist.
      */
@@ -100,7 +100,11 @@ public class GameSession implements IGameSession, Serializable{
         teams.add(new Team(players,"Rot"));
         teams.add(new Team(players,"Blau"));
             level = new Map("NoName", 4, 2, this);
+        try {
             level.init();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -108,7 +112,11 @@ public class GameSession implements IGameSession, Serializable{
      */
     @Override
     public void update(){
-        level.update();
+        try {
+            level.update();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
 
         Iterator<Buff> it = buffs.iterator();
         while (it.hasNext())
@@ -193,6 +201,7 @@ public class GameSession implements IGameSession, Serializable{
      * Fuegt dem Spiel eine Liste von Buffs hinzu.
      * @param b Liste von Buffs, die hinzugefuegt werden sollen.
      */
+    @Override
     public void addBuffs(List<Buff> b){
         buffs.addAll(b);
     }
@@ -209,6 +218,7 @@ public class GameSession implements IGameSession, Serializable{
      * Entfernt Buff aus der Liste von Buffs.
      * @param b Buff der entfernt werden soll.
      */
+    @Override
     public void removeBuff(Buff b){
         buffs.remove(b);
     }
@@ -216,6 +226,7 @@ public class GameSession implements IGameSession, Serializable{
     /**
      * Leitet alle noetigen Schritte fuer den Beginn eines Zuges ein.
      */
+    @Override
     public void startTurn(){
 
     };
@@ -223,7 +234,8 @@ public class GameSession implements IGameSession, Serializable{
     /**
      * Leitet alle noetigen Schritte fuer das Beenden eines Zuges ein.
      */
-    public void finishTurn(Player p)throws RemoteException{
+    @Override
+    public void finishTurn(Player p){
         if(p == active) {
             List<Player> player = new ArrayList<>();
             for(Team t:teams){player.addAll(t.getPlayers());}
@@ -236,8 +248,13 @@ public class GameSession implements IGameSession, Serializable{
                 player.get(index).getRessources()[Constants.GOLD] += Constants.GOLD_RES_VALUE + player.get(index).getRessourceBoni()[Constants.GOLD];
 
             update();
-            finish();
-            save();
+            try {
+                finish();
+                save();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
             turn++;
         }
     }
@@ -253,12 +270,16 @@ public class GameSession implements IGameSession, Serializable{
                 t.getPlayers().remove(p);
             }
         }
-        for(Field[] f:level.getFields()){
-            for(Field f2 :f){
-                if(f2.getCurrent().getOwner()==p){
-                    f2.setCurrent(null);
+        try {
+            for(Field[] f:level.getFields()){
+                for(Field f2 :f){
+                    if(f2.getCurrent().getOwner()==p){
+                        f2.setCurrent(null);
+                    }
                 }
             }
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 
@@ -305,6 +326,7 @@ public class GameSession implements IGameSession, Serializable{
         return p;
     }
 
+    @Override
     public void showSessionDetails(){
         GameSession session=this;
 
@@ -363,7 +385,7 @@ public class GameSession implements IGameSession, Serializable{
 
     //Getter Setter
     @Override
-    public Map getMap() {
+    public IMap getMap() {
         return level;
     }
 
@@ -422,101 +444,124 @@ public class GameSession implements IGameSession, Serializable{
         return true;
     }
 
-
+    @Override
     public Chat getSessionChat()throws RemoteException {
         return sessionChat;
     }
 
-    public void setSessionChat(Chat sessionChat)throws RemoteException {
+    @Override
+    public void setSessionChat(Chat sessionChat) {
         this.sessionChat = sessionChat;
     }
 
-    public int getTurn()throws RemoteException {
+    @Override
+    public int getTurn() {
         return turn;
     }
 
-    public void setTurn(int turn)throws RemoteException {
+    @Override
+    public void setTurn(int turn){
         this.turn = turn;
     }
 
-    public boolean isHasStarted()throws RemoteException {
+    @Override
+    public boolean isHasStarted(){
         return hasStarted;
     }
 
-    public void setHasStarted(boolean hasStarted)throws RemoteException {
+    @Override
+    public void setHasStarted(boolean hasStarted){
         this.hasStarted = hasStarted;
     }
 
-    public int getMaxPlayersPerTeam()throws RemoteException {
+    @Override
+    public int getMaxPlayersPerTeam(){
         return maxPlayersPerTeam;
     }
 
-    public void setMaxPlayersPerTeam(int maxPlayersPerTeam)throws RemoteException {
+    @Override
+    public void setMaxPlayersPerTeam(int maxPlayersPerTeam) {
         this.maxPlayersPerTeam = maxPlayersPerTeam;
     }
 
-    public List<Team> getTeams()throws RemoteException {
+    @Override
+    public List<Team> getTeams(){
         return teams;
     }
 
-    public void setTeams(List<Team> teams)throws RemoteException {
+    @Override
+    public void setTeams(List<Team> teams)  {
         this.teams = teams;
     }
 
-    public Map getLevel()throws RemoteException {
+    @Override
+    public IMap getLevel() {
         return level;
     }
 
-    public void setLevel(Map level)throws RemoteException {
+    @Override
+    public void setLevel(Map level) {
         this.level = level;
     }
 
-    public Player getActive()throws RemoteException {
+    @Override
+    public Player getActive(){
         return active;
     }
 
-    public void setActive(Player active)throws RemoteException {
+    @Override
+    public void setActive(Player active){
         this.active = active;
         active.setTurn(true);
     }
 
-    public List<Buff> getBuffs()throws RemoteException {
+    @Override
+    public List<Buff> getBuffs(){
         return buffs;
     }
 
-    public void setBuffs(List<Buff> buffs)throws RemoteException {
+    @Override
+    public void setBuffs(List<Buff> buffs) {
         this.buffs = buffs;
     }
 
-    public HashMap<Account, Player> getIdentities()throws RemoteException {
+    @Override
+    public HashMap<Account, Player> getIdentities()  {
         return identities;
     }
 
-    public void setIdentities(HashMap<Account, Player> identities)throws RemoteException {
+    @Override
+    public void setIdentities(HashMap<Account, Player> identities) {
         this.identities = identities;
     }
 
-    public ActionProcessor getCurrentTurn()throws RemoteException {
+    @Override
+    public ActionProcessor getCurrentTurn() {
         return currentTurn;
     }
 
-    public void setCurrentTurn(ActionProcessor currentTurn)throws RemoteException {
+    @Override
+    public void setCurrentTurn(ActionProcessor currentTurn) {
         this.currentTurn = currentTurn;
     }
 
-    public Market getMarket()throws RemoteException {
+    @Override
+    public Market getMarket(){
         return market;
     }
 
-    public void setMarket(Market market)throws RemoteException {
+    @Override
+    public void setMarket(Market market) {
         this.market = market;
     }
 
-    public String getName()throws RemoteException {
+    @Override
+    public String getName() {
         return name;
     }
 
-    public void setName(String name)throws RemoteException {
+    @Override
+    public void setName(String name){
         if(name.length()>100){
             this.name=name.substring(0,99);
         }else{
@@ -524,18 +569,22 @@ public class GameSession implements IGameSession, Serializable{
         }
     }
 
+    @Override
     public int getRound() {
         return round;
     }
 
+    @Override
     public void setRound(int round) {
         this.round = round;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }

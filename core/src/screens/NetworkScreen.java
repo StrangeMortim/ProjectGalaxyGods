@@ -1,6 +1,7 @@
 package screens;
 
 import GameObject.GameSession;
+import GameObject.IGameSession;
 import Player.Player;
 import Player.Team;
 import chat.Message;
@@ -124,7 +125,7 @@ public class NetworkScreen implements Screen {
                     Registry reg = LocateRegistry.getRegistry();
                     ServerInterface stub = (ServerInterface) reg.lookup("ServerInterface");
                     System.out.println("--"+selectedGame.getText()+"--");
-                  GameSession session =stub.loadSession(selectedGame.getText()+"");
+                  IGameSession session =stub.loadSession(selectedGame.getText()+"");
 
                    game.setScreen(new InitScreen(game,session));
                 } catch (Exception e) {
