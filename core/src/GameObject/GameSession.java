@@ -98,6 +98,7 @@ public class GameSession implements IGameSession, Serializable{
         sessionChat = new Chat();
         ArrayList<Player> players= new ArrayList<>();
         teams.add(new Team(players,"Rot"));
+        players= new ArrayList<>();
         teams.add(new Team(players,"Blau"));
             level = new Map("NoName", 4, 2, this);
         try {
