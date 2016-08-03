@@ -79,7 +79,7 @@ public class Base extends Unit implements IBase,Serializable {
                     owner.getTemporaryBuffs().add(current);
                 }
                 try {
-                    currentField.getMap().getSession().registerBuff(current);
+                    currentField.getMap().getSession().registerBuff(current.getOrigin(),current.getOrigin(),current.getPlayer().getAccount().getName(), current.getBuffInfo());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }

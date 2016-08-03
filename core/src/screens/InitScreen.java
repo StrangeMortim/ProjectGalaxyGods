@@ -174,19 +174,19 @@ public class InitScreen implements Screen {
                     session.setNumberOfPlayers(Integer.parseInt(sSpieler.getSelected().toString()));
                     ArrayList<Player> players = new ArrayList<Player>();
                     Account account = new Account(name,password);
-                    Player player= new Player(account);
+                    IPlayer player= new Player(account);
                    /////////////////////////////////////////////////////////////////////////////////////////
                     if(lastCheck) {
                         if(session.getTeams().size()>0) {
                             for (Team t : session.getTeams()) {
                                 if (t.getColor().equals(sTeam.getSelected().toString())&&!t.getPlayers().contains(player)) {
-                                    session.playerJoin(account,player,t);
+                                    player = session.playerJoin(account,(Player)player,t);
                                 }
                             }
                         }else{session.addTeam(new Team(players,sTeam.getSelected().toString()));
                             for (Team t : session.getTeams()) {
                                 if (t.getColor().equals(sTeam.getSelected().toString())&&!t.getPlayers().contains(player)) {
-                                    session.playerJoin(account,player,t);
+                                    player = session.playerJoin(account,(Player)player,t);
                                 }
                             }
                         }

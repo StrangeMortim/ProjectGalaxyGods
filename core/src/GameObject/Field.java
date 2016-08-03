@@ -2,6 +2,7 @@ package GameObject;
 
 import Action.Buff;
 import Player.Player;
+import GameObject.GameSession;
 import com.badlogic.gdx.graphics.Texture;
 
 import java.io.Serializable;
@@ -176,11 +177,18 @@ public class Field implements IField,Serializable {
     /**
      * Faengt an eine Basis auf dem Feld zu bauen
      *
-     * @param player der Spieler der die Basis baut
+     * @param playerName der Spieler der die Basis baut
      * @return gibt an ob der Spieler die Basis bauen kann oder nicht
      */
     @Override
-    public boolean buildBase(Player player) {
+    public boolean buildBase(String playerName) {
+        Player player = null;
+        try {
+            player = map.getSession().getPlayerPerName(playerName);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
         if(player == null)
             throw new IllegalArgumentException("Player is null in Buildbase");
 
@@ -218,25 +226,34 @@ public class Field implements IField,Serializable {
     /**
      * Bricht den Bau der Basis ab, findet keiner statt passiert nichts
      *
-     * @param player der Spieler der versucht den Bau abzubrechen
+     * @param playerName der Spieler der versucht den Bau abzubrechen
      * @return Ob der Vorgang erfolgreich war oder nicht(ob nach dem Methodenaufruf kein Bau mehr stattfindet oder nicht)
      */
     @Override
-    public boolean abortBuild(Player player) {
-        List<Unit> nearUnits = this.getNearUnits();
-        for(Unit u: nearUnits){
-            if(u.getOwner() == player){
-                int[] originalCost = UnitType.BASE.getRessourceCost();
-                float ressourcesLeft = roundsRemain / UnitType.BASE.getRecruitingTime();
+    public boolean abortBuild(String playerName) {
+        Player player = null;
+        try {
+            player = map.getSession().getPlayerPerName(playerName);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
 
-                //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
-                for(int i = Constants.WOOD; i<=Constants.MANA; ++i)
-                    player.getRessources()[i] = (int)(ressourcesLeft*originalCost[i]);
+        if(player != null) {
+            List<Unit> nearUnits = this.getNearUnits();
+            for (Unit u : nearUnits) {
+                if (u.getOwner() == player) {
+                    int[] originalCost = UnitType.BASE.getRessourceCost();
+                    float ressourcesLeft = roundsRemain / UnitType.BASE.getRecruitingTime();
 
-                roundsRemain = Constants.NONE_OR_NOT_SET;
-                walkable = true;
-                baseBuilding = false;
-                return true;
+                    //Order is WOOD=0;IRON=1;GOLDINDEX=2;MANA=3//
+                    for (int i = Constants.WOOD; i <= Constants.MANA; ++i)
+                        player.getRessources()[i] = (int) (ressourcesLeft * originalCost[i]);
+
+                    roundsRemain = Constants.NONE_OR_NOT_SET;
+                    walkable = true;
+                    baseBuilding = false;
+                    return true;
+                }
             }
         }
                 /*TODO check*/
@@ -246,12 +263,19 @@ public class Field implements IField,Serializable {
     /**
      * Startet den Bau einer Mine, der Bau kann nicht abgebrochen werden
      *
-     * @param player der Spieler der den Bau starten will
+     * @param playerName der Spieler der den Bau starten will
      * @return gibt an ob das Starten erfolgreich war
      */
     @Override
-    public boolean buildMine(Player player) {
-        if(roundsRemain == Constants.NONE_OR_NOT_SET && current == null && resType == Constants.IRON){
+    public boolean buildMine(String playerName) {
+        Player player = null;
+        try {
+            player = map.getSession().getPlayerPerName(playerName);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        if(player != null && roundsRemain == Constants.NONE_OR_NOT_SET && current == null && resType == Constants.IRON){
             List<Unit> nearUnits = this.getNearUnits();
             //check near units if one of them belongs to player, player may start building
             for(Unit u: nearUnits)

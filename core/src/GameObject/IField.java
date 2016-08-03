@@ -20,10 +20,10 @@ public interface IField extends Remote {
     /**
      * Faengt an eine Basis auf dem Feld zu bauen
      *
-     * @param player der Spieler der die Basis baut
+     * @param playerName der Spieler der die Basis baut
      * @return gibt an ob der Spieler die Basis bauen kann oder nicht
      */
-    public boolean buildBase(Player player)throws RemoteException;
+    public boolean buildBase(String playerName)throws RemoteException;
 
     /**
      * Searches all Unit in the direct environment to the Field(the (max) 8 surrounding Fields
@@ -34,17 +34,17 @@ public interface IField extends Remote {
     /**
      * Bricht den Bau der Basis ab, findet keiner statt passiert nichts
      *
-     * @param player der Spieler der versucht den Bau abzubrechen
+     * @param playerName der Spieler der versucht den Bau abzubrechen
      * @return Ob der Vorgang erfolgreich war oder nicht(ob nach dem Methodenaufruf kein Bau mehr stattfindet oder nicht)
      */
-    public boolean abortBuild(Player player)throws RemoteException;
+    public boolean abortBuild(String playerName)throws RemoteException;
 
     /**
      * Startet den Bau einer Mine, der Bau kann nicht abgebrochen werden
      *
      * @return gibt an ob das Starten erfolgreich war
      */
-    public boolean buildMine(Player player)throws RemoteException;
+    public boolean buildMine(String playerName)throws RemoteException;
 
 
     public Object select() throws  RemoteException;
