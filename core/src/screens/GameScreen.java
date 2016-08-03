@@ -153,7 +153,7 @@ public class GameScreen implements Screen, InputProcessor{
 
     public  GameScreen(Game game, IGameSession session, IPlayer player){
 
-        this.player=player;
+        this.player = player;
         batch=new SpriteBatch();
         this.session = session;
         System.out.println(session.toString());
@@ -252,10 +252,14 @@ public class GameScreen implements Screen, InputProcessor{
         batch.setProjectionMatrix(camera.combined);
         shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
 
-        label1.setText(((Player)player).getRessources()[Constants.GOLD]+"");
-        label2.setText(((Player)player).getRessources()[Constants.WOOD]+"");
-        label3.setText(((Player)player).getRessources()[Constants.IRON]+"");
-        label4.setText(((Player)player).getRessources()[Constants.MANA]+"");
+        try {
+            label1.setText(player.getRessources()[Constants.GOLD] + "");
+            label2.setText(player.getRessources()[Constants.WOOD] + "");
+            label3.setText(player.getRessources()[Constants.IRON] + "");
+            label4.setText(player.getRessources()[Constants.MANA] + "");
+        }catch (RemoteException e){
+            e.printStackTrace();
+        }
 
         //region Buttonumstellungen fuer Auswahlbuttons
         try{
@@ -635,29 +639,34 @@ public class GameScreen implements Screen, InputProcessor{
      * Zeigt die obere Menuebar an.
      */
     public void showTopMenu(){
+try {
+    table = new Table();
+    table.setWidth(stage.getWidth());
+    table.align(Align.left | Align.top);
+    table.setPosition(10, Gdx.graphics.getHeight());
+    HorizontalGroup group = new HorizontalGroup();
+    Image image = new Image(textures[14]);//Gold
+    player.getRessources()[2] = 10000;
+    label1 = new Label(player.getRessources()[2] + "", skin);
+    label1.setColor(Color.WHITE);
+    group.addActor(image);
+    group.addActor(label1);
+    Image image2 = new Image(textures[15]);//Holz
+    label2 = new Label(player.getRessources()[0] + "", skin);
+    label2.setColor(Color.WHITE);
+    group.addActor(image2);
+    group.addActor(label2);
+    Image image3 = new Image(textures[16]);//Eisen
+    label3 = new Label(player.getRessources()[1] + "", skin);
+    label3.setColor(Color.WHITE);
+    group.addActor(image3);
+    group.addActor(label3);
+    Image image4 = new Image(textures[17]);//Mana
+    label4 = new Label(player.getRessources()[3] + "", skin);
+    label4.setColor(Color.WHITE);
+    group.addActor(image4);
+    group.addActor(label4);
 
-        table = new Table();
-        table.setWidth(stage.getWidth());
-        table.align(Align.left|Align.top);
-        table.setPosition(10, Gdx.graphics.getHeight());
-        HorizontalGroup group = new HorizontalGroup();
-        Image image =new Image(textures[14]);//Gold
-        ((Player)player).getRessources()[2]=10000;
-        label1 = new Label(((Player)player).getRessources()[2]+"", skin);label1.setColor(Color.WHITE);
-        group.addActor(image);
-        group.addActor(label1);
-        Image image2 =new Image(textures[15]);//Holz
-        label2 = new Label(((Player)player).getRessources()[0]+"", skin);label2.setColor(Color.WHITE);
-        group.addActor(image2);
-        group.addActor(label2);
-        Image image3 =new Image(textures[16]);//Eisen
-        label3 = new Label(((Player)player).getRessources()[1]+"", skin);label3.setColor(Color.WHITE);
-        group.addActor(image3);
-        group.addActor(label3);
-        Image image4 =new Image(textures[17]);//Mana
-        label4 = new Label(((Player)player).getRessources()[3]+"", skin);label4.setColor(Color.WHITE);
-        group.addActor(image4);
-        group.addActor(label4);
 
         NinePatch tmp = new NinePatch(textures[18],0,0,0,0);
         skin.add("teamBox",tmp);
@@ -752,7 +761,9 @@ public class GameScreen implements Screen, InputProcessor{
         stage.addActor(table);
         stage.addActor(optionTable);
 
-
+} catch (RemoteException e){
+    e.printStackTrace();
+}
     }
 
     private void showBottomMenu(){
@@ -903,7 +914,12 @@ public class GameScreen implements Screen, InputProcessor{
         chatScroller.setFadeScrollBars(false);
         chatTable.add(chatScroller).expand().fill().colspan(2);
         chatTable.row().fill();
-        userName = new Label(((Player)player).getAccount().getName(),skin);
+        try {
+            userName = new Label(player.getAccount().getName(),skin);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            userName = new Label("n/a",skin);
+        }
 
         chatTable.add(messageField);
         chatTable.add(sendMessageButton);
@@ -964,7 +980,7 @@ public class GameScreen implements Screen, InputProcessor{
 
 
         try {
-            Market tmp = session.getMarket();
+            IMarket tmp = session.getMarket();
 
             woodAmount = new Label("Holz: " + tmp.getWood(),skin);
             woodPrice = new Label("Preis: " + tmp.woodPrice(),skin);
@@ -1263,8 +1279,7 @@ public class GameScreen implements Screen, InputProcessor{
                         ((Base)selected).createUnit(UnitType.SWORDFIGHTER);
                     } else if(laborEntered) {
                         try {
-                            Buff tmp = new ReduceUnitCosts(null,null,(Player)player);
-                            session.registerBuff(tmp);
+                            session.registerBuff(null,null,player.getAccount().getName(),BuffInfo.REDUCED_UNIT_COST);
                         } catch (RemoteException e) {
                             e.printStackTrace();
                         }
@@ -1315,7 +1330,11 @@ public class GameScreen implements Screen, InputProcessor{
                             new Heal2((Unit)selected,(Unit)selected,(Player)player, uArray).execute();
                         }}
                 } else if(selected instanceof  Field){
-                    ((Field)selected).buildMine((Player)player);
+                    try {
+                        ((Field)selected).buildMine(player.getAccount().getName());
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     System.out.println(selected.getClass().getName());
                 }
@@ -1331,8 +1350,7 @@ public class GameScreen implements Screen, InputProcessor{
                         System.out.println(((Base)selected).createUnit(UnitType.SPEARFIGHTER));
                     } else if(laborEntered) {
                         try {
-                            Buff tmp = new EmpowerShield(((Player)player).getHero(),null,(Player)player);
-                            session.registerBuff(tmp);
+                            session.registerBuff(player.getHero(),null,player.getAccount().getName(),BuffInfo.EMPOWER_SHIELD);
                         } catch (RemoteException e) {
                             e.printStackTrace();
                         }
@@ -1358,7 +1376,11 @@ public class GameScreen implements Screen, InputProcessor{
 
                         shield.start();}
                 } else if(selected instanceof  Field){
-                    ((Field)selected).buildBase((Player)player);
+                    try {
+                        ((Field)selected).buildBase(player.getAccount().getName());
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 }else {
                     System.out.println(selected.getClass().getName());
                 }
@@ -1375,8 +1397,7 @@ public class GameScreen implements Screen, InputProcessor{
                     } else if(laborEntered){
                         if(archerOrBuff){
                             try {
-                                Buff tmp = new Buff(null,null,(Player)player, BuffInfo.RANGED_STYLE);
-                                session.registerBuff(tmp);
+                                session.registerBuff(null,null,player.getAccount().getName(), BuffInfo.RANGED_STYLE);
                             } catch (RemoteException e) {
                                 e.printStackTrace();
                             }
@@ -1409,8 +1430,7 @@ public class GameScreen implements Screen, InputProcessor{
                     } else if(laborEntered) {
                         if(spearfighterOrBuff){
                             try {
-                                Buff tmp = new Buff(null,null,(Player)player, BuffInfo.HORNET_STYLE);
-                                session.registerBuff(tmp);
+                                session.registerBuff(null,null,player.getAccount().getName(), BuffInfo.HORNET_STYLE);
                             } catch (RemoteException e) {
                                 e.printStackTrace();
                             }
@@ -1458,13 +1478,12 @@ public class GameScreen implements Screen, InputProcessor{
             @Override
             public void clicked(InputEvent event, float x, float y){
               try{
-                  Market market = session.getMarket();
+                  IMarket market = session.getMarket();
 
                   if(!woodField.getText().equals("")) {
-                      boolean wood = market.buy((Player)player,Constants.WOOD,Integer.parseInt(woodField.getText()));
+                      boolean wood = market.buy(player.getAccount().getName(),Constants.WOOD,Integer.parseInt(woodField.getText()));
                       woodAmount.setText("Holz: " + market.getWood());
                       woodPrice.setText("Preis: " + market.woodPrice());
-
                       if(wood)
                           woodField.setText("");
                       else{
@@ -1480,7 +1499,7 @@ public class GameScreen implements Screen, InputProcessor{
                   }
 
                   if(!ironField.getText().equals("")) {
-                      boolean iron = market.buy((Player)player,Constants.IRON,Integer.parseInt(ironField.getText()));
+                      boolean iron = market.buy(player.getAccount().getName(),Constants.IRON,Integer.parseInt(ironField.getText()));
                       ironAmount.setText("Eisen: " + market.getIron());
                       ironPrice.setText("Preis: " + market.ironPrice());
 
@@ -1509,10 +1528,10 @@ public class GameScreen implements Screen, InputProcessor{
             @Override
             public void clicked(InputEvent event, float x, float y){
                 try{
-                    Market market = session.getMarket();
+                    IMarket market = session.getMarket();
 
                     if(!woodField.getText().equals("")) {
-                        boolean wood = market.sell((Player)player,Constants.WOOD,Integer.parseInt(woodField.getText()));
+                        boolean wood = market.sell(player.getAccount().getName(),Constants.WOOD,Integer.parseInt(woodField.getText()));
                         woodAmount.setText("Holz: " + market.getWood());
                         woodPrice.setText("Preis: " + market.woodPrice());
 
@@ -1531,7 +1550,7 @@ public class GameScreen implements Screen, InputProcessor{
                     }
 
                     if(!ironField.getText().equals("")) {
-                        boolean iron = market.sell((Player)player,Constants.IRON,Integer.parseInt(ironField.getText()));
+                        boolean iron = market.sell(player.getAccount().getName(),Constants.IRON,Integer.parseInt(ironField.getText()));
                         ironAmount.setText("Eisen: " + market.getIron());
                         ironPrice.setText("Preis: " + market.woodPrice());
 
@@ -1757,7 +1776,7 @@ public class GameScreen implements Screen, InputProcessor{
             @Override
             public  void clicked(InputEvent event, float x, float y){
                 try {
-                    session.finishTurn((Player)player);
+                    session.finishTurn(player.getAccount().getName());
                 } catch (RemoteException e) {
                     System.out.println(e.getMessage());
                     e.printStackTrace();

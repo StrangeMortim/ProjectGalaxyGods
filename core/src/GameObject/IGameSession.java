@@ -63,7 +63,7 @@ public interface IGameSession extends Remote {
     /**
      *
      */
-    public void finishTurn(Player p)throws RemoteException;
+    public void finishTurn(String playerName)throws RemoteException;
 
     /**
      *
@@ -98,7 +98,7 @@ public interface IGameSession extends Remote {
 
     public void setNumberOfPlayers(int number)throws RemoteException;
 
-    public boolean registerBuff(Buff b) throws RemoteException;
+    public boolean registerBuff(Unit origin, Unit target, String playerName, BuffInfo info) throws RemoteException;
 
     public String getName() throws RemoteException;
 
@@ -106,7 +106,7 @@ public interface IGameSession extends Remote {
 
     public String getPassword() throws RemoteException;
 
-    public Market getMarket() throws RemoteException;
+    public IMarket getMarket() throws RemoteException;
 
     public Player getActive() throws RemoteException;
 
@@ -150,7 +150,7 @@ public interface IGameSession extends Remote {
 
     public void setCurrentTurn(ActionProcessor currentTurn)throws RemoteException;
 
-    public void setMarket(Market market)throws RemoteException;
+    public void setMarket(IMarket market)throws RemoteException;
 
     public void setPassword(String password) throws RemoteException;
 
@@ -158,5 +158,5 @@ public interface IGameSession extends Remote {
 
     public void setRound(int round) throws RemoteException;
 
-
+    public Player getPlayerPerName(String name) throws RemoteException;
 }

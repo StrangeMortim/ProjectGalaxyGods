@@ -13,21 +13,21 @@ public interface IMarket extends Remote {
 
     /**
      * Ermöglicht einem Spieler eine Ressource zu kaufen
-     * @param p         Der Spieler der etwas kaufen will
+     * @param playerName         Der Spieler der etwas kaufen will
      * @param type      Bestimmt die zu kaufende Ressource(0=Holz, 1=Eisen)
      * @param amount    Gibt die Menge an die gekauft werden soll
      * @return ob der vorgang erfolgreich war oder nicht
      */
-    public boolean buy(Player p, int type, int amount)throws RemoteException;
+    public boolean buy(String playerName, int type, int amount)throws RemoteException;
 
     /**
      * Ermöglicht einem Spieler eine Ressource zu verkaufen
-     * @param p         Der Spieler der etwas verkaufen will
+     * @param playerName         Der Spieler der etwas verkaufen will
      * @param type      Bestimmt die zu verkaufende Ressource(0=Holz, 1=Eisen)
      * @param amount    Gibt die Menge an die verkauft werden soll
      * @return ob der vorgang erfolgreich war oder nicht
      */
-    public boolean sell(Player p, int type, int amount)throws RemoteException;
+    public boolean sell(String playerName, int type, int amount)throws RemoteException;
 
     //Getter Setter
     public void setIron(int amount)throws RemoteException;

@@ -77,7 +77,7 @@ public class GameSession implements IGameSession, Serializable{
     /**
      * Der Marktplatz des Spiels.
      */
-    private Market market;
+    private IMarket market;
     /**
      * Max Anzahl an Spielern
      */
@@ -91,13 +91,14 @@ public class GameSession implements IGameSession, Serializable{
 
     public GameSession(){
         identities = new HashMap<>();
-        market = new Market();
+        market = new Market(this);
         buffs  = new ArrayList<Buff>();
         teams = new ArrayList<>();
         currentTurn = new ActionProcessor(this);
         sessionChat = new Chat();
         ArrayList<Player> players= new ArrayList<>();
         teams.add(new Team(players,"Rot"));
+        players= new ArrayList<>();
         teams.add(new Team(players,"Blau"));
             level = new Map("NoName", 4, 2, this);
         try {
@@ -235,8 +236,9 @@ public class GameSession implements IGameSession, Serializable{
      * Leitet alle noetigen Schritte fuer das Beenden eines Zuges ein.
      */
     @Override
-    public void finishTurn(Player p){
-        if(p == active) {
+    public void finishTurn(String playerName){
+        Player p = getPlayerPerName(playerName);
+        if(p != null && p == active) {
             List<Player> player = new ArrayList<>();
             for(Team t:teams){player.addAll(t.getPlayers());}
             int index = (player.indexOf(p)+1) % player.size();
@@ -416,48 +418,66 @@ public class GameSession implements IGameSession, Serializable{
     }
 
     @Override
-    public boolean registerBuff(Buff b) throws RemoteException {
-        Field tmp[][] = level.getFields();
+    public boolean registerBuff(Unit origin, Unit target, String playerName, BuffInfo info) throws RemoteException {
+        Player player = getPlayerPerName(playerName);
+        if(player != null) {
+            Buff b = null;
+            switch (info){
+                case EMPOWER_SHIELD:
+                    b = new EmpowerShield(player.getHero(),null,player);
+                    break;
+                case REDUCED_UNIT_COST:
+                    b = new ReduceUnitCosts(null,null,player);
+                    break;
+                default:
+                    b = new Buff(origin, target, player, info);
+                    break;
+            }
 
-        for(int i=Constants.WOOD; i<=Constants.MANA; ++i)
-           if(b.getPlayer().getRessources()[i] < b.getBuffInfo().getBuffCost()[i])
-               return false;
 
-        for(int j=Constants.WOOD; j<=Constants.MANA;++j)
-            b.getPlayer().getRessources()[j] -= b.getBuffInfo().getBuffCost()[j];
+            Field tmp[][] = level.getFields();
 
-        if(b.getClass().isAssignableFrom(Buff.class)) {
-            Buff current = null;
-            Unit currentUnit = null;
-            if (b.isPermanent()) {
-                b.getPlayer().addPermaBuff(b);
-                for (Field[] fArray : tmp) {
-                    for (Field f : fArray) {
-                        currentUnit = f.getCurrent();
-                        if (currentUnit != null && b.appliesForUnit(currentUnit)) {
-                            current = b.getPersonalCopy(currentUnit);
-                            current.execute();
+            for (int i = Constants.WOOD; i <= Constants.MANA; ++i)
+                if (b.getPlayer().getRessources()[i] < b.getBuffInfo().getBuffCost()[i])
+                    return false;
+
+            for (int j = Constants.WOOD; j <= Constants.MANA; ++j)
+                b.getPlayer().getRessources()[j] -= b.getBuffInfo().getBuffCost()[j];
+
+            if (b.getClass().isAssignableFrom(Buff.class)) {
+                Buff current = null;
+                Unit currentUnit = null;
+                if (b.isPermanent()) {
+                    b.getPlayer().addPermaBuff(b);
+                    for (Field[] fArray : tmp) {
+                        for (Field f : fArray) {
+                            currentUnit = f.getCurrent();
+                            if (currentUnit != null && b.appliesForUnit(currentUnit)) {
+                                current = b.getPersonalCopy(currentUnit);
+                                current.execute();
+                            }
+                        }
+                    }
+                } else {
+                    b.getPlayer().addTemporaryBuff(b);
+                    for (Field[] fArray : tmp) {
+                        for (Field f : fArray) {
+                            currentUnit = f.getCurrent();
+                            if (currentUnit != null && b.appliesForUnit(currentUnit)) {
+                                current = b.getPersonalCopy(currentUnit);
+                                current.execute();
+                                buffs.add(current);
+                            }
                         }
                     }
                 }
             } else {
-                b.getPlayer().addTemporaryBuff(b);
-                for (Field[] fArray : tmp) {
-                    for (Field f : fArray) {
-                        currentUnit = f.getCurrent();
-                        if (currentUnit != null && b.appliesForUnit(currentUnit)) {
-                            current = b.getPersonalCopy(currentUnit);
-                            current.execute();
-                            buffs.add(current);
-                        }
-                    }
-                }
+                b.execute();
             }
-        } else {
-            b.execute();
-        }
 
-        return true;
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -562,12 +582,12 @@ public class GameSession implements IGameSession, Serializable{
     }
 
     @Override
-    public Market getMarket(){
+    public IMarket getMarket(){
         return market;
     }
 
     @Override
-    public void setMarket(Market market) {
+    public void setMarket(IMarket market) {
         this.market = market;
     }
 
@@ -603,5 +623,14 @@ public class GameSession implements IGameSession, Serializable{
     @Override
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public Player getPlayerPerName(String name){
+        for(java.util.Map.Entry<Account,Player> entry: identities.entrySet())
+            if(entry.getKey().getName().equals(name))
+                return entry.getValue();
+
+        return null;
     }
 }

@@ -32,8 +32,14 @@ public class Market implements IMarket,Serializable{
      */
     private int ironPrice = 10;
 
+    private IGameSession session = null;
 
-    public Market(){
+
+    public Market(GameSession session){
+        if(session == null)
+            throw new IllegalArgumentException("Session ist null in Market");
+
+        this.session = session;
         //Nothing to do because only default Values
     }
 
@@ -41,15 +47,26 @@ public class Market implements IMarket,Serializable{
     /**
      * Ermöglicht einem Spieler eine Ressource zu kaufen
      *
-     * @param p      Der Spieler der etwas kaufen will
+     * @param playerName      Der Spieler der etwas kaufen will
      * @param type   Bestimmt die zu kaufende Ressource(0=Holz, 1=Eisen)
      * @param amount Gibt die Menge an die gekauft werden soll
      * @return ob der vorgang erfolgreich war oder nicht
      */
     @Override
-    public boolean buy(Player p, int type, int amount) {
+    public boolean buy(String playerName, int type, int amount) {
+        Player p = null;
+        try {
+            p = session.getPlayerPerName(playerName);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        if(p == null)
+            return false;
+
         switch (type){
             case Constants.WOOD:
+
                 if(wood < amount || amount*woodPrice > p.getRessources()[Constants.GOLD])
                     return false;
 
@@ -79,13 +96,22 @@ public class Market implements IMarket,Serializable{
     /**
      * Ermöglicht einem Spieler eine Ressource zu verkaufen
      *
-     * @param p      Der Spieler der etwas verkaufen will
+     * @param playerName      Der Spieler der etwas verkaufen will
      * @param type   Bestimmt die zu verkaufende Ressource(0=Holz, 1=Eisen)
      * @param amount Gibt die Menge an die verkauft werden soll
      * @return ob der vorgang erfolgreich war oder nicht
      */
     @Override
-    public boolean sell(Player p, int type, int amount) {
+    public boolean sell(String playerName, int type, int amount) {
+        Player p = null;
+        try {
+            p = session.getPlayerPerName(playerName);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        if(p == null)
+            return false;
         //TODO fix price
         switch (type){
             case Constants.WOOD:
