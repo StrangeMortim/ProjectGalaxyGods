@@ -138,6 +138,7 @@ public class InitScreen implements Screen {
                        String name = stub.createSession(tID.getText());
                        if(!name.equals(""))
                        session = (IGameSession)reg.lookup(name);
+                       System.out.println(session.toString());
                    } catch (RemoteException e) {
                        e.printStackTrace();
                        return;
