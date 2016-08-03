@@ -179,14 +179,8 @@ public class InitScreen implements Screen {
                     if(lastCheck) {
                         if(session.getTeams().size()>0) {
                             for (Team t : session.getTeams()) {
-                                if (t.getColor().equals(sTeam.getSelected().toString())&&!t.getPlayers().contains(player)) {
-                                    session.playerJoin(account,player,t);
-                                }
-                            }
-                        }else{session.addTeam(new Team(players,sTeam.getSelected().toString()));
-                            for (Team t : session.getTeams()) {
-                                if (t.getColor().equals(sTeam.getSelected().toString())&&!t.getPlayers().contains(player)) {
-                                    session.playerJoin(account,player,t);
+                                if (t.getColor().equals(sTeam.getSelected().toString()) && !t.getPlayers().contains(player)) {
+                                    session.playerJoin(account, player, t);
                                 }
                             }
                         }
@@ -267,8 +261,8 @@ public class InitScreen implements Screen {
 
             try {
 
-                if(stub.loadSession(session.getName())!=null) {
-                    lError.setText("Ein Spiel mit dem Namen \n existiert bereits! "); check=false;}
+              //  if(stub.loadSession(session.getName())!=null) {
+                //    lError.setText("Ein Spiel mit dem Namen \n existiert bereits! "); check=false;}
 
             } catch (Exception e) {
                 System.out.println("Fehler bei der Verbindung!");

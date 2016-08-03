@@ -721,6 +721,7 @@ public class GameScreen implements Screen, InputProcessor{
             public void clicked(InputEvent event, float x, float y){
                 try {
                     session.showSessionDetails();
+                    System.out.println("\n Der aktive Spieler des Clients: "+player.toString());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
