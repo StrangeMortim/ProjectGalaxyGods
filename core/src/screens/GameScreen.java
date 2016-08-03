@@ -152,7 +152,7 @@ public class GameScreen implements Screen, InputProcessor{
     ParticleEffect shield;
 
     public  GameScreen(Game game, IGameSession session, IPlayer player){
-        
+
         this.player=player;
         batch=new SpriteBatch();
         this.session = session;
