@@ -295,16 +295,18 @@ public class GameSession implements IGameSession, Serializable{
         if(a == null)
             throw new IllegalArgumentException("Account ist null");
 
-        if(identities.containsKey(a))
-            return identities.get(a);
-        else if(p == null || t == null)
-            throw new IllegalArgumentException("Player or Team is null");
+        for(Account a2: this.identities.keySet()){
+            if(a2.getName().equals(a.getName())){
+                return identities.get(a2);
+            }
+        }
+
         int pCounter=0;
         for(Team t2: teams){
             for(Player pCount:t2.getPlayers()){
                 pCounter++;
             }
-            if(t2 == t){
+            if(t2.getColor() == t.getColor()){
                 try {
                     p.setTeam(t2);
                 } catch (RemoteException e) {
