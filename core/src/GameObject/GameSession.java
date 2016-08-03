@@ -297,23 +297,24 @@ public class GameSession implements IGameSession, Serializable{
         if(a == null)
             throw new IllegalArgumentException("Account ist null");
 
-        for(java.util.Map.Entry<Account,Player> entry: identities.entrySet())
-        if(entry.getKey().getName().equals(a.getName()))
-            return entry.getValue();
+        for(Account a2: this.identities.keySet()){
+            if(a2.getName().equals(a.getName())){
+                return identities.get(a2);
+            }
+        }
 
-        if(p == null || t == null)
-            throw new IllegalArgumentException("Player or Team is null");
         int pCounter=0;
         for(Team t2: teams){
             for(Player pCount:t2.getPlayers()){
                 pCounter++;
             }
-            if(t2 == t){
+            if(t2.getColor() == t.getColor()){
                 try {
                     p.setTeam(t2);
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
+                System.out.println("Hier1");
                 t2.getPlayers().add(p);
                 identities.put(a, p);
                 level.addBase(p, pCounter);
@@ -321,10 +322,14 @@ public class GameSession implements IGameSession, Serializable{
             }
 
         }
-
+        System.out.println("Hier2");
         teams.add(t);
         t.getPlayers().add(p);
-
+        try {
+            p.setTeam(t);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
         identities.put(a, p);
         level.addBase(p, pCounter);
         return p;
@@ -339,6 +344,8 @@ public class GameSession implements IGameSession, Serializable{
             stats+="\n"+"Name: "+session.getName();
             stats+="\n"+"Passwort: "+session.getPassword();
             stats+="\n"+"Anzahl der Spieler: "+session.getNumberOfPlayers();
+            stats+="\n"+"Der aktive Spieler in der Session: "+session.getActive();
+            stats+="\n"+"Die Anzahl der Runden der Session: "+session.getTurn();
             stats+="\n"+"--------------------------------------------------"
                     +"\n"+"Nachrichten: ";
             for(Message m: session.getSessionChat().getBacklog()){
@@ -350,11 +357,18 @@ public class GameSession implements IGameSession, Serializable{
                 stats+="\n Team-Name: "+t.getColor();
                 for(Player p: t.getPlayers()){
                     stats+="  \n Spielername: "+p.getAccount().getName();
+                    stats+="  \n Objektname: "+p.toString();
                     stats+="  Holz : "+p.getRessources()[0];
                     stats+="  Eisen : "+p.getRessources()[1];
                     stats+="  Gold : "+p.getRessources()[2];
                     stats+="  Hat Markt: "+p.getMarket();
                 }
+                stats+="\n"+"--------------------------------------------------"
+                        +"\n"+"Nachrichten des Teams: ";
+                for(Message m : t.getChat().getBacklog()){
+                    stats+="\n"+m.getContent();
+                }
+                stats+="\n"+"--------------------------------------------------";
             }
 
         } catch (RemoteException e) {

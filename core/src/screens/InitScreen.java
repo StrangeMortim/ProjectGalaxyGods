@@ -138,6 +138,7 @@ public class InitScreen implements Screen {
                        String name = stub.createSession(tID.getText());
                        if(!name.equals(""))
                        session = (IGameSession)reg.lookup(name);
+                       System.out.println(session.toString());
                    } catch (RemoteException e) {
                        e.printStackTrace();
                        return;
@@ -151,7 +152,7 @@ public class InitScreen implements Screen {
                            for (Team t : session.getTeams()) {
                                for (Player p : t.getPlayers()) {
                                    if (p.getAccount().getName().equals(name)) {
-                                       game.setScreen(new GameScreen(game, session, p));
+                                       game.setScreen(new GameScreen(game, session, session.playerJoin(p.getAccount(),p,t)));
                                        return;
                                    }
                                }
@@ -183,15 +184,9 @@ public class InitScreen implements Screen {
                                     player = session.playerJoin(account,(Player)player,t);
                                 }
                             }
-                        }else{session.addTeam(new Team(players,sTeam.getSelected().toString()));
-                            for (Team t : session.getTeams()) {
-                                if (t.getColor().equals(sTeam.getSelected().toString())&&!t.getPlayers().contains(player)) {
-                                    player = session.playerJoin(account,(Player)player,t);
-                                }
-                            }
                         }
                         stub.saveSession(session);
-                        game.setScreen(new GameScreen(game,session,player));
+                        game.setScreen(new GameScreen(game,session,session.playerJoin(player.getAccount(),(Player)player,player.getTeam())));
                     }
                    /////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -267,8 +262,8 @@ public class InitScreen implements Screen {
 
             try {
 
-                if(stub.loadSession(session.getName())!=null) {
-                    lError.setText("Ein Spiel mit dem Namen \n existiert bereits! "); check=false;}
+              //  if(stub.loadSession(session.getName())!=null) {
+                //    lError.setText("Ein Spiel mit dem Namen \n existiert bereits! "); check=false;}
 
             } catch (Exception e) {
                 System.out.println("Fehler bei der Verbindung!");
@@ -310,7 +305,7 @@ public class InitScreen implements Screen {
                            init();
                        }else{
                            checkAccount=false;
-                           init();
+                           game.setScreen(new MenuScreen(game));
                        }
                    }catch(Exception e){
                     System.out.println("Wahrscheinlich laeuft die Datenbank noch im Hintergrund.");
@@ -319,14 +314,14 @@ public class InitScreen implements Screen {
                    @Override
                    public void canceled() {
                        checkSession=false;
-                       init();
+                       game.setScreen(new MenuScreen(game));
                    }};
                Gdx.input.getTextInput(passwordListener, "Bitte geben Sie ein Passwort ein.", "", "");
            }
                @Override
                public void canceled() {
                    checkSession=false;
-                   init();}};
+                   game.setScreen(new MenuScreen(game));}};
 
 
            Gdx.input.getTextInput(nameListener, "Bitte geben Sie einen Nutzernamen ein.", "", "");

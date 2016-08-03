@@ -156,7 +156,13 @@ public class GameScreen implements Screen, InputProcessor{
         this.player = player;
         batch=new SpriteBatch();
         this.session = session;
-      this.game = game;
+        System.out.println(session.toString());
+        try {
+            session.showSessionDetails();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        this.game = game;
         stage = new Stage(new ScreenViewport());
         skin = new Skin(Gdx.files.internal("assets/uiskin.json"));
 
@@ -734,6 +740,7 @@ try {
             public void clicked(InputEvent event, float x, float y){
                 try {
                     session.showSessionDetails();
+                    System.out.println("\n Der aktive Spieler des Clients: "+player.toString());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -1044,9 +1051,10 @@ try {
         try {
             if(player.getTeam()==null){
                 for(Team t :session.getTeams()){
-                    if(t.getPlayers().contains(player)){
+                    for(Player p : t.getPlayers())
+                        if(p.getAccount().getName().equals(player.getAccount().getName()))
                         player.setTeam(t);
-                    }
+
                 }
 
             }
@@ -1971,27 +1979,31 @@ try {
             Unit unit = ((Unit) selected);
             Field target = (Field) obj;
             int radius = unit.getMovePointsLeft();
-            if(unit.getOwner()==player)
             try {
-                  int diff=Math.max(Math.abs(unit.getField().getXPos() - target.getXPos()), Math.abs(unit.getField().getYPos() - target.getYPos()));
-                    if (target.getWalkable()&&diff <= unit.getMovePointsLeft()) {
-                       try {
-                           pe = new ParticleEffect();
-                           pe.load(Gdx.files.internal("assets/sprites/fight.party"), Gdx.files.internal(""));
-                           pe.getEmitters().first().setPosition(unit.getField().getXPos() * 100 + 50, unit.getField().getYPos() * 100 + 50);
-                           pe.setDuration(-2800);
-                           pe.scaleEffect(3);
-                           pe.start();
-                       }catch(Exception e){}//zur Sicherheit
-                        if(unit.getField().getYPos()<target.getYPos()){unit.setDirection(1);}else{unit.setDirection(0);}
-                        unit.getField().setCurrent(null);
-                        target.setCurrent(unit);
-                        unit.setMovePointsLeft(unit.getMovePointsLeft()-diff);
-                        unrendered=true;
-                        fight();
+                if(unit.getOwner().getAccount().getName().equals(player.getAccount().getName()))
+                try {
+                      int diff=Math.max(Math.abs(unit.getField().getXPos() - target.getXPos()), Math.abs(unit.getField().getYPos() - target.getYPos()));
+                        if (target.getWalkable()&&diff <= unit.getMovePointsLeft()) {
+                           try {
+                               pe = new ParticleEffect();
+                               pe.load(Gdx.files.internal("assets/sprites/fight.party"), Gdx.files.internal(""));
+                               pe.getEmitters().first().setPosition(unit.getField().getXPos() * 100 + 50, unit.getField().getYPos() * 100 + 50);
+                               pe.setDuration(-2800);
+                               pe.scaleEffect(3);
+                               pe.start();
+                           }catch(Exception e){}//zur Sicherheit
+                            if(unit.getField().getYPos()<target.getYPos()){unit.setDirection(1);}else{unit.setDirection(0);}
+                            unit.getField().setCurrent(null);
+                            target.setCurrent(unit);
+                            unit.setMovePointsLeft(unit.getMovePointsLeft()-diff);
+                            unrendered=true;
+                            fight();
 
-                    }
-            }catch(Exception e){}
+                        }
+                }catch(Exception e){}
+            } catch (RemoteException e) {
+
+            }
         }
 
     }
