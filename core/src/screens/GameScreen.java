@@ -597,16 +597,9 @@ try {
         teamBox.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
+                stage.getActors().removeValue(teamTable,true);
+                showTeamBox();
                 teamTable.setVisible(true);
-                try {
-                    int[] teamRessources = session.getTeamRessources(player);
-                        tWood = new Label("Holz: "+teamRessources[Constants.WOOD],skin);
-                        tIron = new Label("Eisen: "+teamRessources[Constants.IRON],skin);
-                        tGold = new Label("Gold: "+teamRessources[Constants.GOLD],skin);
-
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
             }
         });
 
@@ -999,6 +992,12 @@ try {
                 @Override
                 public void clicked(InputEvent event, float x, float y){
                     try{
+                        if(addWood.getText().equals(""))
+                            addWood.setText("0");
+                        if(addIron.getText().equals(""))
+                            addIron.setText("0");
+                        if(addGold.getText().equals(""))
+                            addGold.setText("0");
                         int wood=Integer.parseInt(addWood.getText());
                         int iron=Integer.parseInt(addIron.getText());;
                         int gold=Integer.parseInt(addGold.getText());;
