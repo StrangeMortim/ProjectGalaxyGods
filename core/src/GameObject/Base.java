@@ -53,6 +53,18 @@ public class Base extends Unit implements Serializable {
         if(caserneRoundsRemaining > Constants.FINISHED)
             caserneRoundsRemaining--;
 
+        if(caserneRoundsRemaining == Constants.FINISHED){
+            currentField.getMap().getField(currentField.getXPos()+1,currentField.getYPos()).setSpriteIndex(SpriteNames.BASE_DOWN_LEFT_CASERNE.getSpriteIndex());
+
+            if(labRoundsRemaining == Constants.FINISHED)
+                currentField.getMap().getField(currentField.getXPos()+1,currentField.getYPos()-1).setSpriteIndex(SpriteNames.BASE_DOWN_RIGHT_FULL.getSpriteIndex());
+            else
+                currentField.getMap().getField(currentField.getXPos()+1,currentField.getYPos()-1).setSpriteIndex(SpriteNames.BASE_DOWN_RIGHT_CASERNE.getSpriteIndex());
+
+        } else if(labRoundsRemaining == Constants.FINISHED){
+            currentField.getMap().getField(currentField.getXPos()+1,currentField.getYPos()-1).setSpriteIndex(SpriteNames.BASE_DOWN_RIGHT_LAB.getSpriteIndex());
+        }
+
         //count all recruiting states down and if finished, spawn them
         Iterator it = recruiting.entrySet().iterator();
         while (it.hasNext()){

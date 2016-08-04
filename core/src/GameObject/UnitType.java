@@ -137,6 +137,8 @@ public enum UnitType implements Serializable {
                 return SpriteNames.WORKER.getSpriteIndex();
             case HERO:
                 return SpriteNames.HERO.getSpriteIndex();
+            case BASE:
+                return SpriteNames.BASE_UP_LEFT.getSpriteIndex();
             default:
                 return 0;
         }

@@ -1270,7 +1270,6 @@ try {
                             shield.load(Gdx.files.internal("assets/sprites/shield.party"), Gdx.files.internal("assets/sprites/"));
                             shield.getEmitters().first().setPosition(session.getSelectedX(session.getHero(player)) * 100 + 50, session.getSelectedY(session.getHero(player)) * 100 + 50);
                             shield.scaleEffect(2);
-
                             shield.start();}
                     } else if(session.isSelectedClassOf(Selectable.FIELD)){
                             session.buildOrAbortBuildingOnSelected(player,selected,Building.BASE,false);
