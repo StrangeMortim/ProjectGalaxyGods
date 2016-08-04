@@ -39,7 +39,7 @@ public class Shield extends Buff {
             bu.execute();
         }catch (Exception e){return false;}
 
-        List<Unit> additionalTargets = target.getField().getNearUnits();
+        List<Unit> additionalTargets = origin.getField().getNearUnits();
         for(Unit u :additionalTargets){
             if(u.getOwner()==player) {
                 bu= new Buff(u,player,BuffInfo.SHIELD,session);
