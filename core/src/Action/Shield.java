@@ -6,6 +6,9 @@ import GameObject.Hero;
 import GameObject.Unit;
 import Player.Player;
 
+import java.rmi.RemoteException;
+import java.util.List;
+
 /**
  * Created by benja_000 on 22.07.2016.
  */
@@ -30,10 +33,27 @@ public class Shield extends Buff {
         Buff bu= new Buff(origin,player,BuffInfo.SHIELD,session);
         bu.setDef(this.def);
         bu.setRoundsLeft(this.roundsLeft);
+
         try {
             origin.getField().getMap().getSession().addSingleBuff(bu);
             bu.execute();
         }catch (Exception e){return false;}
+
+        List<Unit> additionalTargets = target.getField().getNearUnits();
+        for(Unit u :additionalTargets){
+            if(u.getOwner()==player) {
+                bu= new Buff(u,player,BuffInfo.SHIELD,session);
+                bu.setDef(this.def);
+                bu.setRoundsLeft(this.roundsLeft);
+                try {
+                    origin.getField().getMap().getSession().addSingleBuff(bu);
+                    bu.execute();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
             return true;
     }
 

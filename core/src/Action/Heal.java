@@ -31,10 +31,11 @@ public class Heal extends Action{
           ||player.getRessources()[Constants.MANA]< (BuffInfo.HEAL.getBuffCost()[Constants.MANA]-player.getRessourceBoni()[Constants.MANA]))
   {return false;}
 
-        List<Unit> additionalTargets = target.getField().getNearUnits();
+
          target.setCurrentHp(target.getCurrentHp()+ BuffInfo.HEAL.getPower());
         player.getRessources()[Constants.MANA]-= (BuffInfo.HEAL.getBuffCost()[Constants.MANA]-player.getRessourceBoni()[Constants.MANA]);
 
+        List<Unit> additionalTargets = target.getField().getNearUnits();
         for(Unit u :additionalTargets){
             if(u.getOwner()==player) {
                 u.setCurrentHp(u.getCurrentHp() + BuffInfo.HEAL.getPower());

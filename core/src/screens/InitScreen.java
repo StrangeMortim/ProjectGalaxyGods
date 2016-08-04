@@ -1,6 +1,5 @@
 package screens;
 
-import GameObject.GameSession;
 import GameObject.IGameSession;
 import Player.*;
 import com.badlogic.gdx.Game;
@@ -17,10 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import projectgg.gag.GoldAndGreed;
-import server.DBManager;
 import server.ServerInterface;
 
 import java.rmi.NotBoundException;
@@ -75,8 +71,7 @@ public class InitScreen implements Screen {
         backGround = new Sprite(new Texture(Gdx.files.internal("assets/splash.jpg")));
         backGround.setBounds(0, (stage.getHeight()* 3/4), stage.getWidth(), stage.getHeight()/4);
 
-
-            checkAccount();
+        checkAccount();
 
 
     }
@@ -103,6 +98,7 @@ public class InitScreen implements Screen {
         sSpieler = new SelectBox<>(skin);
         sRunden  = new SelectBox<>(skin);
         sTeam.setItems((Object[]) new String[]{"Rot", "Blau"});
+        sTeam.setSelected("Rot");
         sSpieler.setItems((Object[]) new String[]{"2", "3", "4"});
         sRunden.setItems((Object[]) new String[]{"15", "20", "30", "40", "50", "75", "100", "Endlos"});
         sTeam.setVisible(false);
@@ -113,7 +109,7 @@ public class InitScreen implements Screen {
                 tID.setText(session.getName());
                 tPW.setText(session.getPassword());
                 sRunden.setItems((Object[]) new String[]{session.getTurn() + ""});
-                sSpieler.setItems((Object[]) new String[]{session.getMaxPlayersPerTeam() + ""});
+                sSpieler.setItems((Object[]) new String[]{session.getMaxPlayers() + ""});
             } catch (RemoteException e){
                 e.printStackTrace();
             }
@@ -172,7 +168,7 @@ public class InitScreen implements Screen {
                     } else {
                         session.setRound(99999);
                     }
-                    session.setNumberOfPlayers(Integer.parseInt(sSpieler.getSelected().toString()));
+                   // session.setNumberOfPlayers(Integer.parseInt(sSpieler.getSelected().toString()));
                     ArrayList<Player> players = new ArrayList<Player>();
                     Account account = new Account(name,password);
                     int playerId = -1;
@@ -186,7 +182,7 @@ public class InitScreen implements Screen {
                             }
                         }*/
                         stub.saveSession(session);
-                        game.setScreen(new GameScreen(game,session,session.playerJoin(account,sTeam.toString())));
+                        game.setScreen(new GameScreen(game,session,session.playerJoin(account,(String)sTeam.getSelected())));
 
                    /////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -283,12 +279,14 @@ public class InitScreen implements Screen {
      * @return
      */
        private void checkAccount(){
-           try {
+          /* try {
                Registry reg = LocateRegistry.getRegistry();
                ServerInterface stub = (ServerInterface) reg.lookup("ServerInterface");
                if(!stub.checkAccount("test","1234")){
                stub.registerAccount("test","1234");}
-           }catch(Exception e){}
+           }catch(Exception e){
+               e.printStackTrace();
+           }*/
 
 
           Input.TextInputListener nameListener = new Input.TextInputListener()
@@ -307,8 +305,12 @@ public class InitScreen implements Screen {
                            checkAccount=false;
                            game.setScreen(new MenuScreen(game));
                        }
-                   }catch(Exception e){
-                    System.out.println("Wahrscheinlich laeuft die Datenbank noch im Hintergrund.");
+                   }catch(RemoteException e){
+                       System.out.println(e.getMessage());
+                       e.printStackTrace();
+                   // System.out.println("Wahrscheinlich laeuft die Datenbank noch im Hintergrund.");
+                   } catch (NotBoundException e) {
+                       e.printStackTrace();
                    }
                }
                    @Override

@@ -40,7 +40,7 @@ public class GameScreen implements Screen, InputProcessor{
     private IGameSession session;
     private Field[][] map = null;
     private boolean unrendered = true;
-    private int selected;
+    private int selected=-1;
     private int player;
     private Stage stage;
     private Skin skin;
@@ -182,8 +182,8 @@ public class GameScreen implements Screen, InputProcessor{
         showTeamBox();
         buildListeners();
 
-        InputMultiplexer im = new InputMultiplexer(stage, this);
-        Gdx.input.setInputProcessor(im);
+          //  InputMultiplexer im = new InputMultiplexer(stage, this);
+            //Gdx.input.setInputProcessor(im);
     }
 
 
@@ -195,207 +195,217 @@ public class GameScreen implements Screen, InputProcessor{
      */
     @Override
     public void render(float delta) {
+        InputMultiplexer im = new InputMultiplexer(stage, this);
+        Gdx.input.setInputProcessor(im);
         timer += delta;
-        int batchWidth = Constants.FIELDXLENGTH*100;
-        int batchHeight = Constants.FIELDYLENGTH*100;
-        int i=0;
-        int j=0;
+        if(timer >= 1/2) {
+            int batchWidth = Constants.FIELDXLENGTH * 100;
+            int batchHeight = Constants.FIELDYLENGTH * 100;
+            int i = 0;
+            int j = 0;
 
-        if(pe!=null) {
-            pe.update(Gdx.graphics.getDeltaTime());
+            if (pe != null) {
+                pe.update((float)timer);
 
-            if (pe.isComplete()){
-            pe.dispose();
-            pe=null;}
-        }
-        if(shield!=null)shield.update(Gdx.graphics.getDeltaTime());
-
-        batch.setProjectionMatrix(camera.combined);
-        shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
-
-        try {
-            int[] ressources = session.getRessources(player);
-            label1.setText(ressources[Constants.GOLD] + "");
-            label2.setText(ressources[Constants.WOOD] + "");
-            label3.setText(ressources[Constants.IRON] + "");
-            label4.setText(ressources[Constants.MANA] + "");
-        }catch (RemoteException e){
-            e.printStackTrace();
-        }
-
-        //region Buttonumstellungen fuer Auswahlbuttons
-        try{
-            if(unrendered) {
-                if (session.isSelectedClassOf(Selectable.UNIT)) {
-                    List<String> info = session.getInformation(selected);
-                    unitAtk.setText("ATK: " + info.get(0));
-                    unitDef.setText("DEF: " + info.get(1));
-                    unitHp.setText("HP: " + info.get(2));
-                    unitMPoints.setText("BP: " + info.get(3));
-                    unitName.setText("NAME: " + info.get(4));
-                    unitRange.setText("RW: " + info.get(5));
-                    unitOwner.setText("SPIELER: " + info.get(6));
-                } else {
-                    unitAtk.setText("");
-                    unitDef.setText("");
-                    unitHp.setText("");
-                    unitMPoints.setText("");
-                    unitName.setText("");
-                    unitRange.setText("");
-                    unitOwner.setText("");
-                }
-
-                if (session.isSelectedClassOf(Selectable.BASE) && session.isSelectedOwner(player)) {
-                    if (baseRecruitButtons) {
-                        selectionUpLeft.setVisible(true);
-                        selectionUpLeft.setText("");
-                        selectionUpLeft.setTouchable(Touchable.enabled);
-                        selectionUpLeft.getStyle().up = skin.getDrawable("swordfighterIcon");
-                        selectionUpRight.setVisible(session.checkHasSelectedUnit(UnitType.SPEARFIGHTER));
-                        selectionUpRight.setText("");
-                        selectionUpRight.getStyle().up = skin.getDrawable("spearfighterIcon");
-                        selectionDownLeft.setVisible(session.checkHasSelectedUnit(UnitType.ARCHER));
-                        selectionDownLeft.setText("Bogenschuetze");
-                        selectionDownLeft.getStyle().up = skin.getDrawable("defaultIcon");
-                        selectionDownRight.setVisible(true);
-                        selectionDownRight.setText("");
-                        selectionDownRight.getStyle().up = skin.getDrawable("workerIcon");
-                    } else if(laborEntered) {
-                        selectionUpLeft.setVisible(true);
-                        selectionUpLeft.setText("Reduziere Einheitenkosten");
-                        selectionUpLeft.setTouchable(Touchable.enabled);
-                        selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
-                        selectionUpRight.setVisible(true);
-                        selectionUpRight.setText("Schildkroetenstil");
-                        selectionUpRight.getStyle().up = skin.getDrawable("defaultIcon");
-                        selectionDownLeft.setVisible(true);
-
-                        if(archerOrBuff)
-                            selectionDownLeft.setText("Fernkampfstil");
-                        else
-                        selectionDownLeft.setText("Bogenschuetze erforschen");
-
-                        selectionDownLeft.getStyle().up = skin.getDrawable("defaultIcon");
-                        selectionDownRight.setVisible(true);
-
-                        if(spearfighterOrBuff)
-                            selectionDownRight.setText("Hornissenstil");
-                        else
-                        selectionDownRight.setText("Speerkaempfer erforschen");
-
-                        selectionDownRight.getStyle().up = skin.getDrawable("defaultIcon");
-                    } else  {
-                        selectionUpLeft.setVisible(true);
-
-                        if(session.checkSelectedBuildingFinished(Building.LABOR)) //TODO
-                                selectionUpLeft.setText("Labor");
-                        else if(session.checkIsBuilding(Building.LABOR))
-                            selectionUpLeft.setText("Labor wird gebaut");
-                            else
-                                selectionUpLeft.setText("Labor bauen");
-
-                            selectionUpLeft.setTouchable(Touchable.enabled);
-                            selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
-
-                            selectionUpRight.setVisible(true);
-
-                        if(session.checkSelectedBuildingFinished(Building.CASERNE))
-                            selectionUpRight.setText("Kaserne");
-                         else if(session.checkIsBuilding(Building.CASERNE))
-                                selectionUpRight.setText("Kaserne wird gebaut");
-                        else
-                            selectionUpRight.setText("Kaserne bauen");
-
-                            selectionUpRight.getStyle().up = skin.getDrawable("defaultIcon");
-                            selectionDownLeft.setVisible(false);
-                            selectionDownLeft.setText("Einheiten Rekrutieren");
-                            selectionDownLeft.getStyle().up = skin.getDrawable("defaultIcon");
-                            selectionDownRight.setVisible(!session.checkMarket(player));
-                            selectionDownRight.setText("Marktplatz bauen");
-                            selectionDownRight.getStyle().up = skin.getDrawable("defaultIcon");
-                        }
-                } else if (session.isSelectedClassOf(Selectable.HERO)) {
-                    selectionUpLeft.setVisible(true);
-                    selectionUpLeft.setText("Heldenfaehigkeit links");
-                    selectionUpLeft.setTouchable(Touchable.enabled);
-                    selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
-                    selectionUpRight.setVisible(true);
-                    selectionUpRight.setText("Heldenfaehigkeit rechts");
-                    selectionUpRight.getStyle().up = skin.getDrawable("defaultIcon");
-                    selectionDownLeft.setVisible(false);
-                    selectionDownRight.setVisible(false);
-                 if(shield!=null)shield.getEmitters().first().setPosition(session.getSelectedX(selected) * 100 + 50, session.getSelectedY(selected) * 100 + 50);
-
-                } else if (session.isSelectedClassOf(Selectable.FIELD)) {
-                    selectionUpLeft.setVisible(session.isSelectedRessourceType(Constants.IRON));
-                    selectionUpLeft.setText("Mine bauen");
-                    selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
-
-                    selectionUpRight.setVisible(session.checkPathFull(player,Constants.TECHTREE_CULTURE)
-                                                && session.hasSelectedCurrent()
-                                                && session.isSelectedRessourceType(Constants.NONE_OR_NOT_SET));
-                    selectionUpRight.setText("Basis bauen");
-                    selectionUpRight.getStyle().up = skin.getDrawable("defaultIcon");
-                    selectionDownLeft.setVisible(false);
-                    selectionDownRight.setVisible(false);
-                } else {
-                    selectionUpLeft.setVisible(false);
-                    selectionUpRight.setVisible(false);
-                    selectionDownLeft.setVisible(false);
-                    selectionDownRight.setVisible(false);
+                if (pe.isComplete()) {
+                    pe.dispose();
+                    pe = null;
                 }
             }
-        unrendered = true;
+            if (shield != null) shield.update((float)timer);
+
+            batch.setProjectionMatrix(camera.combined);
+            shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
+
+            try {
+                int[] ressources = session.getRessources(player);
+                label1.setText(ressources[Constants.GOLD] + "");
+                label2.setText(ressources[Constants.WOOD] + "");
+                label3.setText(ressources[Constants.IRON] + "");
+                label4.setText(ressources[Constants.MANA] + "");
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
+            //region Buttonumstellungen fuer Auswahlbuttons
+            try {
+                finishRound.setVisible(session.isActive(player));
+
+                if (unrendered) {
+                    if (session.isSelectedClassOf(Selectable.UNIT)) {
+                        List<String> info = session.getInformation(selected);
+                        unitAtk.setText("ATK: " + info.get(0));
+                        unitDef.setText("DEF: " + info.get(1));
+                        unitHp.setText("HP: " + info.get(2));
+                        unitMPoints.setText("BP: " + info.get(3));
+                        unitName.setText("NAME: " + info.get(4));
+                        unitRange.setText("RW: " + info.get(5));
+                        unitOwner.setText("SPIELER: " + info.get(6));
+                    } else {
+                        unitAtk.setText("");
+                        unitDef.setText("");
+                        unitHp.setText("");
+                        unitMPoints.setText("");
+                        unitName.setText("");
+                        unitRange.setText("");
+                        unitOwner.setText("");
+                    }
+
+                    if(session.isSelectedOwner(player) && session.isActive(player)) {
+                        if (session.isSelectedClassOf(Selectable.BASE)) {
+                            if (baseRecruitButtons) {
+                                selectionUpLeft.setVisible(true);
+                                selectionUpLeft.setText("");
+                                selectionUpLeft.setTouchable(Touchable.enabled);
+                                selectionUpLeft.getStyle().up = skin.getDrawable("swordfighterIcon");
+                                selectionUpRight.setVisible(session.checkHasSelectedUnit(UnitType.SPEARFIGHTER));
+                                selectionUpRight.setText("");
+                                selectionUpRight.getStyle().up = skin.getDrawable("spearfighterIcon");
+                                selectionDownLeft.setVisible(session.checkHasSelectedUnit(UnitType.ARCHER));
+                                selectionDownLeft.setText("Bogenschuetze");
+                                selectionDownLeft.getStyle().up = skin.getDrawable("defaultIcon");
+                                selectionDownRight.setVisible(true);
+                                selectionDownRight.setText("");
+                                selectionDownRight.getStyle().up = skin.getDrawable("workerIcon");
+                            } else if (laborEntered) {
+                                selectionUpLeft.setVisible(true);
+                                selectionUpLeft.setText("Reduziere Einheitenkosten");
+                                selectionUpLeft.setTouchable(Touchable.enabled);
+                                selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
+                                selectionUpRight.setVisible(true);
+                                selectionUpRight.setText("Schildkroetenstil");
+                                selectionUpRight.getStyle().up = skin.getDrawable("defaultIcon");
+                                selectionDownLeft.setVisible(true);
+
+                                if (archerOrBuff)
+                                    selectionDownLeft.setText("Fernkampfstil");
+                                else
+                                    selectionDownLeft.setText("Bogenschuetze erforschen");
+
+                                selectionDownLeft.getStyle().up = skin.getDrawable("defaultIcon");
+                                selectionDownRight.setVisible(true);
+
+                                if (spearfighterOrBuff)
+                                    selectionDownRight.setText("Hornissenstil");
+                                else
+                                    selectionDownRight.setText("Speerkaempfer erforschen");
+
+                                selectionDownRight.getStyle().up = skin.getDrawable("defaultIcon");
+                            } else {
+                                selectionUpLeft.setVisible(true);
+
+                                if (session.checkSelectedBuildingFinished(Building.LABOR)) //TODO
+                                    selectionUpLeft.setText("Labor");
+                                else if (session.checkIsBuilding(Building.LABOR))
+                                    selectionUpLeft.setText("Labor wird gebaut");
+                                else
+                                    selectionUpLeft.setText("Labor bauen");
+
+                                selectionUpLeft.setTouchable(Touchable.enabled);
+                                selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
+
+                                selectionUpRight.setVisible(true);
+
+                                if (session.checkSelectedBuildingFinished(Building.CASERNE))
+                                    selectionUpRight.setText("Kaserne");
+                                else if (session.checkIsBuilding(Building.CASERNE))
+                                    selectionUpRight.setText("Kaserne wird gebaut");
+                                else
+                                    selectionUpRight.setText("Kaserne bauen");
+
+                                selectionUpRight.getStyle().up = skin.getDrawable("defaultIcon");
+                                selectionDownLeft.setVisible(false);
+                                selectionDownLeft.setText("Einheiten Rekrutieren");
+                                selectionDownLeft.getStyle().up = skin.getDrawable("defaultIcon");
+                                selectionDownRight.setVisible(!session.checkMarket(player));
+                                selectionDownRight.setText("Marktplatz bauen");
+                                selectionDownRight.getStyle().up = skin.getDrawable("defaultIcon");
+                            }
+                        } else if (session.isSelectedClassOf(Selectable.HERO)) {
+                            selectionUpLeft.setVisible(true);
+                            selectionUpLeft.setText("Heldenfaehigkeit links");
+                            selectionUpLeft.setTouchable(Touchable.enabled);
+                            selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
+                            selectionUpRight.setVisible(true);
+                            selectionUpRight.setText("Heldenfaehigkeit rechts");
+                            selectionUpRight.getStyle().up = skin.getDrawable("defaultIcon");
+                            selectionDownLeft.setVisible(false);
+                            selectionDownRight.setVisible(false);
+                            if (shield != null)
+                                shield.getEmitters().first().setPosition(session.getSelectedX(selected) * 100 + 50, session.getSelectedY(selected) * 100 + 50);
+
+                        } else if (session.isSelectedClassOf(Selectable.FIELD)) {
+                            selectionUpLeft.setVisible(session.isSelectedRessourceType(Constants.IRON));
+                            selectionUpLeft.setText("Mine bauen");
+                            selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
+
+                            selectionUpRight.setVisible(session.checkPathFull(player, Constants.TECHTREE_CULTURE)
+                                    && session.hasSelectedCurrent()
+                                    && session.isSelectedRessourceType(Constants.NONE_OR_NOT_SET));
+                            selectionUpRight.setText("Basis bauen");
+                            selectionUpRight.getStyle().up = skin.getDrawable("defaultIcon");
+                            selectionDownLeft.setVisible(false);
+                            selectionDownRight.setVisible(false);
+                        }
+                    }else {
+                        selectionUpLeft.setVisible(false);
+                        selectionUpRight.setVisible(false);
+                        selectionDownLeft.setVisible(false);
+                        selectionDownRight.setVisible(false);
+                    }
+                }
+                unrendered = true;
 
 
-        }catch(Exception e){
-            System.out.println(e.getMessage());
-        }
-        //endregion
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+            //endregion
 
-        buildChatString();
+            buildChatString();
 
-        //region Kamerabeweung
-        //Move screen right
-        if((Gdx.input.getX()>=(Gdx.graphics.getWidth()-10) || Gdx.input.isKeyPressed(Input.Keys.DPAD_RIGHT))&&camera.position.x<batchWidth)
-        {camera.position.set(camera.position.x+10, camera.position.y, 0);
-         }
+            //region Kamerabeweung
+            //Move screen right
+            if ((Gdx.input.getX() >= (Gdx.graphics.getWidth() - 10) || Gdx.input.isKeyPressed(Input.Keys.DPAD_RIGHT)) && camera.position.x < batchWidth) {
+                camera.position.set(camera.position.x + (500*(float)timer), camera.position.y, 0);
+            }
 
-        //Move screen left
-        if((Gdx.input.getX()<=(10)|| Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT)) &&camera.position.x>0)
-        {camera.position.set(camera.position.x-10, camera.position.y, 0);
+            //Move screen left
+            if ((Gdx.input.getX() <= (10) || Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT)) && camera.position.x > 0) {
+                camera.position.set(camera.position.x - (500*(float)timer), camera.position.y, 0);
 
-        }
+            }
 
-        //Move screen down
-        if((Gdx.input.getY()>=(Gdx.graphics.getHeight()-10)|| Gdx.input.isKeyPressed(Input.Keys.DPAD_DOWN))&&camera.position.y>0)
-        {camera.position.set(camera.position.x,camera.position.y-10, 0);
+            //Move screen down
+            if ((Gdx.input.getY() >= (Gdx.graphics.getHeight() - 10) || Gdx.input.isKeyPressed(Input.Keys.DPAD_DOWN)) && camera.position.y > 0) {
+                camera.position.set(camera.position.x, camera.position.y - (500*(float)timer), 0);
 
-        }
+            }
 
-        //Move screen up
-        if((Gdx.input.getY()<=(10)|| Gdx.input.isKeyPressed(Input.Keys.DPAD_UP))&&camera.position.y<batchHeight)
-        {camera.position.set(camera.position.x,camera.position.y+10, 0);
-           }
-        camera.update();
-        //endregion
+            //Move screen up
+            if ((Gdx.input.getY() <= (10) || Gdx.input.isKeyPressed(Input.Keys.DPAD_UP)) && camera.position.y < batchHeight) {
+                camera.position.set(camera.position.x, camera.position.y + (500*(float)timer), 0);
+            }
+            camera.update();
+            //endregion
 
-        Gdx.gl.glClearColor(0,0,0,1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            Gdx.gl.glClearColor(0, 0, 0, 1);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 
-        batch.begin();
-        //region Felder zeichnen
-        String textureName = "";
-        int textureIndex = 0;
-        if(timer >= (1/30)) {
+            batch.begin();
+            //region Felder zeichnen
+            String textureName = "";
+            int textureIndex = 0;
             try {
                 for (int k = 0; k < Constants.FIELDXLENGTH; k++)
                     for (int h = 0; h < Constants.FIELDYLENGTH; h++) {
                         int[] spriteIndeces = session.getSpriteIndex(k, h);
                         batch.draw(textures[spriteIndeces[0]], 100 * k, 100 * h, 100, 100);
                         if (spriteIndeces[1] != -1)
-                            batch.draw(textures[spriteIndeces[0]], 100 * k, 100 * h, 100, 100);
+                            batch.draw(textures[spriteIndeces[1]], 100 * k, 100 * h, 100, 100);
+
+                        //TODO check fuer particle effects
                     }
             } catch (RemoteException e) {
                 System.out.println("Render Fields");
@@ -410,30 +420,38 @@ public class GameScreen implements Screen, InputProcessor{
 
                     }
             }
-            timer = 0;
-        }
-        //endregion
+
+
+            //endregion
 
 //testweise
-        if(pe!=null)
-        pe.draw(batch);
-        if(shield!=null)
-        shield.draw(batch);
-        batch.end();
+            if (pe != null)
+                pe.draw(batch);
+            if (shield != null)
+                shield.draw(batch);
+            batch.end();
 
-        showMovementRange();
+            try {
+                if(session.isActive(player))
+                showMovementRange();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
 
 
-        Vector3 vector=camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-        float x = vector.x > batchWidth ? batchWidth-100 : vector.x < 0 ? 0 : vector.x;
-        float y = vector.y > batchHeight ? batchHeight-100 : vector.y < 0 ? 0 : vector.y;
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.BLUE);
-        shapeRenderer.rect(((int)x/100)*100, ((int)y/100)*100, 100, 100);
-        shapeRenderer.end();
+            Vector3 vector = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+            float x = vector.x > batchWidth ? batchWidth - 100 : vector.x < 0 ? 0 : vector.x;
+            float y = vector.y > batchHeight ? batchHeight - 100 : vector.y < 0 ? 0 : vector.y;
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.setColor(Color.BLUE);
+            shapeRenderer.rect(((int) x / 100) * 100, ((int) y / 100) * 100, 100, 100);
+            shapeRenderer.end();
 
-        stage.act();
-        stage.draw();
+            stage.act();
+            stage.draw();
+
+            timer = 0;
+        }
     }
 
     public boolean showUnitRadius(){
@@ -567,9 +585,9 @@ try {
     group.addActor(label4);
 
 
-        NinePatch tmp = new NinePatch(textures[18],0,0,0,0);
+        NinePatch tmp = new NinePatch(textures[SpriteNames.CHEST_ICON.getSpriteIndex()],0,0,0,0);
         skin.add("teamBox",tmp);
-        tmp = new NinePatch(textures[37],0,0,0,0);
+        tmp = new NinePatch(textures[SpriteNames.TEAMBOX_OPEN.getSpriteIndex()],0,0,0,0);
         skin.add("teamBoxOpen",tmp);
 
         ImageButtonStyle buttonStyle = new ImageButtonStyle();
@@ -668,19 +686,19 @@ try {
         NinePatch tmp = null;
         TextButton.TextButtonStyle style = null;
 
-        tmp = new NinePatch(textures[22], 0, 0, 0, 0);
+        tmp = new NinePatch(textures[SpriteNames.BUTTON_BG.getSpriteIndex()], 0, 0, 0, 0);
         skin.add("defaultIcon",tmp);
-        tmp = new NinePatch(textures[21], 0, 0, 0, 0);
+        tmp = new NinePatch(textures[SpriteNames.BUTTON_WORKER.getSpriteIndex()], 0, 0, 0, 0);
         skin.add("workerIcon",tmp);
-        tmp = new NinePatch(textures[20], 0, 0, 0, 0);
+        tmp = new NinePatch(textures[SpriteNames.MARKETPLACE.getSpriteIndex()], 0, 0, 0, 0);
         skin.add("marketIcon",tmp);
-        tmp = new NinePatch(textures[19], 10, 10, 10, 10);
+        tmp = new NinePatch(textures[SpriteNames.MENU_BG.getSpriteIndex()], 10, 10, 10, 10);
         skin.add("background",tmp);
-        tmp = new NinePatch(textures[27], 10, 10, 10, 10);
+        tmp = new NinePatch(textures[SpriteNames.SPEARFIGHTER.getSpriteIndex()], 10, 10, 10, 10);
         skin.add("spearfighterIcon",tmp);
-        tmp = new NinePatch(textures[28], 10, 10, 10, 10);
+        tmp = new NinePatch(textures[SpriteNames.SWORDFIGHTER.getSpriteIndex()], 10, 10, 10, 10);
         skin.add("swordfighterIcon",tmp);
-        tmp = new NinePatch(textures[36], 10, 10, 10, 10);
+        tmp = new NinePatch(textures[SpriteNames.TECHTREE.getSpriteIndex()], 10, 10, 10, 10);
         skin.add("treeBackground",tmp);
 
         ////Grundlegende Tabelle////
@@ -827,6 +845,7 @@ try {
                 tmp.setWrap(true);
                 backLog.row().fill().expandX().align(Align.left).height(tmp.getHeight());
                 backLog.add(tmp);
+                backLog.row().fill().expandX().align(Align.left).height(tmp.getHeight());
                 chatScroller.layout();
                 chatScroller.setScrollPercentY(100);
             }
@@ -964,16 +983,16 @@ try {
 
             }*/
             int[] teamRessources = session.getTeamRessources(player);
-                tWood = new Label("Holz: "+teamRessources[Constants.WOOD]+"",skin);
+                tWood = new Label("Holz: "+teamRessources[Constants.WOOD],skin);
 
-                tIron = new Label("Eisen: "+teamRessources[Constants.IRON]+"",skin);
+                tIron = new Label("Eisen: "+teamRessources[Constants.IRON],skin);
 
-                tGold = new Label("Gold: "+teamRessources[Constants.GOLD]+"",skin);
+                tGold = new Label("Gold: "+teamRessources[Constants.GOLD],skin);
 
 
-            addWood = new TextField("0", skin);
-            addIron = new TextField("0", skin);
-            addGold = new TextField("0", skin);
+            addWood = new TextField("", skin);
+            addIron = new TextField("", skin);
+            addGold = new TextField("", skin);
 
             addButton = new TextButton("Einzahlen",skin);
             addButton.addListener(new ClickListener(){
@@ -986,19 +1005,25 @@ try {
                         if(wood<0||iron<0||gold<0) {
                             addWood.setText("Die Zahlen muessen positiv sein!");return;
                         }
+
                         if(!session.addTeamRessources(player,Constants.WOOD, wood)) {
                             addWood.setText("Du besitzt nicht genug Holz"); return;
                         }
+                        addWood.setText("");
                         if(!session.addTeamRessources(player,Constants.IRON, iron)) {
                             addIron.setText("Du besitzt nicht genug Eisen"); return;
                         }
+                        addIron.setText("");
+
                         if(!session.addTeamRessources(player,Constants.GOLD, gold)) {
                             addGold.setText("Du besitzt nicht genug Gold"); return;
                         }
+                        addGold.setText("");
+
                         int[] teamRessources = session.getTeamRessources(player);
-                            tWood.setText("Holz: "+teamRessources[Constants.WOOD]+"");
-                            tIron.setText("Eisen: "+teamRessources[Constants.IRON]+"");
-                            tGold.setText("Gold: "+teamRessources[Constants.GOLD]+"");
+                            tWood.setText("Holz: "+teamRessources[Constants.WOOD]);
+                            tIron.setText("Eisen: "+teamRessources[Constants.IRON]);
+                            tGold.setText("Gold: "+teamRessources[Constants.GOLD]);
 
 
                     }catch(Exception e){
@@ -1043,13 +1068,13 @@ try {
         TextButton.TextButtonStyle style = null;
 
         //TODO change Textureindex
-        tmp = new NinePatch(textures[29], 0, 0, 0, 0);
+        tmp = new NinePatch(textures[SpriteNames.BUTTON_GREY.getSpriteIndex()], 0, 0, 0, 0);
         skin.add("defaultIcon",tmp);
-        tmp = new NinePatch(textures[29], 0, 0, 0, 0);
+        tmp = new NinePatch(textures[SpriteNames.BUTTON_GREY.getSpriteIndex()], 0, 0, 0, 0);
         skin.add("steelIcon",tmp);
-        tmp = new NinePatch(textures[31], 0, 0, 0, 0);
+        tmp = new NinePatch(textures[SpriteNames.BUTTON_BLUE.getSpriteIndex()], 0, 0, 0, 0);
         skin.add("magicIcon",tmp);
-        tmp = new NinePatch(textures[30], 0, 0, 0, 0);
+        tmp = new NinePatch(textures[SpriteNames.BUTTON_GOLD.getSpriteIndex()], 0, 0, 0, 0);
         skin.add("cultureIcon",tmp);
 
         treeTable = new Table();
@@ -1345,6 +1370,7 @@ try {
 
                   if(!woodField.getText().equals("")) {
                       boolean wood = session.buyOnMarket(player,Constants.WOOD,Integer.parseInt(woodField.getText()));
+                      marketInfo = session.getMarketInfo();
                       woodAmount.setText("Holz: " + marketInfo[Constants.WOOD]);
                       woodPrice.setText("Preis: " + marketInfo[Constants.WOOD_PRICE_MARKET_INDEX]);
                       if(wood)
@@ -1363,6 +1389,7 @@ try {
 
                   if(!ironField.getText().equals("")) {
                       boolean iron = session.buyOnMarket(player,Constants.IRON,Integer.parseInt(ironField.getText()));
+                      marketInfo = session.getMarketInfo();
                       ironAmount.setText("Eisen: " + marketInfo[Constants.IRON]);
                       ironPrice.setText("Preis: " + marketInfo[Constants.IRON_PRICE_MARKET_INDEX]);
 
@@ -1395,6 +1422,7 @@ try {
 
                     if(!woodField.getText().equals("")) {
                         boolean wood = session.sellOnMarket(player,Constants.WOOD,Integer.parseInt(woodField.getText()));
+                        marketInfo = session.getMarketInfo();
                         woodAmount.setText("Holz: " + marketInfo[Constants.WOOD]);
                         woodPrice.setText("Preis: " + marketInfo[Constants.WOOD_PRICE_MARKET_INDEX]);
 
@@ -1414,6 +1442,7 @@ try {
 
                     if(!ironField.getText().equals("")) {
                         boolean iron = session.sellOnMarket(player,Constants.IRON,Integer.parseInt(ironField.getText()));
+                        marketInfo = session.getMarketInfo();
                         ironAmount.setText("Eisen: " + marketInfo[Constants.IRON]);
                         ironPrice.setText("Preis: " + marketInfo[Constants.IRON_PRICE_MARKET_INDEX]);
 
@@ -1525,7 +1554,7 @@ try {
                     if(session.advanceOnTechtree(player,TreeElement.STEEL5)) {
                         steelButtonLv5.setText("");
                         NinePatch tmp = null;
-                        tmp = new NinePatch(textures[16], 0, 0, 0, 0);
+                        tmp = new NinePatch(textures[SpriteNames.IRON_ICON.getSpriteIndex()], 0, 0, 0, 0);
                         skin.add("ironIcon", tmp);
                         steelButtonLv5.getStyle().up = skin.getDrawable("ironIcon");
                     }
@@ -1600,7 +1629,7 @@ try {
                     if(session.advanceOnTechtree(player,TreeElement.MAGIC5)) {
                         magicButtonLv5.setText("");
                         NinePatch tmp = null;
-                        tmp = new NinePatch(textures[17], 0, 0, 0, 0);
+                        tmp = new NinePatch(textures[SpriteNames.MANA_ICON.getSpriteIndex()], 0, 0, 0, 0);
                         skin.add("manaIcon", tmp);
                         magicButtonLv5.getStyle().up = skin.getDrawable("manaIcon");
                     }
@@ -1675,7 +1704,7 @@ try {
                     if(session.advanceOnTechtree(player,TreeElement.CULTURE5)) {
                         cultureButtonLv5.setText("");
                         NinePatch tmp = null;
-                        tmp = new NinePatch(textures[14], 0, 0, 0, 0);
+                        tmp = new NinePatch(textures[SpriteNames.GOLD_ICON.getSpriteIndex()], 0, 0, 0, 0);
                         skin.add("goldIcon", tmp);
                         cultureButtonLv5.getStyle().up = skin.getDrawable("goldIcon");
                     }

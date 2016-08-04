@@ -128,9 +128,9 @@ public interface IGameSession extends Remote {
 
     public void setTurn(int turn)throws RemoteException;
 
-    public int getMaxPlayersPerTeam()throws RemoteException;
+    public int getMaxPlayers()throws RemoteException;
 
-    public void setMaxPlayersPerTeam(int maxPlayersPerTeam)throws RemoteException;
+    public void setMaxPlayers(int maxPlayers)throws RemoteException;
 
     public void setPassword(String password) throws RemoteException;
 
@@ -204,4 +204,8 @@ public interface IGameSession extends Remote {
     public boolean advanceOnTechtree(int playerId, TreeElement element) throws RemoteException;
 
     public int[] moveSelected(int playerId, int selectedId, int x, int y) throws RemoteException;
+
+    public boolean isActive(int playerId) throws RemoteException;
+
+    public BuffInfo getActiveBuff(int id) throws RemoteException;
 }

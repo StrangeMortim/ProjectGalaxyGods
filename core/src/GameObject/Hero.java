@@ -5,6 +5,7 @@ import Player.Player;
 import Action.*;
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * Created by Fabi on 11.06.2016.
@@ -25,6 +26,7 @@ public class Hero extends Unit implements Serializable {
             throw new IllegalArgumentException("You must name your hero");
 
         this.name = name;
+        setMovePointsLeft(movePoints);
         setLeftHand(new Heal(this,this,getOwner(),session));
         setRightHand(new Shield(this,getOwner(),session));
     }
@@ -67,5 +69,11 @@ public class Hero extends Unit implements Serializable {
         return name;
     }
 
-
+    @Override
+    public List<String> getInfo(){
+        List<String> result = super.getInfo();
+        result.remove(result.size()-1);
+        result.add(name);
+        return result;
+    }
 }

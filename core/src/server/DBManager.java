@@ -4,6 +4,7 @@ import GameObject.GameSession;
 import GameObject.Market;
 
 import java.io.*;
+import java.rmi.NoSuchObjectException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.sql.*;
@@ -156,22 +157,41 @@ try {
      */
     public static boolean checkAccount(String name, String password){
         if(getAccountList().matches("(.*)"+name+"(.*)")) {
+            Connection conn = null;
+            PreparedStatement sta = null;
+            ResultSet res = null;
 try {
-    Connection conn = DriverManager.getConnection(DB_URL);
-    PreparedStatement sta = conn.prepareStatement(
+    conn = DriverManager.getConnection(DB_URL);
+    sta = conn.prepareStatement(
             "SELECT password FROM Accounts WHERE id = '" + name + "'");
-    ResultSet res = sta.executeQuery();
+    res = sta.executeQuery();
     String pw="";
     while (res.next()) {
         pw = res.getString(1);
     }
-    sta.close();
-    res.close();
-    conn.close();
+
     if(pw.equals(password)){
         System.out.println("Account mit Namen: '"+name+"' existiert!");
         return true;}
-}catch(Exception e){return false;}}
+}catch (SQLException e) {
+    e.printStackTrace();
+    return false;
+} finally {
+    try {
+        if (sta != null)
+            sta.close();
+
+        if(res != null)
+            res.close();
+
+        if(conn != null);
+        conn.close();
+    } catch (SQLException e) {
+        System.out.println(e.getMessage());
+        e.printStackTrace();
+    }
+}
+        }
         return false;
     }
 

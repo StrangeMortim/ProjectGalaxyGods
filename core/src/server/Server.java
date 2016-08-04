@@ -18,6 +18,7 @@ import java.util.List;
  */
 public class Server implements ServerInterface {
 
+    static Server serv;
     static Registry reg;
     private List<GameSession> sessions = new ArrayList<>();
 
@@ -114,7 +115,7 @@ public class Server implements ServerInterface {
      * @return true, wenn Registration geklappt hat, sonst false
      */
     @Override
-    public boolean registerAccount(String name, String password) throws RemoteException {
+    public boolean registerAccount(String name, String password) {
         return new DBManager().registerAccount(name,password);
     }
 
@@ -126,7 +127,7 @@ public class Server implements ServerInterface {
      * @return true, wenn Pruefung erfolgreich, sonst false.
      */
     @Override
-    public boolean checkAccount(String name, String password) throws RemoteException {
+    public boolean checkAccount(String name, String password)  {
         return new DBManager().checkAccount(name,password);
     }
 
@@ -141,21 +142,27 @@ public class Server implements ServerInterface {
      * @return Namen der GameSession-Objekte
      */
     @Override
-    public String getSessionList() throws RemoteException {
+    public String getSessionList()  {
         return new DBManager().getSessionList();
     }
 
-    public static void init() throws RemoteException
+    public static void init()
     {
         try{
-            Server serv = new Server();
-            ServerInterface stub = (ServerInterface)UnicastRemoteObject.exportObject(serv,0);
+            if(serv == null)
+            serv = new Server();
+
 
             reg = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
+
+            ServerInterface stub = (ServerInterface)UnicastRemoteObject.exportObject(serv,0);
+
             reg.rebind("ServerInterface",stub);
 
             System.out.println("Server: Server ready");
-        } catch (RemoteException e){
+        } catch (Exception e){
+
+            e.printStackTrace();
             System.out.println(e.getMessage());
         }
 

@@ -36,4 +36,5 @@ public final class  Constants {
     public final static int TECHTREE_MAGIC = 1;
     public final static int TECHTREE_CULTURE = 2;
     public final static int INFO_MOVEPOINTS = 3;
+    public final static float UNIT_RECYCLING_MODIFIER = 1/3;
 }

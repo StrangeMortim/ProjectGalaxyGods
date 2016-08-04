@@ -281,7 +281,9 @@ public class NetworkScreen implements Screen {
             ServerInterface stub = (ServerInterface) reg.lookup("ServerInterface");
             if(!stub.checkAccount("test","1234")){
                 stub.registerAccount("test","1234");}
-        }catch(Exception e){}
+        }catch(Exception e){
+            e.printStackTrace();
+        }
 
 
         Input.TextInputListener nameListener = new Input.TextInputListener()
@@ -293,13 +295,17 @@ public class NetworkScreen implements Screen {
                 try{
                     Registry reg = LocateRegistry.getRegistry();
                     ServerInterface stub = (ServerInterface) reg.lookup("ServerInterface");
-                    if(!stub.checkAccount(name,password)){
+                   /* if(!stub.checkAccount(name,password)){
                         game.setScreen(new MenuScreen(game));
                     }else{
                         init();
-                    }
-                }catch(Exception e){
-                    System.out.println("Wahrscheinlich laeuft die Datenbank noch im Hintergrund.");
+                    }*/
+                    init();
+                }catch(RemoteException e){
+                    e.printStackTrace();
+                    System.out.println(e.getMessage());
+                } catch (NotBoundException e) {
+                    e.printStackTrace();
                 }
             }
                 @Override

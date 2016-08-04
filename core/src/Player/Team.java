@@ -82,4 +82,14 @@ public class Team implements Serializable {
     public int[] getCheck() {
         return check;
     }
+
+    public boolean addPlayer(Player player){
+        if(player != null) {
+            players.add(player);
+            chat.addParticipant(player);
+            return true;
+        }
+
+        return false;
+    }
 }

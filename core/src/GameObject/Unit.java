@@ -1,6 +1,7 @@
 package GameObject;
 
 import Action.Buff;
+import Action.BuffInfo;
 import Player.Player;
 
 import java.io.Serializable;
@@ -26,6 +27,7 @@ public class Unit implements Serializable {
     protected int direction=0;
     protected int iD;
     protected GameSession session;
+    protected BuffInfo significantBuff = BuffInfo.NONE;
 
     public Unit(UnitType type, Player owner, GameSession session){
         if(type == null || owner == null || session == null)
@@ -55,7 +57,9 @@ public class Unit implements Serializable {
      */
 
     public List<Buff> update() {
-        return new ArrayList<Buff>();        /*TODO override in base*/
+        movePointsLeft = movePoints;
+
+        return new ArrayList<Buff>();
     }
 //TODO: Check ob Spieler dranne is und Einheit vom Spieler, jo und swag
     /**
@@ -219,5 +223,13 @@ public class Unit implements Serializable {
         result.add(range+"");
         result.add(owner.getAccount().getName());
         return result;
+    }
+
+    public void setSignificantBuff(BuffInfo buff){
+        this.significantBuff = buff;
+    }
+
+    public BuffInfo getSignificantBuff(){
+        return significantBuff;
     }
 }

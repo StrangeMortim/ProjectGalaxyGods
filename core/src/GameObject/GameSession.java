@@ -65,7 +65,7 @@ public class GameSession implements IGameSession, Serializable{
     /**
      * Die Anzahl der maximalen Spieler pro Team.
      */
-    private int maxPlayersPerTeam = 2;
+    private int maxPlayers = 2;
     /**
      * Gibt an, ob die Runde gestartet ist.
      */
@@ -77,13 +77,13 @@ public class GameSession implements IGameSession, Serializable{
     /**
      * Max Anzahl an Spielern
      */
-    private int numberOfPlayers;
+    private int numberOfPlayers=0;
 
     private int currentId = 1;
 
     private HashMap<Integer,Object> archive = new HashMap<>();
 
-    private Object selected;
+    private Object selected = null;
 
 
     /**
@@ -120,6 +120,7 @@ public class GameSession implements IGameSession, Serializable{
 
         for(Team t: teams)
             for(Player p: t.getPlayers()){
+                p.getRessources()[Constants.GOLD] += Constants.GOLD_RES_VALUE+p.getRessourceBoni()[Constants.GOLD];
                 it = p.getTemporaryBuffs().iterator();
                 while (it.hasNext())
                     if(it.next().execute())
@@ -158,6 +159,16 @@ public class GameSession implements IGameSession, Serializable{
         while (it.hasNext()){
             if(((Action)it.next()).getOrigin() == u)
                 it.remove();
+        }
+        Player p = u.getOwner();
+        for(int i=Constants.WOOD; i<=Constants.MANA; i++){
+            if(p.getTeam().getCheck()[i] >= (int)(u.getType().getRessourceCost()[i]*Constants.UNIT_RECYCLING_MODIFIER)) {
+                p.getRessources()[i] += (int) (u.getType().getRessourceCost()[i] * Constants.UNIT_RECYCLING_MODIFIER);
+                p.getTeam().getCheck()[i] -= (int) (u.getType().getRessourceCost()[i] * Constants.UNIT_RECYCLING_MODIFIER);
+            }else{
+                p.getRessources()[i] += p.getTeam().getCheck()[i];
+                p.getTeam().getCheck()[i] = 0;
+            }
         }
     }
 
@@ -308,6 +319,9 @@ public class GameSession implements IGameSession, Serializable{
     public int playerJoin(Account a, String teamColor) {
         if(a == null)
             throw new IllegalArgumentException("Account ist null");
+        numberOfPlayers++;
+
+
 
         for(Account a2: this.identities.keySet()){
             if(a2.getName().equals(a.getName())){
@@ -323,9 +337,12 @@ public class GameSession implements IGameSession, Serializable{
             }
             if(t2.getColor().equals(teamColor)){
                     p.setTeam(t2);
-                t2.getPlayers().add(p);
+                t2.addPlayer(p);
                 identities.put(a, p);
+                sessionChat.addParticipant(p);
                 level.addBase(p, pCounter);
+                if(numberOfPlayers >= maxPlayers)
+                    active = p;
                 return p.getId();
             }
 
@@ -333,10 +350,13 @@ public class GameSession implements IGameSession, Serializable{
 
         Team t = new Team(new ArrayList<Player>(),teamColor,this);
         teams.add(t);
-        t.getPlayers().add(p);
+        t.addPlayer(p);
         p.setTeam(t);
         identities.put(a, p);
+        sessionChat.addParticipant(p);
         level.addBase(p, pCounter);
+        if(numberOfPlayers >= maxPlayers)
+            active = p;
         return p.getId();
 
     }
@@ -518,14 +538,12 @@ public class GameSession implements IGameSession, Serializable{
         this.hasStarted = hasStarted;
     }
 
-    @Override
-    public int getMaxPlayersPerTeam(){
-        return maxPlayersPerTeam;
+    public int getMaxPlayers(){
+        return maxPlayers;
     }
 
-    @Override
-    public void setMaxPlayersPerTeam(int maxPlayersPerTeam) {
-        this.maxPlayersPerTeam = maxPlayersPerTeam;
+    public void setMaxPlayers(int maxPlayers) {
+        this.maxPlayers = maxPlayers;
     }
 
     @Override
@@ -633,27 +651,27 @@ public class GameSession implements IGameSession, Serializable{
     @Override
     public int[] getSpriteIndex(int x, int y) throws RemoteException {
         if(x < 0 || x > Constants.FIELDXLENGTH || y < 0 || y > Constants.FIELDYLENGTH)
-            return new int[2];
+            return new int[3];
 
         Object tmp = level.getField(x,y).select();
         if(tmp == null){
             System.out.println("Das Feld (" + x + ","+y+") gibt null zurueck");
-            return new int[2];
+            return new int[3];
         } else if(tmp instanceof Field){
-            return new int[]{((Field)tmp).getSpriteIndex(),-1};
+            return new int[]{((Field)tmp).getSpriteIndex(),-1,-1};
         } else if(tmp instanceof Unit){
-            return new int[]{level.getField(x,y).getSpriteIndex(),((Unit)tmp).getSpriteIndex()};
+            return new int[]{level.getField(x,y).getSpriteIndex(),((Unit)tmp).getSpriteIndex(),((Unit)tmp).getId()};
         }
 
         System.out.println("Das Feld: (" + x+","+y + ") besitzt kein Sprite");
-        return new int[2];
+        return new int[3];
     }
 
     @Override
     public List<String> getInformation(int id) throws RemoteException {
         Object tmp = archive.get(id);
         if(tmp == null) {
-            System.out.println("Id: " + id + " besitzt kein Objekt");
+            //System.out.println("Id: " + id + " besitzt kein Objekt");
             return new ArrayList<>();
         } else if(tmp instanceof Unit){
             return ((Unit)tmp).getInfo();
@@ -661,7 +679,7 @@ public class GameSession implements IGameSession, Serializable{
 
         ArrayList<String> failSafe = new ArrayList<>();
         for(int i=0; i<8;++i)
-            failSafe.add("n/a");
+            failSafe.add("-1/-1");
 
         System.out.println("Die id: " + id + " gehoert zu keiner Einheit");
         return failSafe;
@@ -694,7 +712,7 @@ public class GameSession implements IGameSession, Serializable{
             System.out.println("Id: " + playerId + " besitzt kein Objekt");
             return false;
         }else if(tmp instanceof Player && selected instanceof Unit){
-            System.out.println("Ist selected-Owner-Id und tmp id gleich?: " + (((Player)tmp).getId()==((Unit)selected).getOwner().getId()));
+            //System.out.println("Ist selected-Owner-Id und tmp id gleich?: " + (((Player)tmp).getId()==((Unit)selected).getOwner().getId()));
             return ((Unit)selected).getOwner() == tmp;
         }
 
@@ -991,13 +1009,15 @@ public class GameSession implements IGameSession, Serializable{
             return false;
         }
 
-        if(!(selected instanceof Base) && !(selected instanceof Field)){
+        if(!(selected instanceof Base) && !(selected instanceof Field))
             if(((Base)selected).getId() != selectedId){
                 System.out.println("Client selected ID und selected sind nicht mehr synchron");
                 return false;
             }
 
+            System.out.println("Lv1");
             if(selected instanceof Field){
+                System.out.println("Lv2");
                 if(abort){
                     switch (building){
                         case BASE:
@@ -1016,6 +1036,7 @@ public class GameSession implements IGameSession, Serializable{
                     }
                 }
             } else if(selected instanceof Base) {
+                System.out.println("Funktioniert bis hierhin");
                 if (abort) {
                     switch (building) {
                         case LABOR:
@@ -1040,9 +1061,9 @@ public class GameSession implements IGameSession, Serializable{
                     }
                 }
             }
-        }
 
-        System.out.println("Create unit wurde auf einem nicht-Base Objekt aufgerufen");
+
+        System.out.println("Build Or Abort wurde auf einem nicht-Base Objekt aufgerufen");
         return false;
     }
 
@@ -1055,10 +1076,14 @@ public class GameSession implements IGameSession, Serializable{
             return false;
         }
 
-        if(left)
-            return ((Player)player).getHero().getLeftHand().execute();
-        else
-            return ((Player)player).getHero().getRightHand().execute();
+        if(active == player) {
+            if (left)
+                return ((Player) player).getHero().getLeftHand().execute();
+            else
+                return ((Player) player).getHero().getRightHand().execute();
+        }
+
+        return false;
     }
 
     @Override
@@ -1293,4 +1318,25 @@ public class GameSession implements IGameSession, Serializable{
         return false;
     }
 
+
+    public boolean isActive(int playerId){
+        Object player = archive.get(playerId);
+
+        if(!(player instanceof Player)){
+            System.out.println("isActive fuer ein nicht-Spieler Objekt wurde aufgerufen");
+            return false;
+        }
+
+        return active == player;
+    }
+
+    public BuffInfo getActiveBuff(int id){
+        Object unit = archive.get(id);
+
+        if(!(unit instanceof Unit)){
+            return BuffInfo.NONE;
+        }
+
+        return ((Unit)unit).getSignificantBuff();
+    }
 }

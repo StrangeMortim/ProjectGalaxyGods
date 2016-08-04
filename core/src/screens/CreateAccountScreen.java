@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import server.ServerInterface;
 
+import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -77,6 +78,10 @@ public class CreateAccountScreen implements Screen {
         table.row().padBottom(40);
         table.add(lMessage);
         stage.addActor(table);
+
+        stage.addActor(bCancel);
+        stage.addActor(bApply);
+
         bCancel.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) { game.setScreen(new MenuScreen(game));}
@@ -92,12 +97,17 @@ public class CreateAccountScreen implements Screen {
                         lMessage.setText("Account existiert bereits!");
                     }
                 } catch (RemoteException e) {
+                    System.out.println(e.getMessage());
                     e.printStackTrace();
+                    lMessage.setText("Account wurde erstellt");
+                    try {
+                        stub.registerAccount(tID.getText(),tPW.getText());
+                    } catch (RemoteException e1) {
+                        e1.printStackTrace();
+                    }
                 }
             }
         });
-        stage.addActor(bCancel);
-        stage.addActor(bApply);
         Gdx.input.setInputProcessor(stage);
     }
 

@@ -46,6 +46,8 @@ public class Buff extends Action{
             roundsLeft--;
             if(roundsLeft <= 0){
                 if(origin != null){
+                    if(info == BuffInfo.SHIELD && origin.getSignificantBuff() == BuffInfo.SHIELD)
+                        origin.setSignificantBuff(BuffInfo.SHIELD);
                     origin.setAtk(origin.getAtk()-this.atk);
                     origin.setDef(origin.getDef()-this.def);
                     origin.setMaxHp(origin.getMaxHp()-this.hp);
@@ -56,6 +58,8 @@ public class Buff extends Action{
             }
         }
 
+        if(info == BuffInfo.SHIELD)
+            origin.setSignificantBuff(BuffInfo.SHIELD);
         //if first time executed, do stuff
         if(firstTime){//TODO: check Null
 

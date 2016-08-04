@@ -469,4 +469,13 @@ public class Base extends Unit implements Serializable {
     public HashMap<Unit, Integer> getRecruiting(){
         return recruiting;
     }
+
+    public boolean spawnHero(){
+        if(owner.getHero() == null){
+            spawnUnit(new Hero(UnitType.HERO,owner,owner.getAccount().getName(),session));
+            return true;
+        }
+
+        return false;
+    }
 }

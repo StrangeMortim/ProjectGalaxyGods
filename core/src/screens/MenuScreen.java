@@ -19,8 +19,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import server.ServerInterface;
 
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 
 /**
@@ -40,23 +43,27 @@ public class MenuScreen implements Screen{
     private TextButton exitButton;
     private TextButton newGameButton;
     private TextButton createGameButton;
-    Texture bg = new Texture(Gdx.files.internal("assets/stone.png"));
+    Texture bg;
     ParticleEffect pe;
     ParticleEffect pe2;
 
     public MenuScreen(Game pGame){
         game=pGame;
+        skin = new Skin(Gdx.files.internal("assets/uiskin.json"));
+        stage = new Stage(new ScreenViewport());
+        bg = new Texture(Gdx.files.internal("assets/stone.png"));
+        checkAccount();
     }
 
     @Override
     public void show() {
         ////////////////////////Attribut inititialisierung und Setup////////////////////
-        skin = new Skin(Gdx.files.internal("assets/uiskin.json"));
-        stage = new Stage(new ScreenViewport());
+
         table = new Table();
         table.setWidth(stage.getWidth());
         table.align(Align.center|Align.top);
         table.setPosition(0, Gdx.graphics.getHeight()* 3/4);
+
 
         ///////////////////////Button Generierung///////////////////////////////////////
         networkButton = new TextButton("Start", skin);
@@ -233,4 +240,20 @@ public class MenuScreen implements Screen{
         batch.dispose();
         backGround.getTexture().dispose();
 }
+
+    private void checkAccount() {
+        try {
+            Registry reg = LocateRegistry.getRegistry();
+            ServerInterface stub = (ServerInterface) reg.lookup("ServerInterface");
+                stub.registerAccount("Spieler 1", "1234");
+
+
+                stub.registerAccount("Spieler 2", "1234");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
 }

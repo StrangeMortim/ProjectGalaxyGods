@@ -188,7 +188,7 @@ public class Map implements Serializable {
             for(Field f2: f) {
                 result.addAll(f2.update());
 
-                if(timesSpawned < 2 && rng.nextInt(100) < 5 && f2.getCurrent() == null && f2.getResType() == -1){
+                if(timesSpawned < 1 && rng.nextInt(10000) < 3 && f2.getCurrent() == null && f2.getResType() == -1){
                     f2.setResType(Constants.MANA);
                     f2.setResValue(Constants.MANA_RES_VALUE);
                     timesSpawned++;
@@ -212,7 +212,7 @@ public class Map implements Serializable {
      */
 
     public Field getField(int x, int y) {
-        if(x < 0 || y < 0 || x > fields.length || y > fields[0].length)
+        if(x < 0 || y < 0 || x >= fields.length || y >= fields[0].length)
            return null;
 
 
@@ -296,6 +296,7 @@ public class Map implements Serializable {
         fields[baseXPositions[playerNumber]+1][baseYPositions[playerNumber]-1].setSpriteIndex(SpriteNames.BASE_DOWN_RIGHT_EMPTY.getSpriteIndex());
         fields[baseXPositions[playerNumber]][baseYPositions[playerNumber]].setCurrent(tmp);
         fields[baseXPositions[playerNumber]][baseYPositions[playerNumber]].setSpriteIndex(SpriteNames.BASE_UP_LEFT.getSpriteIndex());
+        tmp.spawnHero();
         return true;
     }
 
