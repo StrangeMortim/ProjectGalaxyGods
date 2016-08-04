@@ -1301,6 +1301,17 @@ public class GameSession implements IGameSession, Serializable{
 
         if (enemy.getCurrentHp() <= 0) {
             if(enemy instanceof Base){
+                Player attacker = unit.getOwner();
+                Player defender = enemy.getOwner();
+                for(int i=Constants.WOOD; i<=Constants.MANA; i++){
+                    if(defender.getRessources()[i] >= (int)(UnitType.BASE.getRessourceCost()[i]*Constants.UNIT_RECYCLING_MODIFIER)) {
+                        attacker.getRessources()[i] += (int) (UnitType.BASE.getRessourceCost()[i] * Constants.UNIT_RECYCLING_MODIFIER);
+                        defender.getRessources()[i] -= (int) (UnitType.BASE.getRessourceCost()[i] * Constants.UNIT_RECYCLING_MODIFIER);
+                    }else{
+                        attacker.getRessources()[i] += defender.getRessources()[i];
+                        defender.getRessources()[i] = 0;
+                    }
+                }
                 enemy.setOwner(unit.getOwner());
                 enemy.setCurrentHp(enemy.getMaxHp());
             }
@@ -1338,5 +1349,21 @@ public class GameSession implements IGameSession, Serializable{
         }
 
         return ((Unit)unit).getSignificantBuff();
+    }
+
+    public boolean hasCalledTheDragon(int heroId){
+        Object hero = archive.get(heroId);
+
+        if(hero instanceof Hero)
+            return ((Hero)hero).getCalledTheDragon();
+
+        return false;
+    }
+
+    public void deactivateTheDragon(int heroId){
+        Object hero = archive.get(heroId);
+
+        if(hero instanceof Hero)
+            ((Hero)hero).setCalledTheDragon(false);
     }
 }

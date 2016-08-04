@@ -30,30 +30,32 @@ public class Shield extends Buff {
         for(int i=Constants.WOOD; i<=Constants.MANA; ++i)
             player.getRessources()[i] -= (BuffInfo.SHIELD.getBuffCost()[i] - player.getRessourceBoni()[i]);
 
-        Buff bu= new Buff(origin,player,BuffInfo.SHIELD,session);
-        bu.setDef(this.def);
-        bu.setRoundsLeft(this.roundsLeft);
 
-        try {
-            origin.getField().getMap().getSession().addSingleBuff(bu);
-            bu.execute();
-        }catch (Exception e){return false;}
 
-        List<Unit> additionalTargets = target.getField().getNearUnits();
-        for(Unit u :additionalTargets){
-            if(u.getOwner()==player) {
-                bu= new Buff(u,player,BuffInfo.SHIELD,session);
-                bu.setDef(this.def);
-                bu.setRoundsLeft(this.roundsLeft);
-                try {
-                    origin.getField().getMap().getSession().addSingleBuff(bu);
-                    bu.execute();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
+        List<Unit> additionalTargets = origin.getField().getNearUnits();
+        if(!additionalTargets.isEmpty()) {
+            for (Unit u : additionalTargets) {
+                if (u.getOwner() != player && u.getOwner().getTeam() != player.getTeam()) {
+                    u.setCurrentHp(u.getCurrentHp() - BuffInfo.DRAGONFIST.getPower());
+                    if (u.getCurrentHp() <= 0)
+                        session.removeUnit(u);
                 }
             }
-        }
 
+            ((Hero)origin).setCalledTheDragon(true);
+        } else {
+
+            Buff bu = new Buff(origin, player, BuffInfo.SHIELD, session);
+            bu.setDef(this.def);
+            bu.setRoundsLeft(this.roundsLeft);
+
+            try {
+                origin.getField().getMap().getSession().addSingleBuff(bu);
+                bu.execute();
+            } catch (Exception e) {
+                return false;
+            }
+        }
             return true;
     }
 
