@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue;
  * Created by Fabi on 02.08.2016.
  */
 public class MessageTest {
-
+/*
     @Test
     public void testeSichtbarMachen(){
         Player testPlayer = new Player(new Account("test","1234"));
@@ -24,4 +24,5 @@ public class MessageTest {
         testMsg.makeVisibleFor(testPlayer);
         assertTrue(testMsg.getVisibleFor().contains(testPlayer));
     }
+    */
 }

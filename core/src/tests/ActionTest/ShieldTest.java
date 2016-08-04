@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
  * Created by Fabi on 02.08.2016.
  */
 public class ShieldTest {
-
+/*
     @Test
     public void testeAusfuehren() throws RemoteException {
         GameSession session = new GameSession();
@@ -36,5 +36,5 @@ public class ShieldTest {
         assertTrue(testPlayer.getRessources()[Constants.MANA] == mana - (BuffInfo.SHIELD.getBuffCost()[Constants.MANA] - testPlayer.getRessourceBoni()[Constants.MANA]));
         assertFalse(session.getBuffs().get(0).execute());
         assertTrue(session.getBuffs().get(0).execute());
-    }
+    }*/
 }

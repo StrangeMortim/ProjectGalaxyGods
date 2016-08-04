@@ -1,8 +1,10 @@
 package chat;
 
+import GameObject.GameSession;
 import Player.Player;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +13,7 @@ import java.util.List;
  * Diese Klasse realisert das Message-Objekt, dass die Eigenschaften
  * einer Nachricht im Chat verkörpert.
  */
-public class Message implements IMessage,Serializable {
+public class Message implements Serializable {
 
   //  private static final long serialVersionUID = -7904810564348423122L;
     /**
@@ -26,6 +28,23 @@ public class Message implements IMessage,Serializable {
      * List der Spieler, fuer die die Nachricht sichtbar ist.
      */
     private List<Player> visibleFor=new ArrayList<Player>();
+
+    private GameSession session;
+
+    private int iD;
+
+
+    public Message(GameSession session){
+        if (session == null)
+            throw new IllegalArgumentException("Session ist null in Message");
+
+        this.session = session;
+        try {
+            iD = session.registerObject(this);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Macht die Nachricht sichtbar fuer ausgewaehlte Spieler.
@@ -43,27 +62,27 @@ public class Message implements IMessage,Serializable {
 
 
     //Getter Setter
-    @Override
+
     public String getContent() {
         return content;
     }
-    @Override
+
     public void SetContent(String s) {
     content=s;
     }
-    @Override
+
     public boolean getVisibleForAll() {
         return visibleForAll;
     }
-    @Override
+
     public void setVisibleForAll(boolean b) {
     visibleForAll=b;
     }
-    @Override
+
     public List<Player> getVisibleFor() {
         return visibleFor;
     }
-    @Override
+
     public void setVisibleFor(List<Player> p) {
     visibleFor=p;
     }

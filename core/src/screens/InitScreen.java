@@ -147,7 +147,7 @@ public class InitScreen implements Screen {
                        return;
                    }
                }
-                   if(lastCheck){
+                  /* if(lastCheck){
                        try {
                            for (Team t : session.getTeams()) {
                                for (Player p : t.getPlayers()) {
@@ -161,7 +161,7 @@ public class InitScreen implements Screen {
                            e.printStackTrace();
                        }
 
-                   }
+                   }*///TODO
 
                 try {
                     //session.setName(tID.getText());
@@ -175,19 +175,19 @@ public class InitScreen implements Screen {
                     session.setNumberOfPlayers(Integer.parseInt(sSpieler.getSelected().toString()));
                     ArrayList<Player> players = new ArrayList<Player>();
                     Account account = new Account(name,password);
-                    IPlayer player= new Player(account);
+                    int playerId = -1;
                    /////////////////////////////////////////////////////////////////////////////////////////
-                    if(lastCheck) {
+                   /* if(lastCheck) {
                         if(session.getTeams().size()>0) {
                             for (Team t : session.getTeams()) {
                                 if (t.getColor().equals(sTeam.getSelected().toString())&&!t.getPlayers().contains(player)) {
                                     player = session.playerJoin(account,(Player)player,t);
                                 }
                             }
-                        }
+                        }*/
                         stub.saveSession(session);
-                        game.setScreen(new GameScreen(game,session,session.playerJoin(player.getAccount(),(Player)player,player.getTeam())));
-                    }
+                        game.setScreen(new GameScreen(game,session,session.playerJoin(account,sTeam.toString())));
+
                    /////////////////////////////////////////////////////////////////////////////////////////////
 
                     if (checkSession() && checkSession) {

@@ -1,10 +1,12 @@
 package Player;
 
 
+import GameObject.GameSession;
+
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-public class TechnologyTree implements ITechnologyTree,Serializable {
+public class TechnologyTree implements Serializable {
 
   //  private static final long serialVersionUID = -481325218194852515L;
     private boolean[] steel = new boolean[5];
@@ -13,66 +15,78 @@ public class TechnologyTree implements ITechnologyTree,Serializable {
     private boolean steelFull = false;
     private boolean magicFull = false;
     private boolean cultureFull = false;
+    private GameSession session;
+    private int iD;
 
-    public TechnologyTree(){}
+    public TechnologyTree(GameSession session){
+        if(session == null)
+            throw new IllegalArgumentException("Session ist null in TechTree");
 
-    @Override
+        this.session = session;
+        try {
+            iD = session.registerObject(this);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public void setSteel(boolean[] achieved) {
         this.steel = achieved;
     }
 
-    @Override
+
     public boolean[] getSteel() {
         return steel;
     }
 
-    @Override
+
     public void setMagic(boolean[] achieved) {
         this.magic = achieved;
     }
 
-    @Override
+
     public boolean[] getMagic() {
         return magic;
     }
 
-    @Override
+
     public void setCulture(boolean[] achieved) {
         this.culture = achieved;
     }
 
-    @Override
+
     public boolean[] getCulture() {
         return culture;
     }
 
-    @Override
-    public boolean isSteelFull() throws RemoteException {
+
+    public boolean isSteelFull()  {
         return steelFull;
     }
 
-    @Override
-    public void setSteelFull(boolean full) throws RemoteException {
+
+    public void setSteelFull(boolean full)  {
         steelFull = full;
     }
 
-    @Override
-    public boolean isMagicFull() throws RemoteException {
+
+    public boolean isMagicFull()  {
         return magicFull;
     }
 
-    @Override
-    public void setMagicFull(boolean full) throws RemoteException {
+
+    public void setMagicFull(boolean full) {
         magicFull = full;
     }
 
-    @Override
-    public boolean isCultureFull() throws RemoteException {
+
+    public boolean isCultureFull() {
         return cultureFull;
     }
 
-    @Override
-    public void setCultureFull(boolean full) throws RemoteException {
+
+    public void setCultureFull(boolean full) {
         cultureFull = full;
     }
 }

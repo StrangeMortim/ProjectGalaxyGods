@@ -3,10 +3,10 @@ package Action;
 /**
  * Created by Fabi on 27.07.2016.
  */
-public enum BuffInfo implements IBuffInfo {
+public enum BuffInfo  {
     REDUCED_UNIT_COST, SHIELD, HEAL, EMPOWER_SHIELD, HORNET_STYLE, RANGED_STYLE, NONE;
 
-    @Override
+
     public int[] getBuffCost(){
         switch (this){
             case REDUCED_UNIT_COST:
@@ -23,7 +23,7 @@ public enum BuffInfo implements IBuffInfo {
         }
     }
 
-    @Override
+
     public int getRounds(){
         switch (this){
             case REDUCED_UNIT_COST:
@@ -42,7 +42,7 @@ public enum BuffInfo implements IBuffInfo {
         }
     }
 
-    @Override
+
     public int getPower(){
         switch (this){
             case SHIELD:
@@ -57,7 +57,7 @@ public enum BuffInfo implements IBuffInfo {
         }
     }
 
-    @Override
+
     public int getAtk(){
         switch (this){
             case HORNET_STYLE:
@@ -69,7 +69,7 @@ public enum BuffInfo implements IBuffInfo {
 
     }
 
-    @Override
+
     public int getDef(){
         switch (this){
             case NONE:
@@ -78,7 +78,7 @@ public enum BuffInfo implements IBuffInfo {
         }
     }
 
-    @Override
+
     public int getHp(){
         switch (this){
             case NONE:
@@ -87,7 +87,7 @@ public enum BuffInfo implements IBuffInfo {
         }
     }
 
-    @Override
+
     public int getRange(){
         switch (this){
             case RANGED_STYLE:
@@ -98,7 +98,7 @@ public enum BuffInfo implements IBuffInfo {
         }
     }
 
-    @Override
+
     public int getMovepoints(){
         switch (this){
             case NONE:
@@ -107,7 +107,7 @@ public enum BuffInfo implements IBuffInfo {
         }
     }
 
-    @Override
+
     public boolean isPermanent(){
         switch (this){
             case NONE:

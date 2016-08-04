@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
  * Created by Fabi on 02.08.2016.
  */
 public class EmpowerShieldTest {
-
+/*
     @Test
     public void testeAusfuehren(){
         Player testPlayer = new Player(new Account("test","1234"));
@@ -34,5 +34,5 @@ public class EmpowerShieldTest {
         assertTrue(((Buff)testHero.getRightHand()).getDef() == BuffInfo.SHIELD.getPower());
         assertTrue(testBuff.getRoundsLeft() == 0);
     }
-
+*/
 }

@@ -4,37 +4,44 @@ import Action.Buff;
 import Player.Player;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Map implements IMap,Serializable {
+public class Map implements Serializable {
 
   //  private static final long serialVersionUID = 1069218016788334349L;
     private Field[][] fields = new Field[Constants.FIELDXLENGTH][Constants.FIELDYLENGTH];
     private int maxPlayers = 4;
     private int minPlayers = 2;
     private String levelName = "";
-    private IGameSession session = null;
+    private GameSession session = null;
     private int currentPlayers = 0;
     private int[] baseXPositions = new int[]{12, 12, 1, 23};
     private int[] baseYPositions = new int[]{2,22,13,13};
+    private int iD;
 
 
     public Map(String levelName, int maxPlayers, int minPlayers, GameSession session){
-        if (levelName.equals("") || maxPlayers > 4 || minPlayers < 2 || maxPlayers < minPlayers ||session == null)
+        if (session == null || levelName.equals("") || maxPlayers > 4 || minPlayers < 2 || maxPlayers < minPlayers ||session == null)
             throw new IllegalArgumentException("Map: Constructor invalid values");
 
         this.session = session;
         this.levelName = levelName;
         this.maxPlayers = maxPlayers;
         this.minPlayers = minPlayers;
+        try {
+           iD = session.registerObject(this);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * Initialisiert die Map, d.h. platziert alle Felder, Basen und Standardobjekte
      */
-    @Override
+
     public void init() {
          /*Hardcoded Map, Magic-Numbers are Magic because they are only used in this specific Map
         Currently this is the only Map, should at any Time the possibility to choose an individual map be added
@@ -46,7 +53,7 @@ public class Map implements IMap,Serializable {
         //Generate a Map with only Normal Fields as a base
         for(Field[] f: fields){
             for(Field f2: f){
-                fields[i][j] = new Field(-1,0,i,j,this);
+                fields[i][j] = new Field(-1,0,i,j,this, session);
                 j++;
             }
             j=0;
@@ -154,7 +161,7 @@ public class Map implements IMap,Serializable {
     /**
      * Generiert zufaellig eine Karte, nur bei genuegend Zeit zu implementieren
      */
-    @Override
+
     public void generateRandom() {
         /*TODO*/
     }
@@ -163,7 +170,7 @@ public class Map implements IMap,Serializable {
      * Speichert die generierte Karte um sie spaeter laden zu koennen
      * wird ebenfalls nur bei genuegend Zeit implementiert
      */
-    @Override
+
     public void saveConfiguration() {
         /*TODO*/
     }
@@ -171,7 +178,7 @@ public class Map implements IMap,Serializable {
     /**
      * Aktualisiert alle Felder der Karte ueber ihre update-Methode
      */
-    @Override
+
     public List<Buff> update() {
         int timesSpawned = 0;
         Random rng = new Random();
@@ -191,7 +198,7 @@ public class Map implements IMap,Serializable {
         return result;
     }
 
-    @Override
+
     public boolean checkMovement(int xPos, int yPos) {
         Field toCheck = fields[xPos][yPos];
         return (toCheck.getCurrent() == null && toCheck.getHasMine());
@@ -203,7 +210,7 @@ public class Map implements IMap,Serializable {
      * @param x
      * @param y
      */
-    @Override
+
     public Field getField(int x, int y) {
         if(x < 0 || y < 0 || x > fields.length || y > fields[0].length)
            return null;
@@ -217,17 +224,17 @@ public class Map implements IMap,Serializable {
      *
      * @param fields
      */
-    @Override
+
     public void setFields(Field[][] fields) {
         this.fields= fields;
     }
 
-    @Override
+
     public Field[][] getFields() {
         return fields;
     }
 
-    @Override
+
     public void setMaxPlayers(int maxPlayers) {
         if(maxPlayers < 2)
             throw new IllegalArgumentException("A game cannot be played with less than 2 players");
@@ -235,12 +242,12 @@ public class Map implements IMap,Serializable {
         this.maxPlayers = maxPlayers;
     }
 
-    @Override
+
     public int getMaxPlayers() {
         return maxPlayers;
     }
 
-    @Override
+
     public void setMinPlayers(int minPlayers) {
         if(minPlayers < 2)
             throw new IllegalArgumentException("A game cannot be played with less than 2 players");
@@ -252,12 +259,12 @@ public class Map implements IMap,Serializable {
 
     }
 
-    @Override
+
     public int getMinPlayers() {
         return minPlayers;
     }
 
-    @Override
+
     public void setLevelName(String levelName) {
         if(levelName.equals(""))
             throw new IllegalArgumentException("Levelname is empty");
@@ -265,30 +272,35 @@ public class Map implements IMap,Serializable {
         this.levelName = levelName;
     }
 
-    @Override
+
     public String getLevelName() {
         return levelName;
     }
 
-    @Override
+
     public IGameSession getSession(){
         return this.session;
     }
 
-    @Override
+
     public boolean addBase(Player p, int playerNumber) {
         if(playerNumber > maxPlayers-1 || playerNumber < 0)
             return false;
 
-        Base tmp = new Base(UnitType.BASE, p);
+        Base tmp = new Base(UnitType.BASE, p, session);
         fields[baseXPositions[playerNumber]+1][baseYPositions[playerNumber]].setCurrent(tmp);
-        fields[baseXPositions[playerNumber]+1][baseYPositions[playerNumber]].setSpriteName(SpriteNames.BASE_UP_RIGHT.getSpriteName());
+        fields[baseXPositions[playerNumber]+1][baseYPositions[playerNumber]].setSpriteIndex(SpriteNames.BASE_UP_RIGHT.getSpriteIndex());
         fields[baseXPositions[playerNumber]][baseYPositions[playerNumber]-1].setCurrent(tmp);
-        fields[baseXPositions[playerNumber]][baseYPositions[playerNumber]-1].setSpriteName(SpriteNames.BASE_DOWN_LEFT_EMPTY.getSpriteName());
+        fields[baseXPositions[playerNumber]][baseYPositions[playerNumber]-1].setSpriteIndex(SpriteNames.BASE_DOWN_LEFT_EMPTY.getSpriteIndex());
         fields[baseXPositions[playerNumber]+1][baseYPositions[playerNumber]-1].setCurrent(tmp);
-        fields[baseXPositions[playerNumber]+1][baseYPositions[playerNumber]-1].setSpriteName(SpriteNames.BASE_DOWN_RIGHT_EMPTY.getSpriteName());
+        fields[baseXPositions[playerNumber]+1][baseYPositions[playerNumber]-1].setSpriteIndex(SpriteNames.BASE_DOWN_RIGHT_EMPTY.getSpriteIndex());
         fields[baseXPositions[playerNumber]][baseYPositions[playerNumber]].setCurrent(tmp);
-        fields[baseXPositions[playerNumber]][baseYPositions[playerNumber]].setSpriteName(SpriteNames.BASE_UP_LEFT.getSpriteName());
+        fields[baseXPositions[playerNumber]][baseYPositions[playerNumber]].setSpriteIndex(SpriteNames.BASE_UP_LEFT.getSpriteIndex());
         return true;
+    }
+
+
+    public int getId(){
+        return iD;
     }
 }

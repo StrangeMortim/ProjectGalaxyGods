@@ -3,7 +3,7 @@ package Player;
 
 import java.io.Serializable;
 
-public class Account implements IAccount,Serializable {
+public class Account implements Serializable {
 
    // private static final long serialVersionUID = -2953331051227985322L;
     private String name;
@@ -17,22 +17,22 @@ public class Account implements IAccount,Serializable {
         this.password = password;
     }
 
-    @Override
+
     public void setName(String name) {
         this.name = name;
     }
 
-    @Override
+
     public String getName() {
         return name;
     }
 
-    @Override
+
     public void setPassword(String pw) {
         this.password = pw;
     }
 
-    @Override
+
     public String getPassword() {
         return password;
     }

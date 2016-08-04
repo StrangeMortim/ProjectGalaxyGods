@@ -1,6 +1,7 @@
 package Action;
 
 import GameObject.Constants;
+import GameObject.GameSession;
 import GameObject.Hero;
 import GameObject.Unit;
 import Player.Player;
@@ -11,8 +12,8 @@ import Player.Player;
 public class Shield extends Buff {
 
 
-    public Shield(Hero origin, Unit target, Player player) {
-        super(origin, target, player, BuffInfo.SHIELD);
+    public Shield(Hero origin, Player player, GameSession session) {
+        super(origin, player, BuffInfo.SHIELD, session);
         def = BuffInfo.SHIELD.getPower();
         roundsLeft = BuffInfo.SHIELD.getRounds();//TODO enum benutzen
     }
@@ -26,7 +27,7 @@ public class Shield extends Buff {
         for(int i=Constants.WOOD; i<=Constants.MANA; ++i)
             player.getRessources()[i] -= (BuffInfo.SHIELD.getBuffCost()[i] - player.getRessourceBoni()[i]);
 
-        Buff bu= new Buff(origin,target,player,BuffInfo.SHIELD);
+        Buff bu= new Buff(origin,player,BuffInfo.SHIELD,session);
         bu.setDef(this.def);
         bu.setRoundsLeft(this.roundsLeft);
         try {

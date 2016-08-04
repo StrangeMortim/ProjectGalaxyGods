@@ -3,12 +3,10 @@ package screens;
 import Action.*;
 import GameObject.*;
 import GameObject.Field;
-import GameObject.Map;
 import Player.*;
 import chat.Chat;
 import chat.Message;
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -21,9 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.Timer;
-import com.badlogic.gdx.utils.reflect.*;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import javafx.scene.text.Font;
 import server.ServerInterface;
 
 import java.rmi.RemoteException;
@@ -44,8 +40,8 @@ public class GameScreen implements Screen, InputProcessor{
     private IGameSession session;
     private Field[][] map = null;
     private boolean unrendered = true;
-    private Object selected;
-    private IPlayer player;
+    private int selected;
+    private int player;
     private Stage stage;
     private Skin skin;
     private SpriteBatch batch;
@@ -57,6 +53,7 @@ public class GameScreen implements Screen, InputProcessor{
     private Table table;
     private boolean archerOrBuff = false;
     private boolean spearfighterOrBuff = false;
+    private double timer = 0;
 
     //region Chat
     private Table chatTable;
@@ -105,55 +102,18 @@ public class GameScreen implements Screen, InputProcessor{
     //endregion
 
     //region Textures
-    private Texture[] textures = new Texture[]{new Texture(Gdx.files.internal(SpriteNames.NORMAL_FIELD.getSpecificName(0))),//0
-            new Texture(Gdx.files.internal(SpriteNames.NORMAL_FIELD.getSpecificName(1))),        //1
-            new Texture(Gdx.files.internal(SpriteNames.FOREST.getSpriteName())),      //2
-            new Texture(Gdx.files.internal(SpriteNames.IRON_FIELD.getSpecificName(0))),//3
-            new Texture(Gdx.files.internal(SpriteNames.BASE_UP_RIGHT.getSpriteName())),//4
-            new Texture(Gdx.files.internal(SpriteNames.BASE_UP_LEFT.getSpriteName())),//5
-            new Texture(Gdx.files.internal(SpriteNames.BASE_DOWN_RIGHT_FULL.getSpriteName())),//6
-            new Texture(Gdx.files.internal(SpriteNames.BASE_DOWN_RIGHT_LAB.getSpriteName())),//7
-            new Texture(Gdx.files.internal(SpriteNames.BASE_DOWN_RIGHT_CASERNE.getSpriteName())),//8
-            new Texture(Gdx.files.internal(SpriteNames.BASE_DOWN_RIGHT_EMPTY.getSpriteName())),//9
-            new Texture(Gdx.files.internal(SpriteNames.BASE_DOWN_LEFT_CASERNE.getSpriteName())),//10
-            new Texture(Gdx.files.internal(SpriteNames.BASE_DOWN_LEFT_EMPTY.getSpriteName())),//11
-            new Texture(Gdx.files.internal(SpriteNames.NORMAL_FIELD.getSpecificName(2))),//12
-            new Texture(Gdx.files.internal(SpriteNames.IRON_FIELD.getSpecificName(1))),//13
-            new Texture(Gdx.files.internal(SpriteNames.GOLD_ICON.getSpriteName())),//14
-            new Texture(Gdx.files.internal(SpriteNames.WOOD_ICON.getSpriteName())),//15
-            new Texture(Gdx.files.internal(SpriteNames.IRON_ICON.getSpriteName())),//16
-            new Texture(Gdx.files.internal(SpriteNames.MANA_ICON.getSpriteName())),//17
-            new Texture(Gdx.files.internal(SpriteNames.CHEST_ICON.getSpriteName())),//18
-            new Texture(Gdx.files.internal(SpriteNames.MENU_BG.getSpriteName())),//19
-            new Texture(Gdx.files.internal(SpriteNames.MARKETPLACE.getSpriteName())),//20
-            new Texture(Gdx.files.internal(SpriteNames.BUTTON_WORKER.getSpriteName())), // 21
-            new Texture(Gdx.files.internal(SpriteNames.BUTTON_BG.getSpriteName())), // 22
-            new Texture(Gdx.files.internal(SpriteNames.SPEARFIGHTER.getSpriteName())),//23
-            new Texture(Gdx.files.internal(SpriteNames.SWORDFIGHTER.getSpriteName())),//24
-            new Texture(Gdx.files.internal(SpriteNames.WORKER.getSpriteName())),//25
-            new Texture(Gdx.files.internal(SpriteNames.HERO.getSpriteName())),//26
-            new Texture(Gdx.files.internal(SpriteNames.BUTTON_SPEARFIGHTER.getSpriteName())),//27
-            new Texture(Gdx.files.internal(SpriteNames.BUTTON_SWORDFIGHTER.getSpriteName())),//28
-            new Texture(Gdx.files.internal(SpriteNames.BUTTON_GREY.getSpriteName())),//29
-            new Texture(Gdx.files.internal(SpriteNames.BUTTON_GOLD.getSpriteName())),//30
-            new Texture(Gdx.files.internal(SpriteNames.BUTTON_BLUE.getSpriteName())),//31
-            new Texture(Gdx.files.internal(SpriteNames.SPEARFIGHTERBACK.getSpriteName())),//32
-            new Texture(Gdx.files.internal(SpriteNames.SWORDFIGHTERBACK.getSpriteName())),//33
-            new Texture(Gdx.files.internal(SpriteNames.WORKERBACK.getSpriteName())),//34
-            new Texture(Gdx.files.internal(SpriteNames.HEROBACK.getSpriteName())),//35
-            new Texture(Gdx.files.internal(SpriteNames.TECHTREE.getSpriteName())),//36
-            new Texture(Gdx.files.internal(SpriteNames.TEAMBOX_OPEN.getSpriteName())),//37
-
-
-    };
+    private Texture[] textures = new Texture[SpriteNames.getSpriteAmount()];
     //endregion
 
     ParticleEffect pe; //For fighting scenes
     ParticleEffect shield;
 
-    public  GameScreen(Game game, IGameSession session, IPlayer player){
+    public  GameScreen(Game game, IGameSession session, int playerId){
 
-        this.player = player;
+        for(int i=0; i<SpriteNames.getSpriteAmount(); ++i)
+            textures[i] = new Texture(Gdx.files.internal(SpriteNames.getValueForIndex(i).getSpriteName()));
+
+        this.player = playerId;
         batch=new SpriteBatch();
         this.session = session;
         System.out.println(session.toString());
@@ -173,18 +133,18 @@ public class GameScreen implements Screen, InputProcessor{
         camera.translate(x/2,y/2);
         camera.setToOrtho(false,x,y);
 
-        try{
-            map = ((IMap)session.getMap()).getFields();
+  /*      try{
+            map = (session.getMap()).getFields();
 //TODO: Irgendwann entfernen
             Unit testUnit = new Unit(UnitType.SPEARFIGHTER, (Player)this.player);
             testUnit.setMovePointsLeft(8);
-            testUnit.setSpriteName(SpriteNames.SPEARFIGHTER.getSpriteName());
+            testUnit.setSpriteIndex(SpriteNames.SPEARFIGHTER.getSpriteName());
             testUnit.setOwner((Player)this.player);
             map[5][5].setCurrent(testUnit);
 
             Hero testUnit2 = new Hero(UnitType.HERO,(Player)this.player,"harald");
             testUnit2.setMovePointsLeft(30);
-            testUnit2.setSpriteName(SpriteNames.HERO.getSpriteName());
+            testUnit2.setSpriteIndex(SpriteNames.HERO.getSpriteName());
             testUnit2.setOwner((Player)this.player);
             testUnit2.setAtk(2000);
             testUnit2.setCurrentHp(2);
@@ -201,7 +161,7 @@ public class GameScreen implements Screen, InputProcessor{
                     fields[i][j] = r.nextInt(2);
         } catch (RemoteException e) {
             e.printStackTrace();
-        }
+        }*/
 
 
     }
@@ -235,6 +195,7 @@ public class GameScreen implements Screen, InputProcessor{
      */
     @Override
     public void render(float delta) {
+        timer += delta;
         int batchWidth = Constants.FIELDXLENGTH*100;
         int batchHeight = Constants.FIELDYLENGTH*100;
         int i=0;
@@ -253,10 +214,11 @@ public class GameScreen implements Screen, InputProcessor{
         shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
 
         try {
-            label1.setText(player.getRessources()[Constants.GOLD] + "");
-            label2.setText(player.getRessources()[Constants.WOOD] + "");
-            label3.setText(player.getRessources()[Constants.IRON] + "");
-            label4.setText(player.getRessources()[Constants.MANA] + "");
+            int[] ressources = session.getRessources(player);
+            label1.setText(ressources[Constants.GOLD] + "");
+            label2.setText(ressources[Constants.WOOD] + "");
+            label3.setText(ressources[Constants.IRON] + "");
+            label4.setText(ressources[Constants.MANA] + "");
         }catch (RemoteException e){
             e.printStackTrace();
         }
@@ -264,14 +226,15 @@ public class GameScreen implements Screen, InputProcessor{
         //region Buttonumstellungen fuer Auswahlbuttons
         try{
             if(unrendered) {
-                if (selected instanceof Unit) {
-                    unitAtk.setText("ATK: " + ((Unit) selected).getAtk());
-                    unitDef.setText("DEF: " + ((Unit) selected).getDef());
-                    unitHp.setText("HP: " + ((Unit) selected).getCurrentHp() + "/" + ((Unit) selected).getMaxHp());
-                    unitMPoints.setText("BP: " + ((Unit) selected).getMovePointsLeft() + "/" + ((Unit) selected).getMovePoints());
-                    unitName.setText("NAME: " + ((Unit) selected).getType().toString());
-                    unitRange.setText("RW: " + ((Unit) selected).getRange());
-                    unitOwner.setText("SPIELER: " + ((Unit) selected).getOwner().getAccount().getName());
+                if (session.isSelectedClassOf(Selectable.UNIT)) {
+                    List<String> info = session.getInformation(selected);
+                    unitAtk.setText("ATK: " + info.get(0));
+                    unitDef.setText("DEF: " + info.get(1));
+                    unitHp.setText("HP: " + info.get(2));
+                    unitMPoints.setText("BP: " + info.get(3));
+                    unitName.setText("NAME: " + info.get(4));
+                    unitRange.setText("RW: " + info.get(5));
+                    unitOwner.setText("SPIELER: " + info.get(6));
                 } else {
                     unitAtk.setText("");
                     unitDef.setText("");
@@ -282,16 +245,16 @@ public class GameScreen implements Screen, InputProcessor{
                     unitOwner.setText("");
                 }
 
-                if (selected instanceof Base && ((Unit)selected).getOwner().getAccount().getName().equals(player.getAccount().getName())) {
+                if (session.isSelectedClassOf(Selectable.BASE) && session.isSelectedOwner(player)) {
                     if (baseRecruitButtons) {
                         selectionUpLeft.setVisible(true);
                         selectionUpLeft.setText("");
                         selectionUpLeft.setTouchable(Touchable.enabled);
                         selectionUpLeft.getStyle().up = skin.getDrawable("swordfighterIcon");
-                        selectionUpRight.setVisible(((Base)selected).getAvaibleUnits().contains(UnitType.SPEARFIGHTER));
+                        selectionUpRight.setVisible(session.checkHasSelectedUnit(UnitType.SPEARFIGHTER));
                         selectionUpRight.setText("");
                         selectionUpRight.getStyle().up = skin.getDrawable("spearfighterIcon");
-                        selectionDownLeft.setVisible(((Base)selected).getAvaibleUnits().contains(UnitType.ARCHER));
+                        selectionDownLeft.setVisible(session.checkHasSelectedUnit(UnitType.ARCHER));
                         selectionDownLeft.setText("Bogenschuetze");
                         selectionDownLeft.getStyle().up = skin.getDrawable("defaultIcon");
                         selectionDownRight.setVisible(true);
@@ -324,9 +287,9 @@ public class GameScreen implements Screen, InputProcessor{
                     } else  {
                         selectionUpLeft.setVisible(true);
 
-                        if(((Base)selected).getLabRoundsRemaining() == Constants.FINISHED)
+                        if(session.checkSelectedBuildingFinished(Building.LABOR)) //TODO
                                 selectionUpLeft.setText("Labor");
-                        else if(((Base)selected).getLabRoundsRemaining() != Constants.NONE_OR_NOT_SET)
+                        else if(session.checkIsBuilding(Building.LABOR))
                             selectionUpLeft.setText("Labor wird gebaut");
                             else
                                 selectionUpLeft.setText("Labor bauen");
@@ -336,9 +299,9 @@ public class GameScreen implements Screen, InputProcessor{
 
                             selectionUpRight.setVisible(true);
 
-                        if(((Base)selected).getCaserneRoundsRemaining() == Constants.FINISHED)
+                        if(session.checkSelectedBuildingFinished(Building.CASERNE))
                             selectionUpRight.setText("Kaserne");
-                         else if(((Base)selected).getCaserneRoundsRemaining() != Constants.NONE_OR_NOT_SET)
+                         else if(session.checkIsBuilding(Building.CASERNE))
                                 selectionUpRight.setText("Kaserne wird gebaut");
                         else
                             selectionUpRight.setText("Kaserne bauen");
@@ -347,11 +310,11 @@ public class GameScreen implements Screen, InputProcessor{
                             selectionDownLeft.setVisible(false);
                             selectionDownLeft.setText("Einheiten Rekrutieren");
                             selectionDownLeft.getStyle().up = skin.getDrawable("defaultIcon");
-                            selectionDownRight.setVisible(!player.getMarket());
+                            selectionDownRight.setVisible(!session.checkMarket(player));
                             selectionDownRight.setText("Marktplatz bauen");
                             selectionDownRight.getStyle().up = skin.getDrawable("defaultIcon");
                         }
-                } else if (selected instanceof Hero) {
+                } else if (session.isSelectedClassOf(Selectable.HERO)) {
                     selectionUpLeft.setVisible(true);
                     selectionUpLeft.setText("Heldenfaehigkeit links");
                     selectionUpLeft.setTouchable(Touchable.enabled);
@@ -361,14 +324,16 @@ public class GameScreen implements Screen, InputProcessor{
                     selectionUpRight.getStyle().up = skin.getDrawable("defaultIcon");
                     selectionDownLeft.setVisible(false);
                     selectionDownRight.setVisible(false);
-                 if(shield!=null)shield.getEmitters().first().setPosition(((Hero) selected).getField().getXPos() * 100 + 50, ((Hero) selected).getField().getYPos() * 100 + 50);
+                 if(shield!=null)shield.getEmitters().first().setPosition(session.getSelectedX(selected) * 100 + 50, session.getSelectedY(selected) * 100 + 50);
 
-                } else if (selected instanceof Field) {
-                    selectionUpLeft.setVisible(((Field) selected).getResType() == Constants.IRON);
+                } else if (session.isSelectedClassOf(Selectable.FIELD)) {
+                    selectionUpLeft.setVisible(session.isSelectedRessourceType(Constants.IRON));
                     selectionUpLeft.setText("Mine bauen");
                     selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
 
-                    selectionUpRight.setVisible(player.getTechTree().isCultureFull() && ((Field)selected).getCurrent() == null && ((Field)selected).getResType() == -1);
+                    selectionUpRight.setVisible(session.checkPathFull(player,Constants.TECHTREE_CULTURE)
+                                                && session.hasSelectedCurrent()
+                                                && session.isSelectedRessourceType(Constants.NONE_OR_NOT_SET));
                     selectionUpRight.setText("Basis bauen");
                     selectionUpRight.getStyle().up = skin.getDrawable("defaultIcon");
                     selectionDownLeft.setVisible(false);
@@ -423,98 +388,29 @@ public class GameScreen implements Screen, InputProcessor{
         //region Felder zeichnen
         String textureName = "";
         int textureIndex = 0;
-        try{
-            for(Field[] f: map){
-                for(Field f2: f){
-                    textureName = f2.getSpriteName();
-                    switch (textureName){
-                        case "assets/sprites/normal0.png":
-                            textureIndex = 0;
-                        break;
-                        case "assets/sprites/normal1.png":
-                            textureIndex = 1;
-                        break;
-                        case "assets/sprites/forest.png":
-                            textureIndex = 2;
-                        break;
-                        case "assets/sprites/ironNoMine0.png":
-                            textureIndex = 3;
-                        break;
-                        case "assets/sprites/baseFullRight.png":
-                            textureIndex = 4;
-                        break;
-                        case "assets/sprites/baseFullLeft.png":
-                            textureIndex = 5;
-                        break;
-                        case "assets/sprites/baseDownRightFull.png":
-                            textureIndex = 6;
-                        break;
-                        case "assets/sprites/baseDownRightLabor.png":
-                            textureIndex = 7;
-                        break;
-                        case "assets/sprites/baseDownRightCaserne.png":
-                            textureIndex = 8;
-                        break;
-                        case "assets/sprites/baseDownRightEmpty.png":
-                            textureIndex = 9;
-                        break;
-                        case "assets/sprites/baseDownLeftCaserne.png":
-                            textureIndex = 10;
-                        break;
-                        case "assets/sprites/baseDownLeftEmpty.png":
-                            textureIndex = 11;
-                        break;
-                        case "assets/sprites/normal2.png":
-                            textureIndex = 12;
-                            break;
-                        case "assets/sprites/ironNoMine1.png":
-                            textureIndex = 13;
-                            break;
-                        case "assets/sprites/spearfighter.png":
-                            textureIndex = 23;
-                            break;
-                        case "assets/sprites/swordfighter.png":
-                            textureIndex = 24;
-                            break;
-                        case "assets/sprites/worker.png":
-                            textureIndex = 25;
-                            break;
-                        case "assets/sprites/hero.png":
-                            textureIndex = 26;
-                            break;
-                        case "assets/sprites/spearfighterBack.png":
-                            textureIndex = 32;
-                            break;
-                        case "assets/sprites/swordfighterBack.png":
-                            textureIndex = 33;
-                            break;
-                        case "assets/sprites/workerBack.png":
-                            textureIndex = 34;
-                            break;
-                        case "assets/sprites/heroBack.png":
-                            textureIndex = 35;
-                            break;
-                        default:
-                            textureIndex = 0;
-                            break;
+        if(timer >= (1/30)) {
+            try {
+                for (int k = 0; k < Constants.FIELDXLENGTH; k++)
+                    for (int h = 0; h < Constants.FIELDYLENGTH; h++) {
+                        int[] spriteIndeces = session.getSpriteIndex(k, h);
+                        batch.draw(textures[spriteIndeces[0]], 100 * k, 100 * h, 100, 100);
+                        if (spriteIndeces[1] != -1)
+                            batch.draw(textures[spriteIndeces[0]], 100 * k, 100 * h, 100, 100);
                     }
-                    batch.draw(textures[textureIndex], 100*i,100*j,100,100);
-                            j++;
-                }
-                j=0;
-                i++;
+            } catch (RemoteException e) {
+                System.out.println("Render Fields");
+                e.printStackTrace();
+                for (i = 0; i < Constants.FIELDXLENGTH; ++i)
+                    for (j = 0; j < Constants.FIELDYLENGTH; ++j) {
+
+                        if (fields[i][j] == 0)
+                            batch.draw(bg, 100 * i, 100 * j, 100, 100);
+                        else
+                            batch.draw(bg2, 100 * i, 100 * j, 100, 100);
+
+                    }
             }
-        }catch (NullPointerException e) {
-            System.out.println("GameScreen 370: " + e.getMessage());
-            for (i = 0; i < Constants.FIELDXLENGTH; ++i)
-                for (j = 0; j < Constants.FIELDYLENGTH; ++j) {
-
-                    if (fields[i][j] == 0)
-                        batch.draw(bg, 100 * i, 100 * j, 100, 100);
-                    else
-                        batch.draw(bg2, 100 * i, 100 * j, 100, 100);
-
-                }
+            timer = 0;
         }
         //endregion
 
@@ -559,7 +455,7 @@ public class GameScreen implements Screen, InputProcessor{
         try {
             switch (button) {
                 case Input.Buttons.LEFT:
-                    selected = map[getFieldXPos(Constants.FIELDXLENGTH*100)][getFieldYPos(Constants.FIELDYLENGTH*100)].select(); //TODO batchBounds->attribute
+                    selected = session.select(getFieldXPos(Constants.FIELDXLENGTH*100),getFieldYPos(Constants.FIELDYLENGTH*100)); //TODO batchBounds->attribute
                     baseRecruitButtons = false;
                     laborEntered = false;
                     unrendered = true;
@@ -574,7 +470,7 @@ public class GameScreen implements Screen, InputProcessor{
                 case Input.Buttons.MIDDLE:
                     baseRecruitButtons = false;
                     laborEntered = false;
-                    selected = null;
+                    selected = session.select(-1,-1);
                     unrendered = true;
                     System.out.println("No action assigned");
                     return true;
@@ -603,35 +499,38 @@ public class GameScreen implements Screen, InputProcessor{
      * Zeigt den Bewegungsradius eigener Einheiten an.
      */
     public void showMovementRange() {
-        if (selected != null && selected instanceof Unit) {
-            try {
-                if (((Unit) selected).getOwner() != null&&((Unit) selected).getType() != UnitType.BASE
-                        && ((Unit) selected).getOwner().getAccount().getName().equals(player.getAccount().getName())) {
-                    shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-                    shapeRenderer.setColor(Color.GREEN);
-                    int radius = ((Unit) selected).getMovePointsLeft();
-                    for (int x = 0 - radius; x < radius + 1; x++) {
-                        for (int y = 0 - radius; y < radius + 1; y++) {
-                            if (((Unit) selected).getField().getXPos() * 100 + x * 100 >= 0
-                                    && ((Unit) selected).getField().getYPos() * 100 + y * 100 >= 0
-                                    && ((Unit) selected).getField().getYPos() * 100 + y * 100 <= Constants.FIELDYLENGTH*100-100
-                                    && ((Unit) selected).getField().getXPos() * 100 + x * 100 <= Constants.FIELDXLENGTH*100-100)
+        try {
+            if (selected != -1 && session.isSelectedClassOf(Selectable.UNIT)) {
+                    if (!session.isSelectedClassOf(Selectable.BASE)
+                            && session.isSelectedOwner(player)) {
+                        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+                        shapeRenderer.setColor(Color.GREEN);
+                        int radius = Integer.parseInt(session.getInformation(selected).get(Constants.INFO_MOVEPOINTS).split("/")[0]);
+                        int selectedXPos = session.getSelectedX(selected);
+                        int selectedYPos = session.getSelectedY(selected);
+                        for (int x = 0 - radius; x < radius + 1; x++) {
+                            for (int y = 0 - radius; y < radius + 1; y++) {
+                                if ( selectedXPos* 100 + x * 100 >= 0
+                                        &&  selectedYPos* 100 + y * 100 >= 0
+                                        && selectedYPos * 100 + y * 100 <= Constants.FIELDYLENGTH*100-100
+                                        && selectedXPos * 100 + x * 100 <= Constants.FIELDXLENGTH*100-100)
 
-                                if(map[((Unit) selected).getField().getXPos()+x][((Unit) selected).getField().getYPos()+y].getWalkable()) {
-                                    shapeRenderer.rect(((Unit) selected).getField().getXPos() * 100 + x * 100, ((Unit) selected).getField().getYPos() * 100 + y * 100, 100, 100);
+                                    if(session.checkWalkable(selectedXPos+x,selectedYPos+y)) {
+                                        shapeRenderer.rect(selectedXPos * 100 + x * 100, selectedYPos * 100 + y * 100, 100, 100);
 
-                                }/*else{
-                                    shapeRenderer.setColor(Color.RED);
-                                    shapeRenderer.rect(((Unit) selected).getField().getXPos() * 100 + x * 100, ((Unit) selected).getField().getYPos() * 100 + y * 100, 100, 100);
-                                    shapeRenderer.setColor(Color.GREEN);
-                                }*/
+                                    }/*else{
+                                        shapeRenderer.setColor(Color.RED);
+                                        shapeRenderer.rect(((Unit) selected).getField().getXPos() * 100 + x * 100, ((Unit) selected).getField().getYPos() * 100 + y * 100, 100, 100);
+                                        shapeRenderer.setColor(Color.GREEN);
+                                    }*/
+                            }
                         }
+                        shapeRenderer.end();
                     }
-                    shapeRenderer.end();
-                }
-            } catch (RemoteException e) {
-                e.printStackTrace();
+
             }
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 
@@ -640,29 +539,29 @@ public class GameScreen implements Screen, InputProcessor{
      */
     public void showTopMenu(){
 try {
+    int[] ressources = session.getRessources(player);
     table = new Table();
     table.setWidth(stage.getWidth());
     table.align(Align.left | Align.top);
     table.setPosition(10, Gdx.graphics.getHeight());
     HorizontalGroup group = new HorizontalGroup();
-    Image image = new Image(textures[14]);//Gold
-    player.getRessources()[2] = 10000;
-    label1 = new Label(player.getRessources()[2] + "", skin);
+    Image image = new Image(textures[SpriteNames.GOLD_ICON.getSpriteIndex()]);//Gold
+    label1 = new Label(ressources[Constants.GOLD] + "", skin);
     label1.setColor(Color.WHITE);
     group.addActor(image);
     group.addActor(label1);
-    Image image2 = new Image(textures[15]);//Holz
-    label2 = new Label(player.getRessources()[0] + "", skin);
+    Image image2 = new Image(textures[SpriteNames.WOOD_ICON.getSpriteIndex()]);//Holz
+    label2 = new Label(ressources[Constants.WOOD] + "", skin);
     label2.setColor(Color.WHITE);
     group.addActor(image2);
     group.addActor(label2);
-    Image image3 = new Image(textures[16]);//Eisen
-    label3 = new Label(player.getRessources()[1] + "", skin);
+    Image image3 = new Image(textures[SpriteNames.IRON_ICON.getSpriteIndex()]);//Eisen
+    label3 = new Label(ressources[Constants.IRON] + "", skin);
     label3.setColor(Color.WHITE);
     group.addActor(image3);
     group.addActor(label3);
-    Image image4 = new Image(textures[17]);//Mana
-    label4 = new Label(player.getRessources()[3] + "", skin);
+    Image image4 = new Image(textures[SpriteNames.MANA_ICON.getSpriteIndex()]);//Mana
+    label4 = new Label(ressources[Constants.MANA] + "", skin);
     label4.setColor(Color.WHITE);
     group.addActor(image4);
     group.addActor(label4);
@@ -682,11 +581,11 @@ try {
             public void clicked(InputEvent event, float x, float y){
                 teamTable.setVisible(true);
                 try {
-                    if(player.getTeam()!=null){
-                        tWood = new Label("Holz: "+player.getTeam().getCheck()[0],skin);
-                        tIron = new Label("Eisen: "+player.getTeam().getCheck()[1],skin);
-                        tGold = new Label("Gold: "+player.getTeam().getCheck()[2],skin);
-                    }
+                    int[] teamRessources = session.getTeamRessources(player);
+                        tWood = new Label("Holz: "+teamRessources[Constants.WOOD],skin);
+                        tIron = new Label("Eisen: "+teamRessources[Constants.IRON],skin);
+                        tGold = new Label("Gold: "+teamRessources[Constants.GOLD],skin);
+
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -725,7 +624,6 @@ try {
                 try {
                     Registry reg = LocateRegistry.getRegistry();
                     ServerInterface stub = (ServerInterface) reg.lookup("ServerInterface");
-                    session.getMap().setFields(map);
                     stub.saveSession(session);
                     game.setScreen(new MenuScreen(game));
                 }catch(Exception e){
@@ -740,7 +638,7 @@ try {
             public void clicked(InputEvent event, float x, float y){
                 try {
                     session.showSessionDetails();
-                    System.out.println("\n Der aktive Spieler des Clients: "+player.toString());
+                    System.out.println("\n Der aktive Spieler des Clients: "+player + " Name: " + session.getPlayerName(player));
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -892,14 +790,6 @@ try {
         generalChat = new TextButton("Spiel", skin);
         teamChat = new TextButton("Team",skin);
 
-        try {
-            lastMessageCountGeneral = session.getSessionChat().getBacklog().size();
-            lastMessageCountTeam = player.getTeam().getChat().getBacklog().size();
-            session.getSessionChat().addParticipant((Player)player); //TODO rausnehmen nicht vergessen
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-
         //backLog = new List(skin);
         chatTable.row().fill().expandX();
         chatTable.add(generalChat).width(chatTable.getWidth()/2);
@@ -915,7 +805,7 @@ try {
         chatTable.add(chatScroller).expand().fill().colspan(2);
         chatTable.row().fill();
         try {
-            userName = new Label(player.getAccount().getName(),skin);
+            userName = new Label(session.getPlayerName(player),skin);
         } catch (RemoteException e) {
             e.printStackTrace();
             userName = new Label("n/a",skin);
@@ -928,7 +818,21 @@ try {
 
     private void buildChatString(){
         try {
-            Chat chat = null;
+            List<String> backLogTmp = session.getChatBackLog(player,showTeamChat);
+            Label tmp;
+            backLog.clear();
+
+            for(String s: backLogTmp){
+                tmp = new Label(s,skin);
+                tmp.setWrap(true);
+                backLog.row().fill().expandX().align(Align.left).height(tmp.getHeight());
+                backLog.add(tmp);
+                chatScroller.layout();
+                chatScroller.setScrollPercentY(100);
+            }
+
+            //region Deprecated
+            /*Chat chat = null;
             if(showTeamChat) {
                 chat = player.getTeam().getChat();
 
@@ -965,7 +869,8 @@ try {
                     }
                     lastMessageCountGeneral = backLogTmp.size();
                 }
-            }
+            }*/
+            //endregion
         } catch (RemoteException e){
             System.out.println(e.getMessage());
         }
@@ -980,13 +885,13 @@ try {
 
 
         try {
-            IMarket tmp = session.getMarket();
+            int[] tmp = session.getMarketInfo();
 
-            woodAmount = new Label("Holz: " + tmp.getWood(),skin);
-            woodPrice = new Label("Preis: " + tmp.woodPrice(),skin);
+            woodAmount = new Label("Holz: " + tmp[Constants.WOOD],skin);
+            woodPrice = new Label("Preis: " + tmp[Constants.WOOD_PRICE_MARKET_INDEX],skin);
 
-            ironAmount = new Label("Eisen: " + tmp.getIron(),skin);
-            ironPrice = new Label("Preis: " + tmp.ironPrice(),skin);
+            ironAmount = new Label("Eisen: " + tmp[Constants.IRON],skin);
+            ironPrice = new Label("Preis: " + tmp[Constants.IRON_PRICE_MARKET_INDEX],skin);
 
         } catch (RemoteException e) {
             woodAmount = new Label("Holz: n/a",skin);
@@ -1049,7 +954,7 @@ try {
         teamTable.setHeight(stage.getHeight()/2);
         teamTable.setBackground(skin.getDrawable("treeBackground"));
         try {
-            if(player.getTeam()==null){
+           /* if(player.getTeam()==null){
                 for(Team t :session.getTeams()){
                     for(Player p : t.getPlayers())
                         if(p.getAccount().getName().equals(player.getAccount().getName()))
@@ -1057,19 +962,14 @@ try {
 
                 }
 
-            }
-            if (player.getTeam()!=null) {
+            }*/
+            int[] teamRessources = session.getTeamRessources(player);
+                tWood = new Label("Holz: "+teamRessources[Constants.WOOD]+"",skin);
 
-                tWood = new Label("Holz: "+player.getTeam().getCheck()[0]+"",skin);
+                tIron = new Label("Eisen: "+teamRessources[Constants.IRON]+"",skin);
 
-                tIron = new Label("Eisen: "+player.getTeam().getCheck()[1]+"",skin);
+                tGold = new Label("Gold: "+teamRessources[Constants.GOLD]+"",skin);
 
-                tGold = new Label("Gold: "+player.getTeam().getCheck()[2]+"",skin);
-
-            }else{
-
-
-                System.out.println("Das Team von "+player+" wurde nicht gesetzt!");}
 
             addWood = new TextField("0", skin);
             addIron = new TextField("0", skin);
@@ -1086,26 +986,20 @@ try {
                         if(wood<0||iron<0||gold<0) {
                             addWood.setText("Die Zahlen muessen positiv sein!");return;
                         }
-                        if(wood>player.getRessources()[0]) {
+                        if(!session.addTeamRessources(player,Constants.WOOD, wood)) {
                             addWood.setText("Du besitzt nicht genug Holz"); return;
                         }
-                        if(iron>player.getRessources()[1]) {
+                        if(!session.addTeamRessources(player,Constants.IRON, iron)) {
                             addIron.setText("Du besitzt nicht genug Eisen"); return;
                         }
-                        if(gold>player.getRessources()[2]) {
+                        if(!session.addTeamRessources(player,Constants.GOLD, gold)) {
                             addGold.setText("Du besitzt nicht genug Gold"); return;
                         }
-                        if(player.getTeam()!=null){
-                            player.getTeam().getCheck()[0]+=wood;
-                            player.getTeam().getCheck()[1]+=iron;
-                            player.getTeam().getCheck()[2]+=gold;
-                            player.getRessources()[0]-=wood;
-                            player.getRessources()[1]-=iron;
-                            player.getRessources()[2]-=gold;
-                            tWood.setText("Holz: "+player.getTeam().getCheck()[0]+"");
-                            tIron.setText("Eisen: "+player.getTeam().getCheck()[1]+"");
-                            tGold.setText("Gold: "+player.getTeam().getCheck()[2]+"");
-                        }
+                        int[] teamRessources = session.getTeamRessources(player);
+                            tWood.setText("Holz: "+teamRessources[Constants.WOOD]+"");
+                            tIron.setText("Eisen: "+teamRessources[Constants.IRON]+"");
+                            tGold.setText("Gold: "+teamRessources[Constants.GOLD]+"");
+
 
                     }catch(Exception e){
                         addWood.setText("Nur Zahlen  eingeben!");
@@ -1274,69 +1168,51 @@ try {
         selectionUpLeft.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(selected instanceof Base){
-                    if(baseRecruitButtons){
-                        ((Base)selected).createUnit(UnitType.SWORDFIGHTER);
-                    } else if(laborEntered) {
-                        try {
-                            session.registerBuff(null,null,player.getAccount().getName(),BuffInfo.REDUCED_UNIT_COST);
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                        }
-                        System.out.println("UpLeft in Labor");
-                    }else {
-                            if(((Base)selected).getLabRoundsRemaining() == Constants.FINISHED) {
-                                laborEntered = true;
-                                baseRecruitButtons = false;
-                            }else if(((Base)selected).getLabRoundsRemaining() != Constants.NONE_OR_NOT_SET)
-                                ((Base)selected).abortLab();
-                            else
-                                ((Base) selected).buildLab();
+                try {
+                    if(session.isSelectedClassOf(Selectable.BASE)){
+                        if(baseRecruitButtons){
+                            session.createUnit(selected,UnitType.SWORDFIGHTER);
+                        } else if(laborEntered) {
+                                session.registerBuff(-1,player,BuffInfo.REDUCED_UNIT_COST);
+
+                            System.out.println("UpLeft in Labor");
+                        }else {
+                                if(session.checkSelectedBuildingFinished(Building.LABOR)) {
+                                    laborEntered = true;
+                                    baseRecruitButtons = false;
+                                }else if(session.checkIsBuilding(Building.LABOR))
+                                    session.buildOrAbortBuildingOnSelected(player,selected,Building.LABOR,true);
+                                else
+                                    session.buildOrAbortBuildingOnSelected(player,selected,Building.LABOR,false);
 
 
-                        }
-                } else if (selected instanceof Hero){
-                   if(((Hero)selected).getLeftHand().execute())
-                    {pe = new ParticleEffect();
-                    pe.load(Gdx.files.internal("assets/sprites/heal.party"), Gdx.files.internal("assets/sprites/"));
-                    pe.getEmitters().first().setPosition(((Hero) selected).getField().getXPos() * 100 + 50, ((Hero) selected).getField().getYPos() * 100 + 50);
-                    pe.setDuration(1);
-                    pe.scaleEffect(1);
-                    pe.start();
-                        List <Unit> units= new ArrayList<>();
-                        boolean heal2=false;
-                        for (int x1 = 0 - 2; x1 < 2 + 1; x1++) {
-                            for (int y1 = 0 - 2; y1 < 2 + 1; y1++) {
-                                try{
-                                   Field f = map[((Hero) selected).getField().getXPos()+x1][((Hero) selected).getField().getYPos()+y1];
-                                    if(f.getCurrent() instanceof Unit && f.getCurrent().getOwner()==((Hero) selected).getOwner()
-                                            &&f.getCurrent()!=selected){
-                                        units.add(f.getCurrent());
-                                        heal2=true;
-                                    }
-                                }catch(Exception e){}
                             }
-                        }
-                        Unit[]uArray=new Unit[units.size()];
-                        for(Unit u : units){
-                            uArray[units.indexOf(u)]=u;
-                        }
-                        if(heal2){
-                            pe.load(Gdx.files.internal("assets/sprites/heal2.party"), Gdx.files.internal("assets/sprites/"));
-                            pe.getEmitters().first().setPosition(((Hero) selected).getField().getXPos() * 100 + 50, ((Hero) selected).getField().getYPos() * 100 + 50);
-                            pe.setDuration(1/2);
-                            pe.scaleEffect(2);
-                            pe.start();
-                            new Heal2((Unit)selected,(Unit)selected,(Player)player, uArray).execute();
-                        }}
-                } else if(selected instanceof  Field){
-                    try {
-                        ((Field)selected).buildMine(player.getAccount().getName());
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
+                    } else if (session.isSelectedClassOf(Selectable.HERO)){
+                       if(session.activateHeroPower(player,true))
+                        {
+                            int heroId = session.getHero(player);
+                            pe = new ParticleEffect();
+                        pe.load(Gdx.files.internal("assets/sprites/heal.party"), Gdx.files.internal("assets/sprites/"));
+                        pe.getEmitters().first().setPosition(session.getSelectedX(heroId) * 100 + 50, session.getSelectedY(heroId) * 100 + 50);
+                        pe.setDuration(1);
+                        pe.scaleEffect(1);
+                        pe.start();
+                          int heroXPos = session.getSelectedX(heroId);
+                            int heroYPos = session.getSelectedY(heroId);
+                            if(session.hasNearUnits(heroXPos,heroYPos)){
+                                pe.load(Gdx.files.internal("assets/sprites/heal2.party"), Gdx.files.internal("assets/sprites/"));
+                                pe.getEmitters().first().setPosition(heroXPos * 100 + 50, heroYPos * 100 + 50);
+                                pe.setDuration(1/2);
+                                pe.scaleEffect(2);
+                                pe.start();
+                            }}
+                    } else if(session.isSelectedClassOf(Selectable.FIELD)){
+                            session.buildOrAbortBuildingOnSelected(player,selected,Building.MINE,false);
+                    } else {
+                        System.out.println("SelectionUpLeft selected ist kein gueltiges objekt");
                     }
-                } else {
-                    System.out.println(selected.getClass().getName());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
                 unrendered = true;
             }
@@ -1345,44 +1221,40 @@ try {
         selectionUpRight.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(selected instanceof Base){
-                    if(baseRecruitButtons){
-                        System.out.println(((Base)selected).createUnit(UnitType.SPEARFIGHTER));
-                    } else if(laborEntered) {
-                        try {
-                            session.registerBuff(player.getHero(),null,player.getAccount().getName(),BuffInfo.EMPOWER_SHIELD);
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                        }
-                        System.out.println("UpRight in Labor");
-                    }else{
-                            if(((Base)selected).getCaserneRoundsRemaining() == Constants.FINISHED) {
-                                baseRecruitButtons = true;
-                                laborEntered = false;
-                            }else if(((Base)selected).getCaserneRoundsRemaining() != Constants.NONE_OR_NOT_SET)
-                                ((Base)selected).abortCaserne();
-                            else
-                                ((Base)selected).buildCaserne();
+                try {
+                    if(session.isSelectedClassOf(Selectable.BASE)){
+                        if(baseRecruitButtons){
+                           session.createUnit (selected, UnitType.SPEARFIGHTER);
+                        } else if(laborEntered) {
+                                session.registerBuff(session.getHero(player),player,BuffInfo.EMPOWER_SHIELD);
+                        }else{
+                                if(session.checkSelectedBuildingFinished(Building.CASERNE)) {
+                                    baseRecruitButtons = true;
+                                    laborEntered = false;
+                                }else if(session.checkIsBuilding(Building.CASERNE))
+                                    session.buildOrAbortBuildingOnSelected(player,selected,Building.CASERNE,true);
+                                else
+                                    session.buildOrAbortBuildingOnSelected(player,selected,Building.CASERNE,false);
 
 
-                        }
-                } else if (selected instanceof Hero){
-                    if(((Hero)selected).getRightHand().execute())
-                    {
-                        shield = new ParticleEffect();
-                        shield.load(Gdx.files.internal("assets/sprites/shield.party"), Gdx.files.internal("assets/sprites/"));
-                        shield.getEmitters().first().setPosition(((Hero) selected).getField().getXPos() * 100 + 50, ((Hero) selected).getField().getYPos() * 100 + 50);
-                        shield.scaleEffect(2);
+                            }
+                    } else if (session.isSelectedClassOf(Selectable.HERO)){
+                        if(session.activateHeroPower(player,false))
+                        {
+                            shield = new ParticleEffect();
+                            shield.load(Gdx.files.internal("assets/sprites/shield.party"), Gdx.files.internal("assets/sprites/"));
+                            shield.getEmitters().first().setPosition(session.getSelectedX(session.getHero(player)) * 100 + 50, session.getSelectedY(session.getHero(player)) * 100 + 50);
+                            shield.scaleEffect(2);
 
-                        shield.start();}
-                } else if(selected instanceof  Field){
-                    try {
-                        ((Field)selected).buildBase(player.getAccount().getName());
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
+                            shield.start();}
+                    } else if(session.isSelectedClassOf(Selectable.FIELD)){
+                            session.buildOrAbortBuildingOnSelected(player,selected,Building.BASE,false);
+                        //TODO abort nicht vergessen
+                    }else {
+                        System.out.println("SelectionUpRight selected ist kein gueltiges objekt");
                     }
-                }else {
-                    System.out.println(selected.getClass().getName());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
                 unrendered = true;
             }
@@ -1391,31 +1263,29 @@ try {
         selectionDownLeft.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(selected instanceof Base){
-                    if(baseRecruitButtons){
-                        ((Base)selected).createUnit(UnitType.ARCHER);
-                    } else if(laborEntered){
-                        if(archerOrBuff){
-                            try {
-                                session.registerBuff(null,null,player.getAccount().getName(), BuffInfo.RANGED_STYLE);
-                            } catch (RemoteException e) {
-                                e.printStackTrace();
-                            }
-                        }else {
-                            if(Research.RESEARCH_ARCHER.research((Base) selected)) {
-                                archerOrBuff = true;
-                            }
+                try {
+                    if(session.isSelectedClassOf(Selectable.BASE)){
+                        if(baseRecruitButtons){
+                            session.createUnit(selected,UnitType.ARCHER);
+                        } else if(laborEntered){
+
+                            if(archerOrBuff)
+                                    session.registerBuff(-1,player, BuffInfo.RANGED_STYLE);
+                        else if(session.researchOnSelected(selected,Research.RESEARCH_ARCHER))
+                                    archerOrBuff = true;
+
                         }
-                        System.out.println("DownLeft in Labor");
+                    } else if (session.isSelectedClassOf(Selectable.HERO)){
+                        System.out.println("DownLeft-Hero");
+                        //TODO/////////////////////////////////////////////////////////////////////////////////
+                    } else if(session.isSelectedClassOf(Selectable.FIELD)){
+                        System.out.println("DownLeft-Field");
+                        //TODO/////////////////////////////////////////////////////////////////////////////////
+                    }else {
+                        System.out.println("SelectionDownLeft selected ist kein gueltiges objekt");
                     }
-                } else if (selected instanceof Hero){
-                    System.out.println("DownLeft-Hero");
-                    //TODO/////////////////////////////////////////////////////////////////////////////////
-                } else if(selected instanceof  Field){
-                    System.out.println("DownLeft-Field");
-                    //TODO/////////////////////////////////////////////////////////////////////////////////
-                }else {
-                    System.out.println(selected.getClass().getName());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
                 unrendered = true;
             }
@@ -1424,41 +1294,34 @@ try {
         selectionDownRight.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(selected instanceof Base){
-                    if(baseRecruitButtons){
-                        ((Base)selected).createUnit(UnitType.WORKER);
-                    } else if(laborEntered) {
-                        if(spearfighterOrBuff){
-                            try {
-                                session.registerBuff(null,null,player.getAccount().getName(), BuffInfo.HORNET_STYLE);
-                            } catch (RemoteException e) {
-                                e.printStackTrace();
-                            }
+                try {
+                    if(session.isSelectedClassOf(Selectable.BASE)){
+                        if(baseRecruitButtons){
+                           session.createUnit (selected,UnitType.WORKER);
+                        } else if(laborEntered) {
+
+                            if(spearfighterOrBuff)
+                                    session.registerBuff(-1,player, BuffInfo.HORNET_STYLE);
+                            else if(session.researchOnSelected(selected,Research.RESEARCH_SPEARFIGHTER))
+                                    spearfighterOrBuff = true;
+
                         }else {
-                            if(Research.RESEARCH_SPEARFIGHTER.research((Base) selected)) {
-                                spearfighterOrBuff = true;
+                                    if(session.buildOrAbortBuildingOnSelected(player,selected,Building.MARKET,false)) {
+                                        marketPlace.setVisible(true);
+                                        unrendered = true;
+                                    }
                             }
-                        }
-                        System.out.println("DownRIght in Labor");
+                    } else if (session.isSelectedClassOf(Selectable.HERO)){
+                        System.out.println("DownRight-Hero");
+                        //TODO/////////////////////////////////////////////////////////////////////////////////
+                    } else if(session.isSelectedClassOf(Selectable.FIELD)){
+                        System.out.println("DownRight-Field");
+                        //TODO/////////////////////////////////////////////////////////////////////////////////
                     }else {
-                            try {
-                                boolean success = ((Base)selected).buildMarket();
-                                if(success) {
-                                    marketPlace.setVisible(true);
-                                    unrendered = true;
-                                }
-                            } catch (RemoteException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                } else if (selected instanceof Hero){
-                    System.out.println("DownRight-Hero");
-                    //TODO/////////////////////////////////////////////////////////////////////////////////
-                } else if(selected instanceof  Field){
-                    System.out.println("DownRight-Field");
-                    //TODO/////////////////////////////////////////////////////////////////////////////////
-                }else {
-                    System.out.println(selected.getClass().getName());
+                        System.out.println("SelectionDownRight selected ist kein gueltiges objekt");
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
                 unrendered = true;
             }
@@ -1478,12 +1341,12 @@ try {
             @Override
             public void clicked(InputEvent event, float x, float y){
               try{
-                  IMarket market = session.getMarket();
+                  int[] marketInfo = session.getMarketInfo();
 
                   if(!woodField.getText().equals("")) {
-                      boolean wood = market.buy(player.getAccount().getName(),Constants.WOOD,Integer.parseInt(woodField.getText()));
-                      woodAmount.setText("Holz: " + market.getWood());
-                      woodPrice.setText("Preis: " + market.woodPrice());
+                      boolean wood = session.buyOnMarket(player,Constants.WOOD,Integer.parseInt(woodField.getText()));
+                      woodAmount.setText("Holz: " + marketInfo[Constants.WOOD]);
+                      woodPrice.setText("Preis: " + marketInfo[Constants.WOOD_PRICE_MARKET_INDEX]);
                       if(wood)
                           woodField.setText("");
                       else{
@@ -1499,9 +1362,9 @@ try {
                   }
 
                   if(!ironField.getText().equals("")) {
-                      boolean iron = market.buy(player.getAccount().getName(),Constants.IRON,Integer.parseInt(ironField.getText()));
-                      ironAmount.setText("Eisen: " + market.getIron());
-                      ironPrice.setText("Preis: " + market.ironPrice());
+                      boolean iron = session.buyOnMarket(player,Constants.IRON,Integer.parseInt(ironField.getText()));
+                      ironAmount.setText("Eisen: " + marketInfo[Constants.IRON]);
+                      ironPrice.setText("Preis: " + marketInfo[Constants.IRON_PRICE_MARKET_INDEX]);
 
                       if(iron)
                           ironField.setText("");
@@ -1528,12 +1391,12 @@ try {
             @Override
             public void clicked(InputEvent event, float x, float y){
                 try{
-                    IMarket market = session.getMarket();
+                    int[] marketInfo = session.getMarketInfo();
 
                     if(!woodField.getText().equals("")) {
-                        boolean wood = market.sell(player.getAccount().getName(),Constants.WOOD,Integer.parseInt(woodField.getText()));
-                        woodAmount.setText("Holz: " + market.getWood());
-                        woodPrice.setText("Preis: " + market.woodPrice());
+                        boolean wood = session.sellOnMarket(player,Constants.WOOD,Integer.parseInt(woodField.getText()));
+                        woodAmount.setText("Holz: " + marketInfo[Constants.WOOD]);
+                        woodPrice.setText("Preis: " + marketInfo[Constants.WOOD_PRICE_MARKET_INDEX]);
 
                         if(wood)
                             woodField.setText("");
@@ -1550,9 +1413,9 @@ try {
                     }
 
                     if(!ironField.getText().equals("")) {
-                        boolean iron = market.sell(player.getAccount().getName(),Constants.IRON,Integer.parseInt(ironField.getText()));
-                        ironAmount.setText("Eisen: " + market.getIron());
-                        ironPrice.setText("Preis: " + market.woodPrice());
+                        boolean iron = session.sellOnMarket(player,Constants.IRON,Integer.parseInt(ironField.getText()));
+                        ironAmount.setText("Eisen: " + marketInfo[Constants.IRON]);
+                        ironPrice.setText("Preis: " + marketInfo[Constants.IRON_PRICE_MARKET_INDEX]);
 
                         if(iron)
                             ironField.setText("");
@@ -1602,9 +1465,13 @@ try {
         steelButtonLv1.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                if(player.advanceOnTechTree(TreeElement.STEEL1)) {
-                    steelButtonLv2.setVisible(true);
-                    steelButtonLv1.setVisible(false);
+                try {
+                    if(session.advanceOnTechtree(player,TreeElement.STEEL1)) {
+                        steelButtonLv2.setVisible(true);
+                        steelButtonLv1.setVisible(false);
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -1612,9 +1479,13 @@ try {
         steelButtonLv2.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                if(player.advanceOnTechTree(TreeElement.STEEL2)) {
-                    steelButtonLv3.setVisible(true);
-                    steelButtonLv2.setVisible(false);
+                try {
+                    if(session.advanceOnTechtree(player,TreeElement.STEEL2)) {
+                        steelButtonLv3.setVisible(true);
+                        steelButtonLv2.setVisible(false);
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -1622,9 +1493,13 @@ try {
         steelButtonLv3.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                if(player.advanceOnTechTree(TreeElement.STEEL3)) {
-                    steelButtonLv4.setVisible(true);
-                    steelButtonLv3.setVisible(false);
+                try {
+                    if(session.advanceOnTechtree(player,TreeElement.STEEL3)) {
+                        steelButtonLv4.setVisible(true);
+                        steelButtonLv3.setVisible(false);
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -1632,9 +1507,13 @@ try {
         steelButtonLv4.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                if(player.advanceOnTechTree(TreeElement.STEEL4)) {
-                    steelButtonLv5.setVisible(true);
-                    steelButtonLv4.setVisible(false);
+                try {
+                    if(session.advanceOnTechtree(player,TreeElement.STEEL4)) {
+                        steelButtonLv5.setVisible(true);
+                        steelButtonLv4.setVisible(false);
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -1642,12 +1521,16 @@ try {
         steelButtonLv5.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                if(player.advanceOnTechTree(TreeElement.STEEL5)) {
-                    steelButtonLv5.setText("");
-                    NinePatch tmp = null;
-                    tmp = new NinePatch(textures[16], 0, 0, 0, 0);
-                    skin.add("ironIcon", tmp);
-                    steelButtonLv5.getStyle().up = skin.getDrawable("ironIcon");
+                try {
+                    if(session.advanceOnTechtree(player,TreeElement.STEEL5)) {
+                        steelButtonLv5.setText("");
+                        NinePatch tmp = null;
+                        tmp = new NinePatch(textures[16], 0, 0, 0, 0);
+                        skin.add("ironIcon", tmp);
+                        steelButtonLv5.getStyle().up = skin.getDrawable("ironIcon");
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -1657,9 +1540,13 @@ try {
         magicButtonLv1.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                if(player.advanceOnTechTree(TreeElement.MAGIC1)) {
-                    magicButtonLv2.setVisible(true);
-                    magicButtonLv1.setVisible(false);
+                try {
+                    if(session.advanceOnTechtree(player,TreeElement.MAGIC1)) {
+                        magicButtonLv2.setVisible(true);
+                        magicButtonLv1.setVisible(false);
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -1667,9 +1554,13 @@ try {
         magicButtonLv2.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                if(player.advanceOnTechTree(TreeElement.MAGIC2)) {
-                    magicButtonLv3.setVisible(true);
-                    magicButtonLv2.setVisible(false);
+                try {
+                    if(session.advanceOnTechtree(player,TreeElement.MAGIC2)) {
+                        magicButtonLv3.setVisible(true);
+                        magicButtonLv2.setVisible(false);
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -1677,9 +1568,13 @@ try {
         magicButtonLv3.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                if(player.advanceOnTechTree(TreeElement.MAGIC3)) {
-                    magicButtonLv4.setVisible(true);
-                    magicButtonLv3.setVisible(false);
+                try {
+                    if(session.advanceOnTechtree(player,TreeElement.MAGIC3)) {
+                        magicButtonLv4.setVisible(true);
+                        magicButtonLv3.setVisible(false);
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -1687,9 +1582,13 @@ try {
         magicButtonLv4.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                if(player.advanceOnTechTree(TreeElement.MAGIC4)) {
-                    magicButtonLv5.setVisible(true);
-                    magicButtonLv4.setVisible(false);
+                try {
+                    if(session.advanceOnTechtree(player,TreeElement.MAGIC4)) {
+                        magicButtonLv5.setVisible(true);
+                        magicButtonLv4.setVisible(false);
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -1697,12 +1596,16 @@ try {
         magicButtonLv5.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                if(player.advanceOnTechTree(TreeElement.MAGIC5)) {
-                    magicButtonLv5.setText("");
-                    NinePatch tmp = null;
-                    tmp = new NinePatch(textures[17], 0, 0, 0, 0);
-                    skin.add("manaIcon", tmp);
-                    magicButtonLv5.getStyle().up = skin.getDrawable("manaIcon");
+                try {
+                    if(session.advanceOnTechtree(player,TreeElement.MAGIC5)) {
+                        magicButtonLv5.setText("");
+                        NinePatch tmp = null;
+                        tmp = new NinePatch(textures[17], 0, 0, 0, 0);
+                        skin.add("manaIcon", tmp);
+                        magicButtonLv5.getStyle().up = skin.getDrawable("manaIcon");
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -1712,9 +1615,13 @@ try {
         cultureButtonLv1.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                if(player.advanceOnTechTree(TreeElement.CULTURE1)) {
-                    cultureButtonLv2.setVisible(true);
-                    cultureButtonLv1.setVisible(false);
+                try {
+                    if(session.advanceOnTechtree(player,TreeElement.CULTURE1)) {
+                        cultureButtonLv2.setVisible(true);
+                        cultureButtonLv1.setVisible(false);
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -1722,9 +1629,13 @@ try {
         cultureButtonLv2.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                if(player.advanceOnTechTree(TreeElement.CULTURE2)) {
-                    cultureButtonLv3.setVisible(true);
-                    cultureButtonLv2.setVisible(false);
+                try {
+                    if(session.advanceOnTechtree(player,TreeElement.CULTURE2)) {
+                        cultureButtonLv3.setVisible(true);
+                        cultureButtonLv2.setVisible(false);
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -1732,9 +1643,13 @@ try {
         cultureButtonLv3.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                if(player.advanceOnTechTree(TreeElement.CULTURE3)) {
-                    cultureButtonLv4.setVisible(true);
-                    cultureButtonLv3.setVisible(false);
+                try {
+                    if(session.advanceOnTechtree(player,TreeElement.CULTURE3)) {
+                        cultureButtonLv4.setVisible(true);
+                        cultureButtonLv3.setVisible(false);
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -1742,9 +1657,13 @@ try {
         cultureButtonLv4.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                if(player.advanceOnTechTree(TreeElement.CULTURE4)) {
-                    cultureButtonLv5.setVisible(true);
-                    cultureButtonLv4.setVisible(false);
+                try {
+                    if(session.advanceOnTechtree(player,TreeElement.CULTURE4)) {
+                        cultureButtonLv5.setVisible(true);
+                        cultureButtonLv4.setVisible(false);
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -1752,12 +1671,16 @@ try {
         cultureButtonLv5.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                if(player.advanceOnTechTree(TreeElement.CULTURE5)) {
-                    cultureButtonLv5.setText("");
-                    NinePatch tmp = null;
-                    tmp = new NinePatch(textures[14], 0, 0, 0, 0);
-                    skin.add("goldIcon", tmp);
-                    cultureButtonLv5.getStyle().up = skin.getDrawable("goldIcon");
+                try {
+                    if(session.advanceOnTechtree(player,TreeElement.CULTURE5)) {
+                        cultureButtonLv5.setText("");
+                        NinePatch tmp = null;
+                        tmp = new NinePatch(textures[14], 0, 0, 0, 0);
+                        skin.add("goldIcon", tmp);
+                        cultureButtonLv5.getStyle().up = skin.getDrawable("goldIcon");
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -1776,7 +1699,7 @@ try {
             @Override
             public  void clicked(InputEvent event, float x, float y){
                 try {
-                    session.finishTurn(player.getAccount().getName());
+                    session.finishTurn(player);
                 } catch (RemoteException e) {
                     System.out.println(e.getMessage());
                     e.printStackTrace();
@@ -1790,11 +1713,7 @@ try {
             @Override
             public void clicked(InputEvent event, float x, float y){
                 try{
-                    if(showTeamChat)
-                        player.getTeam().getChat().addMessage((Player)player, messageField.getText());
-                    else
-                    session.getSessionChat().addMessage((Player)player, messageField.getText());
-
+                    session.sendMessage(player,showTeamChat,messageField.getText());
                     messageField.setText("");
                 }catch (RemoteException e){
                     System.out.println(e.getMessage());
@@ -1807,11 +1726,7 @@ try {
             public void keyTyped(TextField textField, char c) {
                 if(c == '\n' || c == '\r'){
                     try{
-                        if(showTeamChat)
-                            player.getTeam().getChat().addMessage((Player)player, messageField.getText());
-                        else
-                            session.getSessionChat().addMessage((Player)player, messageField.getText());
-
+                        session.sendMessage(player,showTeamChat,messageField.getText());
                         messageField.setText("");
                     }catch (RemoteException e){
                         System.out.println(e.getMessage());
@@ -1974,110 +1889,79 @@ try {
      * This method implements the movement of units.
      */
     public void move() {
-        Object obj = map[getFieldXPos(Constants.FIELDXLENGTH * 100)][getFieldYPos(Constants.FIELDYLENGTH * 100)].select();
-        if (selected instanceof Unit && obj instanceof Field) {
-            Unit unit = ((Unit) selected);
-            Field target = (Field) obj;
-            int radius = unit.getMovePointsLeft();
-            try {
-                if(unit.getOwner().getAccount().getName().equals(player.getAccount().getName()))
-                try {
-                      int diff=Math.max(Math.abs(unit.getField().getXPos() - target.getXPos()), Math.abs(unit.getField().getYPos() - target.getYPos()));
-                        if (target.getWalkable()&&diff <= unit.getMovePointsLeft()) {
-                           try {
-                               pe = new ParticleEffect();
-                               pe.load(Gdx.files.internal("assets/sprites/fight.party"), Gdx.files.internal(""));
-                               pe.getEmitters().first().setPosition(unit.getField().getXPos() * 100 + 50, unit.getField().getYPos() * 100 + 50);
-                               pe.setDuration(-2800);
-                               pe.scaleEffect(3);
-                               pe.start();
-                           }catch(Exception e){}//zur Sicherheit
-                            if(unit.getField().getYPos()<target.getYPos()){unit.setDirection(1);}else{unit.setDirection(0);}
-                            unit.getField().setCurrent(null);
-                            target.setCurrent(unit);
-                            unit.setMovePointsLeft(unit.getMovePointsLeft()-diff);
-                            unrendered=true;
-                            fight();
+        try {
+            int xPos = getFieldXPos(Constants.FIELDXLENGTH * 100);
+            int yPos = getFieldYPos(Constants.FIELDYLENGTH * 100);
+            boolean fight = false;
+            int[] result = session.moveSelected(player,selected,xPos,yPos);
 
-                        }
-                }catch(Exception e){}
-            } catch (RemoteException e) {
-
+            for(int i: result)
+            if(i==1){
+                fight =true;
+                break;
             }
-        }
 
+            if(fight){
+                try {
+                    pe = new ParticleEffect();
+                    pe.load(Gdx.files.internal("assets/sprites/fight.party"), Gdx.files.internal(""));
+                    pe.getEmitters().first().setPosition(xPos * 100 + 50,yPos * 100 + 50);
+                    pe.setDuration(-2800);
+                    pe.scaleEffect(3);
+                    pe.start();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }//zur Sicherheit
+
+                for(int k=0;k<result.length;++k){
+                    if(result[k]==1){
+                        switch (k){
+                            case 0:
+                                fightAnimation(xPos,yPos,50,100);
+                                break;
+                            case 1:
+                                fightAnimation(xPos,yPos,50,0);
+                                break;
+                            case 2:
+                                fightAnimation(xPos,yPos,0,50);
+                                break;
+                            case 3:
+                                fightAnimation(xPos,yPos,100,50);
+                                break;
+                        }
+                    }
+                }
+                unrendered=true;
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * This method checks if enemies are nearby and let them fight.
      */
     public void fight(){
-            Unit unit = ((Unit) selected);
-        boolean both=false;
-           for(int x = 0;x<=unit.getRange();x++){
-               //positive y direction
-               try{if(map[unit.getField().getXPos()][unit.getField().getYPos()+x].getCurrent()instanceof Unit)
-               {if(map[unit.getField().getXPos()][unit.getField().getYPos()+x].getCurrent().getOwner()!=session.getActive()){
-                   final Unit enemy=map[unit.getField().getXPos()][unit.getField().getYPos()+x].getCurrent();
-                   if(enemy.getRange()>=x)both=true;
-                   fightAnimation(unit, enemy,50,100,both);
-                   break;}}}catch(Exception e){}
-               //negative y direction
-               try{if(map[unit.getField().getXPos()][unit.getField().getYPos()-x].getCurrent()instanceof Unit)
-               {if(map[unit.getField().getXPos()][unit.getField().getYPos()-x].getCurrent().getOwner()!=session.getActive()){
-                   final Unit enemy=map[unit.getField().getXPos()][unit.getField().getYPos()-x].getCurrent();
-                   if(enemy.getRange()>=x)both=true;
-                   fightAnimation(unit, enemy,50,0,both);
-                   break;}}}catch(Exception e){}
-               //negative x direction
-               try{if(map[unit.getField().getXPos()-x][unit.getField().getYPos()].getCurrent()instanceof Unit)
-               {if(map[unit.getField().getXPos()-x][unit.getField().getYPos()].getCurrent().getOwner()!=session.getActive()){
-                   final Unit enemy=map[unit.getField().getXPos()-x][unit.getField().getYPos()].getCurrent();
-                   if(enemy.getRange()>=x)both=true;
-                   fightAnimation(unit, enemy,0,50,both);
-                   break;}}}catch(Exception e){}
-               //positive x direction
-               try{if(map[unit.getField().getXPos()+x][unit.getField().getYPos()].getCurrent()instanceof Unit)
-               {if(map[unit.getField().getXPos()+x][unit.getField().getYPos()].getCurrent().getOwner()!=session.getActive()){
-                   final Unit enemy=map[unit.getField().getXPos()+x][unit.getField().getYPos()].getCurrent();
-                   if(enemy.getRange()>=x)both=true;
-                   fightAnimation(unit, enemy,100,50,both);
-                   break;}}}catch(Exception e){}
-           }
+
     }
 
     /**
      * Show a fighting scene
-     * @param unit
-     * @param enemy
      */
-    private void fightAnimation(Unit unit,Unit enemy, int x,int y, boolean both){
-        unit.setMovePointsLeft(0);
+    private void fightAnimation(int xOrigin, int yOrigin, int x,int y){
+
         Timer.schedule(new Timer.Task(){
             @Override
             public void run() {
-                selected=unit.getField();
-                enemy.setCurrentHp(enemy.getCurrentHp() - (unit.getAtk()-enemy.getDef()));
 
-                if (enemy.getCurrentHp() <= 0) {
-                    if(enemy instanceof Base){
-                     enemy.setOwner((Player)player);
-                        enemy.setCurrentHp(enemy.getMaxHp());
-                        return;
-                    }
-                    enemy.getField().setCurrent(null);
-                }
-                if(both){
-                unit.setCurrentHp(unit.getCurrentHp() - (enemy.getAtk()-unit.getDef()));
-                if (unit.getCurrentHp() <= 0) unit.getField().setCurrent(null);
-                }
+
             }
         }, 2);
         pe = new ParticleEffect();
         pe.load(Gdx.files.internal("assets/sprites/fightAnimation.party"), Gdx.files.internal("assets/sprites/"));
         pe.setDuration(1);
         pe.scaleEffect(2);
-        pe.getEmitters().first().setPosition(unit.getField().getXPos() * 100+x, unit.getField().getYPos() * 100+y);
+        pe.getEmitters().first().setPosition(xOrigin * 100+x, yOrigin * 100+y);
         pe.start();
 
     }

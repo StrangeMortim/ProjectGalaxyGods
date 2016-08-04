@@ -7,12 +7,12 @@ import java.rmi.RemoteException;
 /**
  * Created by Fabi on 22.07.2016.
  */
-public enum TreeElement implements ITreeElement {
+public enum TreeElement{
     STEEL1, STEEL2, STEEL3, STEEL4, STEEL5,
     MAGIC1, MAGIC2, MAGIC3, MAGIC4, MAGIC5,
     CULTURE1, CULTURE2, CULTURE3, CULTURE4, CULTURE5;
 
-    @Override
+
     public String getTreePath(){
         switch (this) {
             case STEEL1:
@@ -38,7 +38,7 @@ public enum TreeElement implements ITreeElement {
         }
     }
 
-    @Override
+
     public int getPreRequisiteIndex() {
         switch (this) {
             case STEEL1:
@@ -76,7 +76,7 @@ public enum TreeElement implements ITreeElement {
         }
     }
 
-    @Override
+
     public int[] getRessourceCosts(){
         switch (this) {
             case STEEL1:
@@ -114,11 +114,11 @@ public enum TreeElement implements ITreeElement {
         }
     }
 
-    @Override
+
     public void activate(Player player){
         if (player == null)
             throw new IllegalArgumentException("Player is null");
-        try {
+
             switch (this) {
                 case STEEL1:
                     player.getTechTree().getSteel()[0] = true;
@@ -201,9 +201,6 @@ public enum TreeElement implements ITreeElement {
                 default:
                     break;
             }
-        }catch (RemoteException e){
-            e.printStackTrace();
-        }
     }
 
 

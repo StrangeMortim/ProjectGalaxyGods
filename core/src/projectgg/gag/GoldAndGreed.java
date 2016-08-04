@@ -29,7 +29,6 @@ public class GoldAndGreed extends Game {
 		try{
 			reg = LocateRegistry.getRegistry();
 			ServerInterface stub = (ServerInterface) reg.lookup("ServerInterface");
-			System.out.println("Client: "+ stub.sayHello());
 		} catch (RemoteException e) {
 			System.out.println(e.getMessage());
 		} catch (NotBoundException e) {

@@ -1,5 +1,6 @@
 package Action;
 
+import GameObject.GameSession;
 import GameObject.Hero;
 import GameObject.Unit;
 import Player.Player;
@@ -8,8 +9,8 @@ import Player.Player;
  * Created by Fabi on 28.07.2016.
  */
 public class EmpowerShield extends Buff {
-    public EmpowerShield(Hero origin, Unit target, Player player) {
-        super(origin, target, player, BuffInfo.EMPOWER_SHIELD);
+    public EmpowerShield(Hero origin, Player player, GameSession session) {
+        super(origin, player, BuffInfo.EMPOWER_SHIELD, session);
         roundsLeft = BuffInfo.EMPOWER_SHIELD.getRounds();
     }
 

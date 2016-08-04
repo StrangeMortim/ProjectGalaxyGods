@@ -2,17 +2,14 @@ package GameObject;
 
 import Action.Buff;
 import Player.Player;
-import GameObject.GameSession;
-import com.badlogic.gdx.graphics.Texture;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 
-public class Field implements IField,Serializable {
+public class Field implements Serializable {
 
   //  private static final long serialVersionUID = -7532038227070675590L;
     private int resType = Constants.NONE_OR_NOT_SET;
@@ -22,15 +19,17 @@ public class Field implements IField,Serializable {
     private Unit current;
     private boolean walkable=true;
     private int roundsRemain = Constants.NONE_OR_NOT_SET;
-    private String spriteName = "";
+    private int spriteIndex = -1;
     private boolean baseBuilding = false;
     private Player builder = null;
     private boolean mineBuilding = false;
     private boolean hasMine = false;
     private Map map = null;
+    private GameSession session;
+    private int iD;
 
-    public Field(int resType, int resValue, int xPos, int yPos, Map map){
-        if(resType < Constants.NONE_OR_NOT_SET || resType > Constants.MANA || xPos < 0 || xPos > Constants.FIELDXLENGTH || yPos < 0 || yPos >Constants.FIELDYLENGTH || map == null)
+    public Field(int resType, int resValue, int xPos, int yPos, Map map, GameSession session) {
+        if(session == null || resType < Constants.NONE_OR_NOT_SET || resType > Constants.MANA || xPos < 0 || xPos > Constants.FIELDXLENGTH || yPos < 0 || yPos >Constants.FIELDYLENGTH || map == null)
             throw new IllegalArgumentException("Invalid Values");
 
         this.resType = resType;
@@ -38,13 +37,19 @@ public class Field implements IField,Serializable {
         this.xPos = xPos;
         this.yPos = yPos;
         this.map = map;
+        this.session = session;
+        try {
+            iD = session.registerObject(this);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
 
         //Choose random default Fieldsprite, increase number for new sprites,
         //sprites must be named "normal" + number(next higher int) and be png files
         //sprites must be located in sprites folder
-        Random r = new Random();
-        this.spriteName = SpriteNames.NORMAL_FIELD.getSpriteName();
-        //this.texture = new Texture(Gdx.files.internal("assets/"+this.spriteName));
+        this.spriteIndex = SpriteNames.NORMAL_FIELD.getSpriteIndex();
+
+        //this.texture = new Texture(Gdx.files.internal("assets/"+this.spriteIndex));
     }
 
     /**
@@ -52,7 +57,7 @@ public class Field implements IField,Serializable {
      * Und die bestehenden Bauprozesse
      * Außerdem werden Ressourcen verteilt
      */
-    @Override
+
     public List<Buff> update() {
 
         this.updateBuildingProcesses();
@@ -124,7 +129,7 @@ public class Field implements IField,Serializable {
                     if(u.getOwner() == builder) {       //if it's a base and owner units are near, count down the rounds, -1 for every unit near
                         roundsRemain--;
                         if (roundsRemain == Constants.FINISHED) {        //if the rounds reach zero, build the base and stop
-                            current = new Base(UnitType.BASE, builder);
+                            current = new Base(UnitType.BASE, builder, session);
                             builder = null;
                             baseBuilding = false;
                             break;
@@ -154,7 +159,7 @@ public class Field implements IField,Serializable {
      * Searches all Unit in the direct environment to the Field(the (max) 8 surrounding Fields
      * @return the found Units
      */
-    @Override
+
     public List<Unit> getNearUnits(){
         List<Unit> result = new ArrayList<>();
         for(int i=yPos-1; i<=yPos+1; ++i){
@@ -177,22 +182,15 @@ public class Field implements IField,Serializable {
     /**
      * Faengt an eine Basis auf dem Feld zu bauen
      *
-     * @param playerName der Spieler der die Basis baut
+     * @param player der Spieler der die Basis baut
      * @return gibt an ob der Spieler die Basis bauen kann oder nicht
      */
-    @Override
-    public boolean buildBase(String playerName) {
-        Player player = null;
-        try {
-            player = map.getSession().getPlayerPerName(playerName);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
 
+    public boolean buildBase(Player player) {
         if(player == null)
             throw new IllegalArgumentException("Player is null in Buildbase");
 
-        try {
+
             if(current == null && !hasMine && player.getTechTree().isCultureFull()){
                 int[] baseCost = UnitType.BASE.getRessourceCost();
                 int[] availableRessources = player.getRessources();
@@ -216,9 +214,7 @@ public class Field implements IField,Serializable {
                     }
                 }
             }
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+
         /*TODO check*/
         return false;
     }
@@ -226,18 +222,11 @@ public class Field implements IField,Serializable {
     /**
      * Bricht den Bau der Basis ab, findet keiner statt passiert nichts
      *
-     * @param playerName der Spieler der versucht den Bau abzubrechen
+     * @param player der Spieler der versucht den Bau abzubrechen
      * @return Ob der Vorgang erfolgreich war oder nicht(ob nach dem Methodenaufruf kein Bau mehr stattfindet oder nicht)
      */
-    @Override
-    public boolean abortBuild(String playerName) {
-        Player player = null;
-        try {
-            player = map.getSession().getPlayerPerName(playerName);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
 
+    public boolean abortBuild(Player player) {
         if(player != null) {
             List<Unit> nearUnits = this.getNearUnits();
             for (Unit u : nearUnits) {
@@ -263,18 +252,11 @@ public class Field implements IField,Serializable {
     /**
      * Startet den Bau einer Mine, der Bau kann nicht abgebrochen werden
      *
-     * @param playerName der Spieler der den Bau starten will
+     * @param player der Spieler der den Bau starten will
      * @return gibt an ob das Starten erfolgreich war
      */
-    @Override
-    public boolean buildMine(String playerName) {
-        Player player = null;
-        try {
-            player = map.getSession().getPlayerPerName(playerName);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
 
+    public boolean buildMine(Player player) {
         if(player != null && roundsRemain == Constants.NONE_OR_NOT_SET && current == null && resType == Constants.IRON){
             List<Unit> nearUnits = this.getNearUnits();
             //check near units if one of them belongs to player, player may start building
@@ -292,9 +274,14 @@ public class Field implements IField,Serializable {
         return false;
     }
 
-    @Override
+
     public Object select(){
         return (current == null) ? this : current;
+    }
+
+
+    public int getId() throws RemoteException {
+        return iD;
     }
 
     /**
@@ -302,7 +289,7 @@ public class Field implements IField,Serializable {
      *
      * @param resType
      */
-    @Override
+
     public void setResType(int resType) {
         if(resType < Constants.NONE_OR_NOT_SET || resType > Constants.MANA)
             throw new IllegalArgumentException("That ressource does not exist");
@@ -313,19 +300,19 @@ public class Field implements IField,Serializable {
         walkable=false;
         if(resType==Constants.MANA) {walkable=true;}
 
-        this.spriteName = (resType == Constants.WOOD) ? SpriteNames.FOREST.getSpriteName()
-                        : (resType == Constants.IRON) ? SpriteNames.IRON_FIELD.getSpriteName()
-                        : (resType == Constants.MANA) ? SpriteNames.MIRACLE.getSpriteName()
-                        : SpriteNames.NORMAL_FIELD.getSpriteName();
+        this.spriteIndex = (resType == Constants.WOOD) ? SpriteNames.FOREST.getSpriteIndex()
+                        : (resType == Constants.IRON) ? SpriteNames.IRON_FIELD.getSpriteIndex()
+                        : (resType == Constants.MANA) ? SpriteNames.MIRACLE.getSpriteIndex()
+                        : SpriteNames.NORMAL_FIELD.getSpriteIndex();
         
     }
 
-    @Override
+
     public int getResType() {
         return resType;
     }
 
-    @Override
+
     public void setResValue(int resValue){
         if(resValue < 0) {
             this.resValue = 0;
@@ -336,12 +323,12 @@ public class Field implements IField,Serializable {
 
     }
 
-    @Override
+
     public int getResValue(){
         return resValue;
     }
 
-    @Override
+
     public void setXPos(int xPos) {
         if(xPos < 0 || xPos > Constants.FIELDXLENGTH)
             throw new IllegalArgumentException("Invalid coordinates");
@@ -349,12 +336,12 @@ public class Field implements IField,Serializable {
         this.xPos = xPos;
     }
 
-    @Override
+
     public int getXPos() {
         return xPos;
     }
 
-    @Override
+
     public void setYPos(int yPos) {
         if(yPos < 0 || yPos > Constants.FIELDYLENGTH)
             throw new IllegalArgumentException("Invalid coordinates");
@@ -362,23 +349,23 @@ public class Field implements IField,Serializable {
         this.yPos = yPos;
     }
 
-    @Override
+
     public int getYPos() {
         return yPos;
     }
 
-    @Override
+
     public void setCurrent(Unit current) {
         if(current==null){
             walkable=true;
-            setSpriteName(SpriteNames.NORMAL_FIELD.getSpriteName());
+            setSpriteIndex(SpriteNames.NORMAL_FIELD.getSpriteIndex());
             this.current=null;
             return;
         }
         this.current = current;
         current.setField(this);
-        if(current.getSpriteName()!="")
-        setSpriteName(current.getSpriteName());
+        if(current.getSpriteIndex()>= 0)
+        setSpriteIndex(current.getSpriteIndex());
 
 
         if(resType == Constants.MANA){
@@ -388,22 +375,22 @@ public class Field implements IField,Serializable {
         walkable=false;
     }
 
-    @Override
+
     public Unit getCurrent() {
         return current;
     }
 
-    @Override
+
     public void setWalkable(boolean walkable) {
         this.walkable = walkable;
     }
 
-    @Override
+
     public boolean getWalkable() {
         return walkable;
     }
 
-    @Override
+
     public void setRoundsRemain(int roundsRemain) {
         if(roundsRemain < Constants.NONE_OR_NOT_SET)
             this.roundsRemain = Constants.NONE_OR_NOT_SET;
@@ -411,42 +398,42 @@ public class Field implements IField,Serializable {
             this.roundsRemain = roundsRemain;
     }
 
-    @Override
+
     public int getRoundsRemain() {
         return roundsRemain;
     }
 
     //Sprite name must contain sprite folder
-    @Override
-    public void setSpriteName(String spriteName) {
-        if(spriteName.equals(""))
+
+    public void setSpriteIndex(int spriteIndex) {
+        if(spriteIndex < 0)
             throw new IllegalArgumentException("SpriteName is empty");
 
-        this.spriteName = spriteName;
-       // this.texture = new Texture(Gdx.files.internal("assets/"+this.spriteName));
+        this.spriteIndex = spriteIndex;
+       // this.texture = new Texture(Gdx.files.internal("assets/"+this.spriteIndex));
     }
 
-    @Override
-    public String getSpriteName() {
-        return spriteName;
+
+    public int getSpriteIndex() {
+        return spriteIndex;
     }
 
-    @Override
+
     public void setHasMine(boolean hasMine) {
         this.hasMine = hasMine;
     }
 
-    @Override
+
     public boolean getHasMine() {
         return hasMine;
     }
 
-    @Override
+
     public void setMap(Map map) {
         this.map = map;
     }
 
-    @Override
+
     public Map getMap() {
         return map;
     }

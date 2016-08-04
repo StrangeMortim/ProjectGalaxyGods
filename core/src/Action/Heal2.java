@@ -1,6 +1,7 @@
 package Action;
 
 import GameObject.Constants;
+import GameObject.GameSession;
 import GameObject.Unit;
 import Player.Player;
 
@@ -11,8 +12,8 @@ public class Heal2 extends Action{
 
     Unit[]additionalTargets;
 
-    public Heal2(Unit origin, Unit target, Player player, Unit[]additionalTargets) {
-        super(origin, target, player);
+    public Heal2(Unit origin, Unit target, Player player, Unit[]additionalTargets, GameSession session) {
+        super(origin, target, player, session);
         if(origin == null||player == null||target==null)return;
         this.origin = origin;
         this.target = target;

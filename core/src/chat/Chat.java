@@ -1,5 +1,6 @@
 package chat;
 
+import GameObject.GameSession;
 import Player.Player;
 import projectgg.gag.GoldAndGreed;
 
@@ -14,7 +15,7 @@ import java.util.List;
  * Created by Fabi on 11.05.2016. (mod. 12.06)
  * Die Chat-Klasse ermoeglicht den Nachrichtenaustausch zwischen den Spielern.
  */
-public class Chat implements ChatInterface,Serializable {
+public class Chat implements Serializable {
 
    // private static final long serialVersionUID = 1987963162254788571L;
     /**
@@ -30,16 +31,29 @@ public class Chat implements ChatInterface,Serializable {
      */
     private List<Player> readOnly = new ArrayList<Player>();
 
-    public Chat(){  }
+    private GameSession session;
+    private int iD;
 
-    public void addMessage(Player player, String msg) throws RemoteException{
+    public Chat(GameSession session){
+        if (session == null)
+            throw new IllegalArgumentException("Session ist null in Chat");
+
+        this.session = session;
+        try {
+            iD = session.registerObject(this);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addMessage(Player player, String msg) {
         if(player == null)
             throw new IllegalArgumentException("addMessage: Player is null");
 
         if(!participants.contains(player) || readOnly.contains(player))
             throw new IllegalArgumentException("Spieler ist nicht zum Schreiben berechtigt");
 
-        Message m = new Message();
+        Message m = new Message(session);
         m.SetContent(player.getAccount().getName() +": "+ msg);
         backLog.add(m);
     }
@@ -51,7 +65,7 @@ public class Chat implements ChatInterface,Serializable {
      *
      * @param m zu loeschende Message
      */
-    @Override
+
     public void deleteMessage(Message m) {
         backLog.remove(m);
     }
@@ -61,7 +75,7 @@ public class Chat implements ChatInterface,Serializable {
      *
      * @param p Player (Spieler) der hinzugefuegt werden soll.
      */
-    @Override
+
     public void addParticipant(Player p) {
      if(p == null)
          throw new IllegalArgumentException("addParticipant: player is null");
@@ -75,7 +89,7 @@ public class Chat implements ChatInterface,Serializable {
     /**
      * Loescht den Chat.
      */
-    @Override
+
     public void clear() {
      backLog.clear();
     }
@@ -86,7 +100,7 @@ public class Chat implements ChatInterface,Serializable {
      *
      * @param p zu blockierender Spieler
      */
-    @Override
+
     public void blockPlayer(Player p) {
      if(p == null)
          throw new IllegalArgumentException("blockPlayer: player is null");
@@ -94,7 +108,7 @@ public class Chat implements ChatInterface,Serializable {
         readOnly.add(p);
     }
 
-    @Override
+
     public void unblockPlayer(Player p) throws RemoteException {
         if(p == null)
             throw new IllegalArgumentException("blockPlayer: player is null");
@@ -107,7 +121,7 @@ public class Chat implements ChatInterface,Serializable {
      *
      * @param p Spieler der entfernt werden soll
      */
-    @Override
+
     public void removeParticipant(Player p) {
      if(p == null)
          throw new IllegalArgumentException("removeParticipant: player is null");
@@ -123,23 +137,27 @@ public class Chat implements ChatInterface,Serializable {
         return backLog;
     }
 
-    @Override
+
     public List<Player> getParticipants() {
         return participants;
     }
 
-    @Override
+
     public List<Player> getReadOnly() {
         return readOnly;
     }
 
-    @Override
+
     public void setReadOnly(List<Player> p) {
      readOnly=p;
     }
 
-    @Override
+
     public void setParticipants(List<Player> p) {
      participants=p;
+    }
+
+    public int getId(){
+        return iD;
     }
 }

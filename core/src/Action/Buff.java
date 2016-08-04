@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Buff extends Action implements IBuff{
+public class Buff extends Action{
 
     protected GameSession buffParent = null;      //the game session where this buff belongs to
     protected Research source;                   //the research which this buff realizes
@@ -22,8 +22,8 @@ public class Buff extends Action implements IBuff{
     protected boolean firstTime = true;
     protected BuffInfo info;
 
-    public Buff(Unit origin, Unit target, Player player, BuffInfo info) {
-        super(origin, target, player);
+    public Buff(Unit origin, Player player, BuffInfo info, GameSession session) {
+        super(origin, null, player, session);
 
         permanent = info.isPermanent();
         roundsLeft = info.getRounds();
@@ -88,9 +88,9 @@ public class Buff extends Action implements IBuff{
         /*TODO check*/
     }
 
-    @Override
+
     public Buff getPersonalCopy(Unit u){
-        Buff result = new Buff(u, null, this.player,BuffInfo.NONE);
+        Buff result = new Buff(u, this.player,BuffInfo.NONE, session);
         result.setSource(this);
         result.setRoundsLeft(this.roundsLeft);
         result.setGameSession(this.buffParent);
@@ -103,88 +103,88 @@ public class Buff extends Action implements IBuff{
      *
      * @param permanent
      */
-    @Override
+
     public void setPermanent(Boolean permanent) {
         this.permanent = permanent;
     }
 
-    @Override
+
     public boolean isPermanent() {
         return permanent;
     }
 
-    @Override
+
     public void setRoundsLeft(int rounds) {
         this.roundsLeft = rounds;
     }
 
-    @Override
+
     public int getRoundsLeft() {
         return roundsLeft;
     }
 
-    @Override
+
     public void setAtk(int atk) {
         this.atk = atk;
     }
 
-    @Override
+
     public int getAtk() {
         return atk;
     }
 
-    @Override
+
     public void setDef(int def) {
         this.def = def;
     }
 
-    @Override
+
     public int getDef() {
         return def;
     }
 
-    @Override
+
     public void setHp(int hp) {
         this.hp = hp;
     }
 
-    @Override
+
     public int getHp() {
         return hp;
     }
 
-    @Override
+
     public void setRange(int range) {
         this.range = range;
     }
 
-    @Override
+
     public int getRange() {
         return range;
     }
 
-    @Override
+
     public void setMovePoints(int movePoints) {
         this.movePoints = movePoints;
     }
 
-    @Override
+
     public int getMovePoints() {
         return movePoints;
     }
 
-    @Override
+
     public void setGameSession(GameSession session) {
         this.buffParent = session;
     }
 
-    @Override
+
     public GameSession getGameSession() {
         return buffParent;
     }
 
     //sets all the values according to the given research
-    @Override
+
     public void setSource(Buff source) {
             this.permanent = source.isPermanent();
 
@@ -199,28 +199,28 @@ public class Buff extends Action implements IBuff{
         /*TODO absolut und relativ werte verarbeiten?*/
     }
 
-    @Override
+
     public Research getSource(){
         return source;
     }
 
     //checks if this buff applies for a unit
-    @Override
+
     public boolean appliesForUnit(Unit unit){
         return (player == unit.getOwner() && (appliesFor.isEmpty() || appliesFor.contains(unit.getType())) && unit.getType() != UnitType.BASE);
     }
 
-    @Override
+
     public void setFirstTime(boolean firstTime){
         this.firstTime = firstTime;
     }
 
-    @Override
+
     public BuffInfo getBuffInfo(){
         return info;
     }
 
-    @Override
+
     public List<UnitType> getTargets() throws RemoteException {
         return appliesFor;
     }

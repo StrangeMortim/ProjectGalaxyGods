@@ -9,7 +9,7 @@ import java.rmi.RemoteException;
 import java.util.*;
 import java.util.Map;
 
-public class Base extends Unit implements IBase,Serializable {
+public class Base extends Unit implements Serializable {
 
    // private static final long serialVersionUID = 5924482865156690756L;
 
@@ -21,8 +21,8 @@ public class Base extends Unit implements IBase,Serializable {
     private List<Research> researched = new ArrayList<Research>();
 
 
-    public Base(UnitType type, Player owner) {
-        super(type, owner);
+    public Base(UnitType type, Player owner, GameSession session) {
+        super(type, owner, session);
        // avaibleUnits.add(UnitType.ARCHER);
         //avaibleUnits.add(UnitType.SPEARFIGHTER);
         avaibleUnits.add(UnitType.SWORDFIGHTER);
@@ -72,14 +72,14 @@ public class Base extends Unit implements IBase,Serializable {
             Map.Entry<Research,Integer> entry = (Map.Entry)it.next();
             entry.setValue(entry.getValue()-1);
             if(entry.getValue() <= Constants.FINISHED){
-                current = new Buff(null,null,owner,entry.getKey().getInfo());
+                current = new Buff(null,owner,entry.getKey().getInfo(), session);
                 if(current.isPermanent()) {
                     owner.getPermaBuffs().add(current);
                 } else {
                     owner.getTemporaryBuffs().add(current);
                 }
                 try {
-                    currentField.getMap().getSession().registerBuff(current.getOrigin(),current.getOrigin(),current.getPlayer().getAccount().getName(), current.getBuffInfo());
+                    currentField.getMap().getSession().registerBuff(current.getOrigin().getId(),current.getPlayer().getId(), current.getBuffInfo());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -177,19 +177,16 @@ public class Base extends Unit implements IBase,Serializable {
      * @param type der Typ der gewuenschten Unit
      * @return ob der Vorgang moeglich ist(und dementsprechend ausgefuehrt wird)
      */
-    @Override
+
     public boolean createUnit(UnitType type) {
         if(avaibleUnits.contains(type))
         {
             int[] cost = null;
-            try {
                 if(owner.hasReducedUnitCosts())
                     cost = type.getReducedCost();
                 else
                  cost = type.getRessourceCost();
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
+
 
             int[] ressourcesAvailable = owner.getRessources();
 
@@ -205,9 +202,9 @@ public class Base extends Unit implements IBase,Serializable {
                 owner.getRessources()[i] -= cost[i];
 
                 if(type.getRecruitingTime() != 0)
-                recruiting.put(new Unit(type, owner), type.getRecruitingTime());
+                recruiting.put(new Unit(type, owner, session), type.getRecruitingTime());
             else
-                    spawnUnit(new Unit(type, owner));
+                    spawnUnit(new Unit(type, owner, session));
 
         }
         /*TODO check*/
@@ -222,7 +219,7 @@ public class Base extends Unit implements IBase,Serializable {
      *
      * @param which die Einheit deren Erstellung abgebrochen werden soll
      */
-    @Override
+
     public void abortCreation(Unit which) {
         if(recruiting.containsKey(which))
         {
@@ -244,7 +241,7 @@ public class Base extends Unit implements IBase,Serializable {
      *
      * @return gibt an ob der Bau gestartet ist, false wenn nicht alle bedingungen erfuellt sind
      */
-    @Override
+
     public boolean buildLab() {
         if(labRoundsRemaining == Constants.NONE_OR_NOT_SET){
             int[] ressourceCost = Building.LABOR.getRessourceCost();
@@ -271,7 +268,7 @@ public class Base extends Unit implements IBase,Serializable {
      * Bricht den Bau des Labors ab, wenn er statt findet sonst passiert nichts
      * Der Spieler erhaelt einen Teil der Einheiten zurueck, abhaengig vom Fortschritt
      */
-    @Override
+
     public void abortLab() {
         if(labRoundsRemaining > Constants.FINISHED){
             float ressourcesLeft = labRoundsRemaining / Building.LABOR.getBuildTime();
@@ -289,7 +286,7 @@ public class Base extends Unit implements IBase,Serializable {
     /**
      * Analog zu buildLab fuer die Kaserne
      */
-    @Override
+
     public boolean buildCaserne() {
         if(caserneRoundsRemaining == Constants.NONE_OR_NOT_SET){
             int[] ressourceCost = Building.CASERNE.getRessourceCost();
@@ -315,7 +312,7 @@ public class Base extends Unit implements IBase,Serializable {
     /**
      * Analog zu abortLab fuer die Kaserne
      */
-    @Override
+
     public void abortCaserne() {
         if(caserneRoundsRemaining > Constants.FINISHED){
             float ressourcesLeft = caserneRoundsRemaining / Building.CASERNE.getBuildTime();
@@ -333,8 +330,8 @@ public class Base extends Unit implements IBase,Serializable {
     /**
      * Baut den Marktplatz
      */
-    @Override
-    public boolean buildMarket() throws RemoteException {
+
+    public boolean buildMarket() {
         if(owner.getMarket())
             return true;
 
@@ -355,7 +352,7 @@ public class Base extends Unit implements IBase,Serializable {
      * @param research
      * @return true wenn der Start erfolgreich war(alle bedingungen erfuellt und noch nicht erforscht), sonst false
      */
-    @Override
+
     public boolean research(Research research) {
         if(!researched.contains(research)) {
             int[] ressourceCost = research.getRessourceCost();
@@ -385,7 +382,7 @@ public class Base extends Unit implements IBase,Serializable {
      *
      * @param research
      */
-    @Override
+
     public void abortResearch(Research research) {
         //if never researched, nothing to abort
         if(researched.contains(research)){
@@ -421,7 +418,7 @@ public class Base extends Unit implements IBase,Serializable {
      *
      * @param remaining
      */
-    @Override
+
     public void setLabRoundsRemaining(int remaining) {
         if(remaining < Constants.NONE_OR_NOT_SET)
             this.labRoundsRemaining = Constants.NONE_OR_NOT_SET;
@@ -429,12 +426,12 @@ public class Base extends Unit implements IBase,Serializable {
         this.labRoundsRemaining = remaining;
     }
 
-    @Override
+
     public int getLabRoundsRemaining() {
         return labRoundsRemaining;
     }
 
-    @Override
+
     public void setCaserneRoundsRemaining(int remaining) {
         if(remaining < Constants.NONE_OR_NOT_SET)
             this.caserneRoundsRemaining = Constants.NONE_OR_NOT_SET;
@@ -442,29 +439,29 @@ public class Base extends Unit implements IBase,Serializable {
             this.caserneRoundsRemaining = remaining;
     }
 
-    @Override
+
     public int getCaserneRoundsRemaining() {
         return caserneRoundsRemaining;
     }
 
-    @Override
+
     public void setAvaibleUnits(List<UnitType> avaibleUnits) {
         if(avaibleUnits != null)
             this.avaibleUnits = avaibleUnits;
     }
 
-    @Override
+
     public List<UnitType> getAvaibleUnits() {
         return avaibleUnits;
     }
 
-    @Override
+
     public void setResearched(List<Research> researched) {
         if(researched != null)
             this.researched = researched;
     }
 
-    @Override
+
     public List<Research> getResearched() {
         return researched;
     }

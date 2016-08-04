@@ -5,11 +5,11 @@ import java.io.Serializable;
 /**
  * Created by Fabi on 14.06.2016.
  */
-public enum Building implements IBuilding,Serializable {
-    LABOR, CASERNE, MINE, MARKET;
+public enum Building implements Serializable {
+    BASE,LABOR, CASERNE, MINE, MARKET;
 
 
-    @Override
+
     public int getBuildTime() {
         switch (this)
         {
@@ -24,7 +24,7 @@ public enum Building implements IBuilding,Serializable {
         }
     }
 
-    @Override
+
     public int[] getRessourceCost() {
         switch (this)
         {
@@ -41,7 +41,7 @@ public enum Building implements IBuilding,Serializable {
         }
     }
 
-    @Override
+
     public int[] getInitialCost(){
         switch (this){
             case MINE:

@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
  * Created by Fabi on 02.08.2016.
  */
 public class BuffTest {
-
+/*
 
     @Test
     public void testeAusfuehren(){
@@ -66,5 +66,5 @@ public class BuffTest {
         assertFalse(testBuff.appliesForUnit(testUnit3));
         assertFalse(testBuff.appliesForUnit(testUnit4));
     }
-
+*/
 }

@@ -1,16 +1,19 @@
 package Action;
 
 import GameObject.Constants;
+import GameObject.GameSession;
 import GameObject.Unit;
 import Player.Player;
+
+import java.util.List;
 
 /**
  * Created by benja_000 on 21.07.2016.
  */
 public class Heal extends Action{
 
-    public Heal(Unit origin, Unit target, Player player) {
-        super(origin, target, player);
+    public Heal(Unit origin, Unit target, Player player, GameSession session) {
+        super(origin, target, player,session);
         if(origin == null||player == null||target==null)return;
         this.origin = origin;
         this.target = target;
@@ -25,9 +28,18 @@ public class Heal extends Action{
     public boolean execute() {
         //HEAL costs only mana
   if(target.getCurrentHp()==target.getMaxHp()||target.getOwner()!=player
-          ||player.getRessources()[Constants.MANA]< (BuffInfo.HEAL.getBuffCost()[Constants.MANA]-player.getRessourceBoni()[Constants.MANA])){return false;}
+          ||player.getRessources()[Constants.MANA]< (BuffInfo.HEAL.getBuffCost()[Constants.MANA]-player.getRessourceBoni()[Constants.MANA]))
+  {return false;}
+
+        List<Unit> additionalTargets = target.getField().getNearUnits();
          target.setCurrentHp(target.getCurrentHp()+ BuffInfo.HEAL.getPower());
         player.getRessources()[Constants.MANA]-= (BuffInfo.HEAL.getBuffCost()[Constants.MANA]-player.getRessourceBoni()[Constants.MANA]);
+
+        for(Unit u :additionalTargets){
+            if(u.getOwner()==player) {
+                u.setCurrentHp(u.getCurrentHp() + BuffInfo.HEAL.getPower());
+            }
+        }
         return true;
     }
 }

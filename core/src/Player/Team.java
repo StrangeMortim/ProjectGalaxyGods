@@ -1,5 +1,6 @@
 package Player;
 
+import GameObject.GameSession;
 import chat.Chat;
 
 import java.io.Serializable;
@@ -9,68 +10,75 @@ import java.util.List;
 /**
  * Created by Fabi on 11.06.2016.
  */
-public class Team implements ITeam,Serializable {
+public class Team implements Serializable {
 
     private static final long serialVersionUID = -1231492845712879611L;
     private List<Player> players;
-    private Chat chat = new Chat();
+    private Chat chat;
     private String color;
-    private int[] check = new int[3];
+    private int[] check = new int[4];
+    private GameSession session;
+    private int iD;
 
 
-    public Team(List<Player> players, String color){
-        if(players == null || color.equals(""))
+    public Team(List<Player> players, String color, GameSession session){
+        if(session == null || players == null || color.equals(""))
             throw new IllegalArgumentException("Players is null or color is empty");
 
+        chat = new Chat(session);
         this.players = players;
-        for(Player p: this.players)
-            try {
-                p.setTeam(this);
-                chat.addParticipant(p);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
+        for(Player p: this.players) {
+            p.setTeam(this);
+            chat.addParticipant(p);
+        }
+
         this.color = color;
+        this.session = session;
+        try {
+            iD = session.registerObject(this);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
 
-    @Override
+
     public void setPlayers(List<Player> players) {
         this.players = players;
     }
 
-    @Override
+
     public List<Player> getPlayers() {
         return players;
     }
 
-    @Override
+
     public void setChat(Chat chat) {
             this.chat = chat;
     }
 
-    @Override
+
     public Chat getChat() {
         return chat;
     }
 
-    @Override
+
     public void setColor(String color) {
         this.color = color;
     }
 
-    @Override
+
     public String getColor() {
         return color;
     }
 
     //Check = Kasse
-    @Override
+
     public void setCheck(int[] check) {
         this.check = check;
     }
 
-    @Override
+
     public int[] getCheck() {
         return check;
     }

@@ -14,10 +14,10 @@ import static org.junit.Assert.assertTrue;
  * Created by Fabi on 02.08.2016.
  */
 public class ChatTest {
-
+/*
     /*
     Da die Methoden hinzufuegen und entfernen sehr simpel sind werden sie zusammen gefasst
-     */
+
     @Test
     public void testTeilnehmerHinzufuegenUndEntfernen(){
         Chat testChat = new Chat();
@@ -118,5 +118,5 @@ public class ChatTest {
         testChat.addMessage(testPlayer,"blabla3");
         testChat.clear();
         assertTrue(testChat.getBacklog().isEmpty());
-    }
+    }*/
 }

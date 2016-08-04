@@ -3,7 +3,6 @@ package server;
 import GameObject.GameSession;
 import GameObject.IGameSession;
 import chat.Chat;
-import chat.ChatInterface;
 
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
@@ -25,21 +24,6 @@ public class Server implements ServerInterface {
 
     public  Server(){}
 
-    public String sayHello() throws RemoteException{
-        System.out.println("Recieving Invocation");
-        return "Hello World!";
-    }
-
-    //returns null if something went wrong
-    public void createChat() throws RemoteException {
-        try {
-            Chat chat = new Chat();
-            ChatInterface stub = (ChatInterface) UnicastRemoteObject.exportObject(chat, 0);
-            Server.reg.rebind("Chat", stub);
-        } catch (RemoteException e) {
-            System.out.println(e.getMessage());
-        }
-    }
 
     /**
      * Startet den Server.

@@ -3,7 +3,7 @@ package GameObject;
 
 import java.io.Serializable;
 
-public enum UnitType implements IUnitType,Serializable {
+public enum UnitType implements Serializable {
     BASE, SPEARFIGHTER, ARCHER, SWORDFIGHTER, WORKER,HERO/*TODO Add Types*/
     ;
 
@@ -35,7 +35,6 @@ public enum UnitType implements IUnitType,Serializable {
     /**
      * Getter fuer die jeweiligen werte der spezifischen einheit
      */
-    @Override
     public int getMaxHp() {
         switch (this){
             case BASE:
@@ -53,7 +52,7 @@ public enum UnitType implements IUnitType,Serializable {
         }
     }
 
-    @Override
+
     public int getAtk() {
         switch (this){
             case BASE:
@@ -71,7 +70,7 @@ public enum UnitType implements IUnitType,Serializable {
         }
     }
 
-    @Override
+
     public int getDef() {
         switch (this){
             case BASE:
@@ -89,7 +88,7 @@ public enum UnitType implements IUnitType,Serializable {
         }
     }
 
-    @Override
+
     public int getMovePoints() {
         switch (this){
             case BASE:
@@ -107,7 +106,7 @@ public enum UnitType implements IUnitType,Serializable {
         }
     }
 
-    @Override
+
     public int getRange() {
         switch (this){
             case BASE:
@@ -125,25 +124,25 @@ public enum UnitType implements IUnitType,Serializable {
         }
     }
 
-    @Override
-    public String getSpriteName() {
+
+    public int getSpriteIndex() {
         switch (this){
             case SPEARFIGHTER:
-                return SpriteNames.SPEARFIGHTER.getSpriteName();
+                return SpriteNames.SPEARFIGHTER.getSpriteIndex();
             case ARCHER:
-                return SpriteNames.ARCHER.getSpriteName();
+                return SpriteNames.ARCHER.getSpriteIndex();
             case SWORDFIGHTER:
-                return SpriteNames.SWORDFIGHTER.getSpriteName();
+                return SpriteNames.SWORDFIGHTER.getSpriteIndex();
             case WORKER:
-                return SpriteNames.WORKER.getSpriteName();
+                return SpriteNames.WORKER.getSpriteIndex();
             case HERO:
-                return SpriteNames.HERO.getSpriteName();
+                return SpriteNames.HERO.getSpriteIndex();
             default:
-                return "";
+                return 0;
         }
     }
 
-    @Override
+
     public int getRecruitingTime(){
         switch (this){
             case BASE:
@@ -159,7 +158,7 @@ public enum UnitType implements IUnitType,Serializable {
         }
     }
 
-    @Override
+
     public int[] getRessourceCost() {
 
         switch (this){
@@ -176,7 +175,7 @@ public enum UnitType implements IUnitType,Serializable {
         }
     }
 
-    @Override
+
     public int[] getReducedCost() {
 
         switch (this){

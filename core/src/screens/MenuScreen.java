@@ -97,7 +97,7 @@ public class MenuScreen implements Screen{
         newGameButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                GameSession tmp = new GameSession();
+               /* GameSession tmp = new GameSession();
 
                 Account acc1 = new Account("Spieler 1","password1");
                 Player p1 = new Player(acc1);
@@ -135,7 +135,7 @@ public class MenuScreen implements Screen{
                 tmp.playerJoin(acc3, p3, teamRot);
                 tmp.playerJoin(acc4, p4, teamBlau);
                     tmp.setActive(p2);
-                game.setScreen(new GameScreen(game, tmp, tmp.playerJoin(acc2, p2, teamBlau) ));
+                game.setScreen(new GameScreen(game, tmp, tmp.playerJoin(acc2, p2, teamBlau) ));*/
             }});
 
 

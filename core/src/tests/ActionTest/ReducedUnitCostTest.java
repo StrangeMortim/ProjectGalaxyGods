@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
  * Created by Fabi on 02.08.2016.
  */
 public class ReducedUnitCostTest {
-
+/*
     @Test
     public void testeAusfuehren() throws RemoteException {
         Player testPlayer = new Player(new Account("test","1234"));
@@ -34,5 +34,5 @@ public class ReducedUnitCostTest {
         assertFalse(testCosts.execute());
         assertTrue(testCosts.execute());
     }
-
+*/
 }

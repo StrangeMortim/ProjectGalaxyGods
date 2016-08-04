@@ -9,7 +9,7 @@ import java.rmi.RemoteException;
  * Created by benja_000 on 12.06.2016.
  * Realisiert den Marktplatz auf dem Spieler Ressourcen kaufen und verkaufen koennen.
  */
-public class Market implements IMarket,Serializable{
+public class Market implements Serializable{
 
    // private static final long serialVersionUID = -8470908004440665355L;
     /**
@@ -32,7 +32,8 @@ public class Market implements IMarket,Serializable{
      */
     private int ironPrice = 10;
 
-    private IGameSession session = null;
+    private GameSession session = null;
+    private int iD;
 
 
     public Market(GameSession session){
@@ -40,27 +41,27 @@ public class Market implements IMarket,Serializable{
             throw new IllegalArgumentException("Session ist null in Market");
 
         this.session = session;
+        try {
+           iD = session.registerObject(this);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
         //Nothing to do because only default Values
+
     }
 
 
     /**
      * Ermöglicht einem Spieler eine Ressource zu kaufen
      *
-     * @param playerName      Der Spieler der etwas kaufen will
+     * @param p      Der Spieler der etwas kaufen will
      * @param type   Bestimmt die zu kaufende Ressource(0=Holz, 1=Eisen)
      * @param amount Gibt die Menge an die gekauft werden soll
      * @return ob der vorgang erfolgreich war oder nicht
      */
-    @Override
-    public boolean buy(String playerName, int type, int amount) {
-        Player p = null;
-        try {
-            p = session.getPlayerPerName(playerName);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
 
+    public boolean buy(Player p, int type, int amount) {
         if(p == null)
             return false;
 
@@ -96,20 +97,13 @@ public class Market implements IMarket,Serializable{
     /**
      * Ermöglicht einem Spieler eine Ressource zu verkaufen
      *
-     * @param playerName      Der Spieler der etwas verkaufen will
+     * @param p     Der Spieler der etwas verkaufen will
      * @param type   Bestimmt die zu verkaufende Ressource(0=Holz, 1=Eisen)
      * @param amount Gibt die Menge an die verkauft werden soll
      * @return ob der vorgang erfolgreich war oder nicht
      */
-    @Override
-    public boolean sell(String playerName, int type, int amount) {
-        Player p = null;
-        try {
-            p = session.getPlayerPerName(playerName);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
 
+    public boolean sell(Player p, int type, int amount) {
         if(p == null)
             return false;
         //TODO fix price
@@ -142,32 +136,41 @@ public class Market implements IMarket,Serializable{
     }
 
     //Getter Setter
-    @Override
+
     public void setIron(int amount) {
 iron=amount;
     }
 
-    @Override
-    public int getIron() throws RemoteException {
+
+    public int getIron() {
         return iron;
     }
 
-    @Override
+
     public void setWood(int amount) {
 wood=amount;
     }
 
-    @Override
-    public int getWood() throws RemoteException {
+
+    public int getWood(){
         return wood;
     }
 
-    @Override
+
     public int ironPrice() {
         return ironPrice;
     }
-    @Override
+
     public int woodPrice() {
         return woodPrice;
+    }
+
+
+    public int getId()  {
+        return iD;
+    }
+
+    public int[] getMarketInfo(){
+        return new int[]{wood,iron,woodPrice,ironPrice};
     }
 }

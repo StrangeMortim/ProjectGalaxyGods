@@ -7,11 +7,11 @@ import Player.Player;
 import java.io.Serializable;
 import java.util.List;
 
-public enum Research implements IResearch,Serializable {
+public enum Research implements Serializable {
     RESEARCH_ARCHER, RESEARCH_SPEARFIGHTER;
     /*TODO*/
 
-    @Override
+
     public int[] getRessourceCost() {
         switch (this){
             case RESEARCH_ARCHER:
@@ -23,17 +23,17 @@ public enum Research implements IResearch,Serializable {
         }
     }
 
-    @Override
+
     public int[] getValues() {
         return new int[6];
     }
 
-    @Override
+
     public List<UnitType> getTargets() {
         return null;
     }
 
-    @Override
+
     public int getResearchTime() {
         switch (this){
             case RESEARCH_ARCHER:
@@ -45,12 +45,12 @@ public enum Research implements IResearch,Serializable {
         }
     }
 
-    @Override
+
     public boolean isPermanet() {
         return false;
     }
 
-    @Override
+
     public boolean research(Base b){
         switch (this){
             case RESEARCH_ARCHER:
@@ -73,7 +73,7 @@ public enum Research implements IResearch,Serializable {
         }
     }
 
-    @Override
+
     public BuffInfo getInfo(){
         switch (this){
             default:
