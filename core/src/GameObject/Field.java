@@ -162,6 +162,7 @@ public class Field implements Serializable {
                     }
                 if(roundsRemain <= Constants.FINISHED) {
                     hasMine = true;
+                    spriteIndex = SpriteNames.MINE.getSpriteIndex();
                     mineBuilding = false;
                 }
             }
