@@ -651,20 +651,20 @@ public class GameSession implements IGameSession, Serializable{
     @Override
     public int[] getSpriteIndex(int x, int y) throws RemoteException {
         if(x < 0 || x > Constants.FIELDXLENGTH || y < 0 || y > Constants.FIELDYLENGTH)
-            return new int[3];
+            return new int[2];
 
         Object tmp = level.getField(x,y).select();
         if(tmp == null){
             System.out.println("Das Feld (" + x + ","+y+") gibt null zurueck");
-            return new int[3];
-        } else if(tmp instanceof Field){
-            return new int[]{((Field)tmp).getSpriteIndex(),-1,-1};
+            return new int[2];
+        } else if(tmp instanceof Field || tmp instanceof Base){
+            return new int[]{level.getField(x,y).getSpriteIndex(),-1};
         } else if(tmp instanceof Unit){
-            return new int[]{level.getField(x,y).getSpriteIndex(),((Unit)tmp).getSpriteIndex(),((Unit)tmp).getId()};
-        }
+                return new int[]{((Unit)tmp).getSpriteIndex(),((Unit)tmp).getId()};
+            }
 
         System.out.println("Das Feld: (" + x+","+y + ") besitzt kein Sprite");
-        return new int[3];
+        return new int[2];
     }
 
     @Override
