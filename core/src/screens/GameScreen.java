@@ -402,8 +402,6 @@ public class GameScreen implements Screen, InputProcessor{
                     for (int h = 0; h < Constants.FIELDYLENGTH; h++) {
                         int[] spriteIndeces = session.getSpriteIndex(k, h);
                         batch.draw(textures[spriteIndeces[0]], 100 * k, 100 * h, 100, 100);
-                        if (spriteIndeces[1] != -1)
-                            batch.draw(textures[spriteIndeces[1]], 100 * k, 100 * h, 100, 100);
 
                         //TODO check fuer particle effects
                     }

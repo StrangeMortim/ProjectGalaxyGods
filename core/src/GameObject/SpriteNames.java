@@ -6,7 +6,7 @@ import java.util.Random;
  * Created by Fabi on 19.07.2016.
  */
 public enum  SpriteNames {
-    NORMAL_FIELD, IRON_FIELD,FOREST,MINE, MIRACLE,
+    NORMAL_FIELD,NORMAL_FIELD_2,NORMAL_FIELD_3, IRON_FIELD_2, IRON_FIELD,FOREST,MINE, MIRACLE,
     BASE_UP_LEFT,BASE_UP_RIGHT,BASE_DOWN_LEFT_CASERNE,BASE_DOWN_LEFT_EMPTY,BASE_DOWN_RIGHT_EMPTY,BASE_DOWN_RIGHT_CASERNE,BASE_DOWN_RIGHT_LAB,BASE_DOWN_RIGHT_FULL,
     CHEST_ICON, GOLD_ICON, MANA_ICON, IRON_ICON, WOOD_ICON,
     BUTTON_BG, BUTTON_WORKER, MENU_BG, BUTTON_SPEARFIGHTER, BUTTON_SWORDFIGHTER,BUTTON_GREY,BUTTON_GOLD,BUTTON_BLUE,
@@ -17,9 +17,15 @@ public enum  SpriteNames {
         String folder = "assets/sprites/";
         switch (this){
             case NORMAL_FIELD:
-                return folder+"normal" + new Random().nextInt(Constants.NUMBER_NORMAL_FIELDS) + ".png";
+                return folder+"normal0.png";
+            case NORMAL_FIELD_2:
+                return folder+"normal1.png";
+            case NORMAL_FIELD_3:
+                return folder+"normal2.png";
             case IRON_FIELD:
-                return folder+"ironNoMine"+new Random().nextInt(Constants.NUMBER_MINE_FIELDS)+".png";
+                return folder+"ironNoMine0.png";
+            case IRON_FIELD_2:
+                return folder+"ironNoMine1.png";
             case FOREST:
                 return folder+"forest.png";
             case MIRACLE:
@@ -98,83 +104,90 @@ public enum  SpriteNames {
     }
 
     public int getSpriteIndex(){
+        Random r = new Random();
         switch (this){
             case NORMAL_FIELD:
                 return 0;
-            case IRON_FIELD:
+            case NORMAL_FIELD_2:
                 return 1;
-            case FOREST:
+            case NORMAL_FIELD_3:
                 return 2;
-            case MIRACLE:
+            case IRON_FIELD:
                 return 3;
-            case BASE_UP_LEFT:
+            case IRON_FIELD_2:
                 return 4;
-            case BASE_UP_RIGHT:
+            case FOREST:
                 return 5;
-            case BASE_DOWN_LEFT_CASERNE:
+            case MIRACLE:
                 return 6;
-            case BASE_DOWN_LEFT_EMPTY:
+            case BASE_UP_LEFT:
                 return 7;
-            case BASE_DOWN_RIGHT_CASERNE:
+            case BASE_UP_RIGHT:
                 return 8;
-            case BASE_DOWN_RIGHT_EMPTY:
+            case BASE_DOWN_LEFT_CASERNE:
                 return 9;
-            case BASE_DOWN_RIGHT_FULL:
+            case BASE_DOWN_LEFT_EMPTY:
                 return 10;
-            case BASE_DOWN_RIGHT_LAB:
+            case BASE_DOWN_RIGHT_CASERNE:
                 return 11;
-            case BUTTON_BG:
+            case BASE_DOWN_RIGHT_EMPTY:
                 return 12;
-            case BUTTON_WORKER:
+            case BASE_DOWN_RIGHT_FULL:
                 return 13;
-            case CHEST_ICON:
+            case BASE_DOWN_RIGHT_LAB:
                 return 14;
-            case GOLD_ICON:
+            case BUTTON_BG:
                 return 15;
-            case MANA_ICON:
+            case BUTTON_WORKER:
                 return 16;
-            case IRON_ICON:
+            case CHEST_ICON:
                 return 17;
-            case WOOD_ICON:
+            case GOLD_ICON:
                 return 18;
-            case MARKETPLACE:
+            case MANA_ICON:
                 return 19;
-            case ARCHER:
+            case IRON_ICON:
                 return 20;
-            case ARCHERBACK:
+            case WOOD_ICON:
                 return 21;
-            case SPEARFIGHTER:
+            case MARKETPLACE:
                 return 22;
-            case SPEARFIGHTERBACK:
+            case ARCHER:
                 return 23;
-            case SWORDFIGHTER:
+            case ARCHERBACK:
                 return 24;
-            case SWORDFIGHTERBACK:
+            case SPEARFIGHTER:
                 return 25;
-            case WORKER:
+            case SPEARFIGHTERBACK:
                 return 26;
-            case WORKERBACK:
+            case SWORDFIGHTER:
                 return 27;
-            case HERO:
+            case SWORDFIGHTERBACK:
                 return 28;
-            case HEROBACK:
+            case WORKER:
                 return 29;
-            case MENU_BG:
+            case WORKERBACK:
                 return 30;
-            case BUTTON_SPEARFIGHTER:
+            case HERO:
                 return 31;
-            case BUTTON_SWORDFIGHTER:
+            case HEROBACK:
                 return 32;
-            case BUTTON_GREY:
+            case MENU_BG:
                 return 33;
-            case BUTTON_GOLD:
+            case BUTTON_SPEARFIGHTER:
                 return 34;
-            case BUTTON_BLUE:
+            case BUTTON_SWORDFIGHTER:
                 return 35;
-            case TECHTREE:
+            case BUTTON_GREY:
                 return 36;
-            case TEAMBOX_OPEN:
+            case BUTTON_GOLD:
                 return 37;
+            case BUTTON_BLUE:
+                return 38;
+            case TECHTREE:
+                return 39;
+            case TEAMBOX_OPEN:
+                return 40;
             default:
                 return 0;
         }
@@ -185,78 +198,84 @@ public enum  SpriteNames {
             case 0:
                 return NORMAL_FIELD;
             case 1:
-                return IRON_FIELD;
+                return NORMAL_FIELD_2;
             case 2:
-                return FOREST;
+                return NORMAL_FIELD_3;
             case 3:
-                return MIRACLE;
+                return IRON_FIELD;
             case 4:
-                return BASE_UP_LEFT;
+                return IRON_FIELD_2;
             case 5:
-                return BASE_UP_RIGHT;
+                return FOREST;
             case 6:
-                return BASE_DOWN_LEFT_CASERNE;
+                return MIRACLE;
             case 7:
-                return BASE_DOWN_LEFT_EMPTY;
+                return BASE_UP_LEFT;
             case 8:
-                return BASE_DOWN_RIGHT_CASERNE;
+                return BASE_UP_RIGHT;
             case 9:
-                return BASE_DOWN_RIGHT_EMPTY;
+                return BASE_DOWN_LEFT_CASERNE;
             case 10:
-                return BASE_DOWN_RIGHT_FULL;
+                return BASE_DOWN_LEFT_EMPTY;
             case 11:
-                return BASE_DOWN_RIGHT_LAB;
+                return BASE_DOWN_RIGHT_CASERNE;
             case 12:
-                return BUTTON_BG;
+                return BASE_DOWN_RIGHT_EMPTY;
             case 13:
-                return BUTTON_WORKER;
+                return BASE_DOWN_RIGHT_FULL;
             case 14:
-                return CHEST_ICON;
+                return BASE_DOWN_RIGHT_LAB;
             case 15:
-                return GOLD_ICON;
+                return BUTTON_BG;
             case 16:
-                return MANA_ICON;
+                return BUTTON_WORKER;
             case 17:
-                return IRON_ICON;
+                return CHEST_ICON;
             case 18:
-                return WOOD_ICON;
+                return GOLD_ICON;
             case 19:
-                return MARKETPLACE;
+                return MANA_ICON;
             case 20:
-                return ARCHER;
+                return IRON_ICON;
             case 21:
-                return ARCHERBACK;
+                return WOOD_ICON;
             case 22:
-                return SPEARFIGHTER;
+                return MARKETPLACE;
             case 23:
-                return SPEARFIGHTERBACK;
+                return ARCHER;
             case 24:
-                return SWORDFIGHTER;
+                return ARCHERBACK;
             case 25:
-                return SWORDFIGHTERBACK;
+                return SPEARFIGHTER;
             case 26:
-                return WORKER;
+                return SPEARFIGHTERBACK;
             case 27:
-                return WORKERBACK;
+                return SWORDFIGHTER;
             case 28:
-                return HERO;
+                return SWORDFIGHTERBACK;
             case 29:
-                return HEROBACK;
+                return WORKER;
             case 30:
-                return MENU_BG;
+                return WORKERBACK;
             case 31:
-                return BUTTON_SPEARFIGHTER;
+                return HERO;
             case 32:
-                return BUTTON_SWORDFIGHTER;
+                return HEROBACK;
             case 33:
-                return BUTTON_GREY;
+                return MENU_BG;
             case 34:
-                return BUTTON_GOLD;
+                return BUTTON_SPEARFIGHTER;
             case 35:
-                return BUTTON_BLUE;
+                return BUTTON_SWORDFIGHTER;
             case 36:
-                return TECHTREE;
+                return BUTTON_GREY;
             case 37:
+                return BUTTON_GOLD;
+            case 38:
+                return BUTTON_BLUE;
+            case 39:
+                return TECHTREE;
+            case 40:
                 return TEAMBOX_OPEN;
             default:
                 return NORMAL_FIELD;
@@ -264,7 +283,7 @@ public enum  SpriteNames {
     }
 
     public static int getSpriteAmount(){
-        return 38;
+        return 41;
     }
 
 

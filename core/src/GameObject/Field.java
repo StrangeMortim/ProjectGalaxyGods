@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 public class Field implements Serializable {
@@ -47,7 +48,19 @@ public class Field implements Serializable {
         //Choose random default Fieldsprite, increase number for new sprites,
         //sprites must be named "normal" + number(next higher int) and be png files
         //sprites must be located in sprites folder
-        this.spriteIndex = SpriteNames.NORMAL_FIELD.getSpriteIndex();
+        int type = new Random().nextInt(Constants.NUMBER_NORMAL_FIELDS);
+        switch (type){
+            case 0:
+                this.spriteIndex = SpriteNames.NORMAL_FIELD.getSpriteIndex();
+                break;
+            case 1:
+                this.spriteIndex = SpriteNames.NORMAL_FIELD_2.getSpriteIndex();
+                break;
+            case 2:
+                this.spriteIndex = SpriteNames.NORMAL_FIELD_3.getSpriteIndex();
+                break;
+        }
+
 
         //this.texture = new Texture(Gdx.files.internal("assets/"+this.spriteIndex));
     }
@@ -301,7 +314,7 @@ public class Field implements Serializable {
         if(resType==Constants.MANA) {walkable=true;}
 
         this.spriteIndex = (resType == Constants.WOOD) ? SpriteNames.FOREST.getSpriteIndex()
-                        : (resType == Constants.IRON) ? SpriteNames.IRON_FIELD.getSpriteIndex()
+                        : (resType == Constants.IRON) ? (new Random().nextInt(2) == 0 ? SpriteNames.IRON_FIELD.getSpriteIndex() : SpriteNames.IRON_FIELD_2.getSpriteIndex())
                         : (resType == Constants.MANA) ? SpriteNames.MIRACLE.getSpriteIndex()
                         : SpriteNames.NORMAL_FIELD.getSpriteIndex();
         
@@ -358,13 +371,24 @@ public class Field implements Serializable {
     public void setCurrent(Unit current) {
         if(current==null){
             walkable=true;
-            setSpriteIndex(SpriteNames.NORMAL_FIELD.getSpriteIndex());
+            switch (new Random().nextInt(Constants.NUMBER_NORMAL_FIELDS)){
+                case 0:
+                    setSpriteIndex(SpriteNames.NORMAL_FIELD.getSpriteIndex());
+                    break;
+                case 1:
+                    setSpriteIndex(SpriteNames.NORMAL_FIELD_2.getSpriteIndex());
+                    break;
+                case 2:
+                    setSpriteIndex(SpriteNames.NORMAL_FIELD_3.getSpriteIndex());
+            }
+
             this.current=null;
             return;
         }
         this.current = current;
         current.setField(this);
-        if(current.getSpriteIndex()>= 0)
+
+        if(current.getSpriteIndex()>= 0 && !(current instanceof Base))
         setSpriteIndex(current.getSpriteIndex());
 
 
