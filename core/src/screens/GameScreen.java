@@ -7,6 +7,7 @@ import Player.*;
 import chat.Chat;
 import chat.Message;
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -107,6 +108,7 @@ public class GameScreen implements Screen, InputProcessor{
 
     ParticleEffect pe; //For fighting scenes
     ParticleEffect shield;
+    ParticleEffect dragonfist;
 
     public  GameScreen(Game game, IGameSession session, int playerId){
 
@@ -1261,13 +1263,22 @@ try {
 
                             }
                     } else if (session.isSelectedClassOf(Selectable.HERO)){
-                        if(session.activateHeroPower(player,false))
-                        {
-                            shield = new ParticleEffect();
-                            shield.load(Gdx.files.internal("assets/sprites/shield.party"), Gdx.files.internal("assets/sprites/"));
-                            shield.getEmitters().first().setPosition(session.getSelectedX(session.getHero(player)) * 100 + 50, session.getSelectedY(session.getHero(player)) * 100 + 50);
-                            shield.scaleEffect(2);
-                            shield.start();}
+                        if(session.activateHeroPower(player,false)) {
+                            if (session.hasCalledTheDragon(session.getHero(player))) {
+                                dragonfist = new ParticleEffect();
+                                dragonfist.load(Gdx.files.internal("assets/sprites/dragonfist.party"), Gdx.files.internal("assets/sprites/"));
+                                dragonfist.getEmitters().first().setPosition(session.getSelectedX(session.getHero(player)) * 100 + 50, session.getSelectedY(session.getHero(player)) * 100 + 50);
+                                dragonfist.setDuration(1/2);
+                                dragonfist.scaleEffect(2);
+                                dragonfist.start();
+                            } else {
+                                shield = new ParticleEffect();
+                                shield.load(Gdx.files.internal("assets/sprites/shield.party"), Gdx.files.internal("assets/sprites/"));
+                                shield.getEmitters().first().setPosition(session.getSelectedX(session.getHero(player)) * 100 + 50, session.getSelectedY(session.getHero(player)) * 100 + 50);
+                                shield.scaleEffect(2);
+                                shield.start();
+                            }
+                        }
                     } else if(session.isSelectedClassOf(Selectable.FIELD)){
                             session.buildOrAbortBuildingOnSelected(player,selected,Building.BASE,false);
                         //TODO abort nicht vergessen
@@ -1928,6 +1939,8 @@ try {
 
             if(fight){
                 try {
+                    Sound fightSound = Gdx.audio.newSound(Gdx.files.internal("assets/sounds/kampf.wav"));
+                    fightSound.play();
                     pe = new ParticleEffect();
                     pe.load(Gdx.files.internal("assets/sprites/fight.party"), Gdx.files.internal(""));
                     pe.getEmitters().first().setPosition(xPos * 100 + 50,yPos * 100 + 50);

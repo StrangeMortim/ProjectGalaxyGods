@@ -208,4 +208,8 @@ public interface IGameSession extends Remote {
     public boolean isActive(int playerId) throws RemoteException;
 
     public BuffInfo getActiveBuff(int id) throws RemoteException;
+
+    public boolean hasCalledTheDragon(int heroId) throws RemoteException;
+
+    public void deactivateTheDragon(int heroId) throws RemoteException;
 }

@@ -16,6 +16,7 @@ public class Hero extends Unit implements Serializable {
     private Action leftHand;
     private Action rightHand;
     private String name;
+    private boolean calledTheDragon = false;
 
     public Hero(UnitType type, Player owner, String name, GameSession session) {
         super(type, owner, session);
@@ -75,5 +76,13 @@ public class Hero extends Unit implements Serializable {
         result.remove(result.size()-1);
         result.add(name);
         return result;
+    }
+
+    public boolean getCalledTheDragon(){
+        return calledTheDragon;
+    }
+
+    public void setCalledTheDragon(boolean isCalled){
+        calledTheDragon = isCalled;
     }
 }

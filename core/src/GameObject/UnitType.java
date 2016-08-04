@@ -56,7 +56,7 @@ public enum UnitType implements Serializable {
     public int getAtk() {
         switch (this){
             case BASE:
-                return 10;
+                return 0;
             case SPEARFIGHTER:
                 return 15;
             case ARCHER:
@@ -74,7 +74,7 @@ public enum UnitType implements Serializable {
     public int getDef() {
         switch (this){
             case BASE:
-                return 15;
+                return 0;
             case SPEARFIGHTER:
                 return 10;
             case ARCHER:

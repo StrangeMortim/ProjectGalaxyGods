@@ -4,7 +4,7 @@ package Action;
  * Created by Fabi on 27.07.2016.
  */
 public enum BuffInfo  {
-    REDUCED_UNIT_COST, SHIELD, HEAL, EMPOWER_SHIELD, HORNET_STYLE, RANGED_STYLE, NONE;
+    REDUCED_UNIT_COST, SHIELD, HEAL, EMPOWER_SHIELD, HORNET_STYLE, RANGED_STYLE, NONE, DRAGONFIST;
 
 
     public int[] getBuffCost(){
@@ -51,6 +51,8 @@ public enum BuffInfo  {
                 return 50;
             case EMPOWER_SHIELD:
                 return 5;
+            case DRAGONFIST:
+                return 20;
             case NONE:
             default:
                 return 0;
