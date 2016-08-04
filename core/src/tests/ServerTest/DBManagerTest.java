@@ -59,12 +59,12 @@ public class DBManagerTest {
     @Test
     public void updateAndLoadGameSessionTest()throws RemoteException{
         gameSession.setName("test2");
-        gameSession.setHasStarted(true);
+        gameSession.setPassword("1");
         dbManager.saveSession(gameSession);
-        gameSession.setHasStarted(false);
+        gameSession.setPassword("2");
         dbManager.saveSession(gameSession);
         GameSession gs =dbManager.loadSession("test2");
-        Assert.assertFalse(gs.isHasStarted());
+        Assert.assertTrue(gs.getPassword().equals("2"));
     }
 
 
