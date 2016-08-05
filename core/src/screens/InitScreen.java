@@ -26,7 +26,10 @@ import java.rmi.registry.Registry;
 import java.util.ArrayList;
 
 /**
- * Created by benja_000 on 30.06.2016.
+ * This Screen is used to create a new GameSession
+ * not much comment because it's mostly displaying stuff and should be self-explaining to the most part
+ *
+ * @author Benjamin
  */
 public class InitScreen implements Screen {
     private Game game;

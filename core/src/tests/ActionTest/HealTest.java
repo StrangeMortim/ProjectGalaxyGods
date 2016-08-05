@@ -1,7 +1,6 @@
 package tests.ActionTest;
 
 import Action.BuffInfo;
-import Action.Heal2;
 import GameObject.Constants;
 import GameObject.Hero;
 import GameObject.Unit;
@@ -35,7 +34,6 @@ public class HealTest {
         Player testPlayer = new Player(new Account("test","1234"));
         Hero testHero = new Hero(UnitType.HERO,testPlayer,"Test");
         Unit testUnit = new Unit(UnitType.SWORDFIGHTER,testPlayer);
-        Heal2 testHeal = new Heal2(testHero,testHero,testPlayer,new Unit[]{testUnit});
         int mana = testPlayer.getRessources()[Constants.MANA];
 
         testPlayer.getRessourceBoni()[Constants.MANA] = 5;

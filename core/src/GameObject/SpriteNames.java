@@ -1,9 +1,9 @@
 package GameObject;
 
-import java.util.Random;
-
 /**
- * Created by Fabi on 19.07.2016.
+ * Contains all Information about the Paths for the different assets
+ *
+ * @author Fabi
  */
 public enum  SpriteNames {
     NORMAL_FIELD,NORMAL_FIELD_2,NORMAL_FIELD_3, IRON_FIELD_2, IRON_FIELD,FOREST,MINE, MIRACLE,
@@ -13,6 +13,9 @@ public enum  SpriteNames {
     MARKETPLACE, TECHTREE,TEAMBOX_OPEN,
     ARCHER,ARCHERBACK, SPEARFIGHTER,SPEARFIGHTERBACK, SWORDFIGHTER,SWORDFIGHTERBACK, WORKER,WORKERBACK, HERO,HEROBACK;
 
+    /**
+     * @return the paths to the corresponding assets, can directly be used for Gdx.files.internal()
+     */
     public String getSpriteName(){
         String folder = "assets/sprites/";
         switch (this){
@@ -105,6 +108,9 @@ public enum  SpriteNames {
         }
     }
 
+    /**
+     * @return the Index for the prepared Texture in GameScreen
+     */
     public int getSpriteIndex(){
         switch (this){
             case NORMAL_FIELD:
@@ -196,6 +202,11 @@ public enum  SpriteNames {
         }
     }
 
+    /**
+     * Reverse function for getSpriteIndex
+     * @param index for which value the index is searched
+     * @return the corresponding enum Value
+     */
     public static SpriteNames getValueForIndex(int index){
         switch (index){
             case 0:
@@ -287,11 +298,20 @@ public enum  SpriteNames {
         }
     }
 
+    /**
+     * @return how many sprites there are currently
+     */
     public static int getSpriteAmount(){
         return 42;
     }
 
 
+    /**
+     * Deprecated
+     * returned a specific assets paths, for the assets that have variations(normal fields and mine fields)
+     * @param spec which number of the variation
+     * @return   the asset path
+     */
     public String getSpecificName(int spec){
         String folder = "assets/sprites/";
         switch (this){

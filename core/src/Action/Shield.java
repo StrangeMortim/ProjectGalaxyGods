@@ -10,7 +10,10 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 /**
- * Created by benja_000 on 22.07.2016.
+ * One of the two hero skills
+ * the name is deprecated, ingame it is now called "Macht des Drachen"(Might of the Dragon)
+ *
+ * @author Benjamin
  */
 public class Shield extends Buff {
 
@@ -21,6 +24,14 @@ public class Shield extends Buff {
         roundsLeft = BuffInfo.SHIELD.getRounds();//TODO enum benutzen
     }
 
+    /**
+     * Case 1: The Hero is alone or friendly units are nearby,
+     *          then this skill casts a shield that just works like any other buff
+     *          (for that a new Buff is create)
+     * Case 2: Enemy Units are nearby, in this case instead of the Shield, the Hero casts
+     *          a powerful spell, damaging all enemy Units around him
+     * @return whether the Action was a success or not
+     */
     @Override
     public boolean execute() {
         for(int i = Constants.WOOD; i<=Constants.MANA; ++i)
@@ -41,10 +52,10 @@ public class Shield extends Buff {
                         session.removeUnit(u);
                 }
             }
-
+            //info for graphics
             ((Hero)origin).setCalledTheDragon(true);
         } else {
-
+            //create the Buff
             Buff bu = new Buff(origin, player, BuffInfo.SHIELD, session);
             bu.setDef(this.def);
             bu.setRoundsLeft(this.roundsLeft);
@@ -59,6 +70,9 @@ public class Shield extends Buff {
             return true;
     }
 
+    /**
+     * @see Buff
+     */
     @Override
     public boolean appliesForUnit(Unit unit){
         return unit instanceof Hero && unit.getOwner() == player;

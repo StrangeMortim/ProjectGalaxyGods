@@ -9,17 +9,46 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * This class represents the map in a game, containing all the fields
+ * @author Fabi
+ */
 public class Map implements Serializable {
 
-  //  private static final long serialVersionUID = 1069218016788334349L;
+    /**
+     * The Fields on the Map
+     */
     private Field[][] fields = new Field[Constants.FIELDXLENGTH][Constants.FIELDYLENGTH];
+
+    /**
+     * Players allowed on the map at most
+     */
     private int maxPlayers = 4;
+
+    /**
+     * minimum needed players on the map
+     */
     private int minPlayers = 2;
+
+    /**
+     * the name of the map -currently unused-
+     */
     private String levelName = "";
+
+    /**
+     * the Session where the object belongs to
+     */
     private GameSession session = null;
-    private int currentPlayers = 0;
+
+    /**
+     * pre-calculated coordinates for new Base for new Players
+     */
     private int[] baseXPositions = new int[]{12, 12, 1, 23};
     private int[] baseYPositions = new int[]{2,22,13,13};
+
+    /**
+     * the global ID of the Object
+     */
     private int iD;
 
 
@@ -31,17 +60,12 @@ public class Map implements Serializable {
         this.levelName = levelName;
         this.maxPlayers = maxPlayers;
         this.minPlayers = minPlayers;
-        try {
            iD = session.registerObject(this);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
-     * Initialisiert die Map, d.h. platziert alle Felder, Basen und Standardobjekte
+     * Initializes a Hardcoded default map, just sets all the fields right(was based on a map build from pictures)
      */
-
     public void init() {
          /*Hardcoded Map, Magic-Numbers are Magic because they are only used in this specific Map
         Currently this is the only Map, should at any Time the possibility to choose an individual map be added
@@ -159,24 +183,7 @@ public class Map implements Serializable {
     }
 
     /**
-     * Generiert zufaellig eine Karte, nur bei genuegend Zeit zu implementieren
-     */
-
-    public void generateRandom() {
-        /*TODO*/
-    }
-
-    /**
-     * Speichert die generierte Karte um sie spaeter laden zu koennen
-     * wird ebenfalls nur bei genuegend Zeit implementiert
-     */
-
-    public void saveConfiguration() {
-        /*TODO*/
-    }
-
-    /**
-     * Aktualisiert alle Felder der Karte ueber ihre update-Methode
+     * Calls update on all Fields an spawns mana with a chance of 3 in 10000 for each field an with 1 mana at most
      */
 
     public List<Buff> update() {
@@ -198,17 +205,11 @@ public class Map implements Serializable {
         return result;
     }
 
-
-    public boolean checkMovement(int xPos, int yPos) {
-        Field toCheck = fields[xPos][yPos];
-        return (toCheck.getCurrent() == null && toCheck.getHasMine());
-    }
-
     /**
-     * Gibt ein spezielles Feld zurueck
+     * Returns the field for the coordinates
      *
-     * @param x
-     * @param y
+     * @param x the  x coordinate
+     * @param y the y coordinate
      */
 
     public Field getField(int x, int y) {
@@ -220,69 +221,12 @@ public class Map implements Serializable {
     }
 
     /**
-     * Getter und Setter
-     *
-     * @param fields
+     * spawns a new Base for the given player, position is determined by playerNumber an the
+     * pre-calculated position-arrays, sets all 4 fields correct, since a base takes up to 4 fields
+     * @param p the player who gets the base
+     * @param playerNumber determines the player position
+     * @return whether everything was a success or not
      */
-
-    public void setFields(Field[][] fields) {
-        this.fields= fields;
-    }
-
-
-    public Field[][] getFields() {
-        return fields;
-    }
-
-
-    public void setMaxPlayers(int maxPlayers) {
-        if(maxPlayers < 2)
-            throw new IllegalArgumentException("A game cannot be played with less than 2 players");
-
-        this.maxPlayers = maxPlayers;
-    }
-
-
-    public int getMaxPlayers() {
-        return maxPlayers;
-    }
-
-
-    public void setMinPlayers(int minPlayers) {
-        if(minPlayers < 2)
-            throw new IllegalArgumentException("A game cannot be played with less than 2 players");
-
-        if(minPlayers > maxPlayers)
-            this.minPlayers = maxPlayers;
-        else
-            this.minPlayers = minPlayers;
-
-    }
-
-
-    public int getMinPlayers() {
-        return minPlayers;
-    }
-
-
-    public void setLevelName(String levelName) {
-        if(levelName.equals(""))
-            throw new IllegalArgumentException("Levelname is empty");
-
-        this.levelName = levelName;
-    }
-
-
-    public String getLevelName() {
-        return levelName;
-    }
-
-
-    public IGameSession getSession(){
-        return this.session;
-    }
-
-
     public boolean addBase(Player p, int playerNumber) {
         if(playerNumber > maxPlayers-1 || playerNumber < 0)
             return false;
@@ -300,6 +244,53 @@ public class Map implements Serializable {
         return true;
     }
 
+    /**
+     * Getter/Setter
+     */
+    public void setFields(Field[][] fields) {
+        this.fields= fields;
+    }
+    public Field[][] getFields() {
+        return fields;
+    }
+
+    public void setMaxPlayers(int maxPlayers) {
+        if(maxPlayers < 2)
+            throw new IllegalArgumentException("A game cannot be played with less than 2 players");
+
+        this.maxPlayers = maxPlayers;
+    }
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public void setMinPlayers(int minPlayers) {
+        if(minPlayers < 2)
+            throw new IllegalArgumentException("A game cannot be played with less than 2 players");
+
+        if(minPlayers > maxPlayers)
+            this.minPlayers = maxPlayers;
+        else
+            this.minPlayers = minPlayers;
+
+    }
+    public int getMinPlayers() {
+        return minPlayers;
+    }
+
+    public void setLevelName(String levelName) {
+        if(levelName.equals(""))
+            throw new IllegalArgumentException("Levelname is empty");
+
+        this.levelName = levelName;
+    }
+    public String getLevelName() {
+        return levelName;
+    }
+
+    public IGameSession getSession(){
+        return this.session;
+    }
 
     public int getId(){
         return iD;

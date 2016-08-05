@@ -6,61 +6,52 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 /**
- * Created by benja_000 on 12.06.2016.
- * Realisiert den Marktplatz auf dem Spieler Ressourcen kaufen und verkaufen koennen.
+ * Realises the Marketplace for players to trade
+ *
+ * @author Benjamin
  */
 public class Market implements Serializable{
 
-   // private static final long serialVersionUID = -8470908004440665355L;
     /**
-     *  Verfügbares Holz.
+     *  Current amount of Wood on the marketplace
      */
     private int wood=100;
 
     /**
-     * Preis für Holz
+     * Price for each piece of wood in gold
      */
     private int woodPrice=10;
 
     /**
-     * Verfügbares Eisen
+     *  Current amount of iron on the marketplace
      */
     private int iron=100;
 
     /**
-     * Preis fuer Eisen.
+     * Price for each piece of iron in gold
      */
     private int ironPrice = 10;
 
     private GameSession session = null;
     private int iD;
 
-
     public Market(GameSession session){
         if(session == null)
             throw new IllegalArgumentException("Session ist null in Market");
 
         this.session = session;
-        try {
-           iD = session.registerObject(this);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-
-        //Nothing to do because only default Values
-
+        iD = session.registerObject(this);
     }
 
 
     /**
-     * Ermöglicht einem Spieler eine Ressource zu kaufen
+     * Lets a player buy something on the market
      *
-     * @param p      Der Spieler der etwas kaufen will
-     * @param type   Bestimmt die zu kaufende Ressource(0=Holz, 1=Eisen)
-     * @param amount Gibt die Menge an die gekauft werden soll
-     * @return ob der vorgang erfolgreich war oder nicht
+     * @param p      The player who wants to buy
+     * @param type   Determines the resources(0=Wood, 1=Iron)
+     * @param amount How much the player want to buy
+     * @return true if the transaction was a success, else false
      */
-
     public boolean buy(Player p, int type, int amount) {
         if(p == null)
             return false;
@@ -95,14 +86,13 @@ public class Market implements Serializable{
     }
 
     /**
-     * Ermöglicht einem Spieler eine Ressource zu verkaufen
+     * Lets a player sell something on the market
      *
-     * @param p     Der Spieler der etwas verkaufen will
-     * @param type   Bestimmt die zu verkaufende Ressource(0=Holz, 1=Eisen)
-     * @param amount Gibt die Menge an die verkauft werden soll
-     * @return ob der vorgang erfolgreich war oder nicht
+     * @param p      The player who wants to sell
+     * @param type   Determines the resources(0=Wood, 1=Iron)
+     * @param amount How much the player want to sell
+     * @return true if the transaction was a success, else false
      */
-
     public boolean sell(Player p, int type, int amount) {
         if(p == null)
             return false;
@@ -135,27 +125,30 @@ public class Market implements Serializable{
         }
     }
 
-    //Getter Setter
+    /**
+     * returns the current amount and price values on the market
+     * @return the values(for indeces check Constants enum)
+     */
+    public int[] getMarketInfo(){
+        return new int[]{wood,iron,woodPrice,ironPrice};
+    }
 
+    /**
+     * Getter/setter
+     */
     public void setIron(int amount) {
 iron=amount;
     }
-
-
     public int getIron() {
         return iron;
     }
 
-
     public void setWood(int amount) {
 wood=amount;
     }
-
-
     public int getWood(){
         return wood;
     }
-
 
     public int ironPrice() {
         return ironPrice;
@@ -165,12 +158,8 @@ wood=amount;
         return woodPrice;
     }
 
-
     public int getId()  {
         return iD;
     }
 
-    public int[] getMarketInfo(){
-        return new int[]{wood,iron,woodPrice,ironPrice};
-    }
 }

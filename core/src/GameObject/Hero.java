@@ -8,7 +8,9 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 /**
- * Created by Fabi on 11.06.2016.
+ * This class represents the player in the Game in Form of the special Hero-Unit
+ *
+ * @author Benjamin
  */
 public class Hero extends Unit implements Serializable {
 
@@ -41,22 +43,16 @@ public class Hero extends Unit implements Serializable {
     public void setLeftHand(Action leftHand) {
         this.leftHand = leftHand;
     }
-
-
     public Action getLeftHand() {
         return leftHand;
     }
 
-
     public void setRightHand(Action rightHand) {
         this.rightHand = rightHand;
     }
-
-
     public Action getRightHand() {
         return rightHand;
     }
-
 
     public void setName(String name) {
         if (name.equals(""))
@@ -64,12 +60,21 @@ public class Hero extends Unit implements Serializable {
 
         this.name = name;
     }
-
-
     public String getName() {
         return name;
     }
 
+    public boolean getCalledTheDragon(){
+        return calledTheDragon;
+    }
+    public void setCalledTheDragon(boolean isCalled){
+        calledTheDragon = isCalled;
+    }
+
+    /**
+     * @see Unit
+     * @return
+     */
     @Override
     public List<String> getInfo(){
         List<String> result = super.getInfo();
@@ -78,11 +83,4 @@ public class Hero extends Unit implements Serializable {
         return result;
     }
 
-    public boolean getCalledTheDragon(){
-        return calledTheDragon;
-    }
-
-    public void setCalledTheDragon(boolean isCalled){
-        calledTheDragon = isCalled;
-    }
 }

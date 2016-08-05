@@ -8,7 +8,10 @@ import Player.Player;
 import java.util.List;
 
 /**
- * Created by benja_000 on 21.07.2016.
+ * Realises one of two hero skills,
+ * as the name suggest it Heals stuff
+ *
+ * @author Benjamin
  */
 public class Heal extends Action{
 
@@ -22,7 +25,9 @@ public class Heal extends Action{
 
     /**
      * Restores the HP of the target.
-     * @return true if it's possible
+     * Specialcase: Friendly units are nearby, then heal them too(is visible ingame)
+     *
+     * @return whether execution was a success or not(e.g. not enough Mana or something)
      */
     @Override
     public boolean execute() {
@@ -35,6 +40,7 @@ public class Heal extends Action{
          target.setCurrentHp(target.getCurrentHp()+ BuffInfo.HEAL.getPower());
         player.getRessources()[Constants.MANA]-= (BuffInfo.HEAL.getBuffCost()[Constants.MANA]-player.getRessourceBoni()[Constants.MANA]);
 
+        //check special case
         List<Unit> additionalTargets = target.getField().getNearUnits();
         for(Unit u :additionalTargets){
             if(u.getOwner()==player) {

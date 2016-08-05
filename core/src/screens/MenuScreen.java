@@ -19,7 +19,9 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 /**
- * Created by Benjamin Brennecke on 08.05.2016.
+ * This Screen displays the main menu
+ * not much comment because it's mostly displaying stuff and should be self-explaining to the most part
+ * @author Fabi
  */
 public class MenuScreen implements Screen{
     private Game game;

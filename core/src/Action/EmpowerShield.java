@@ -6,7 +6,9 @@ import GameObject.Unit;
 import Player.Player;
 
 /**
- * Created by Fabi on 28.07.2016.
+ * Improves the "Macht des Drachen" Skill of the given Hero
+ *
+ * @author Fabi
  */
 public class EmpowerShield extends Buff {
     public EmpowerShield(Hero origin, Player player, GameSession session) {
@@ -14,9 +16,15 @@ public class EmpowerShield extends Buff {
         roundsLeft = BuffInfo.EMPOWER_SHIELD.getRounds();
     }
 
+    /**
+     * Acts like any other buff, but instead of unit values, it modifies the Skill-Values
+     *
+     * @return  whether the Buff is still needed or not(false -> can be deleted)
+     */
     @Override
     public boolean execute(){
         try {
+            //get the right action
             Action tmp = ((Hero)origin).getRightHand() instanceof Shield ? ((Hero)origin).getRightHand() : ((Hero)origin).getLeftHand();
 
 
@@ -31,6 +39,7 @@ public class EmpowerShield extends Buff {
                 ((Shield)tmp).setDef(BuffInfo.SHIELD.getPower());
                 return true;
             }
+            //for safety not sure if still needed
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -38,6 +47,9 @@ public class EmpowerShield extends Buff {
         return false;
     }
 
+    /**
+     * @see Buff
+     */
     @Override
     public boolean appliesForUnit(Unit unit){
         return unit instanceof Hero && unit.getOwner() == player;

@@ -9,28 +9,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by benja_000 on 12.06.2016.
- * Diese Klasse realisert das Message-Objekt, dass die Eigenschaften
- * einer Nachricht im Chat verkörpert.
+ * Represents a message inside a chat and contains information about who can see the message
+ * @author Benjamin
  */
 public class Message implements Serializable {
 
-  //  private static final long serialVersionUID = -7904810564348423122L;
     /**
-     * Inhalt der Nachricht.
+     * Content of the Message
      */
     private String content;
     /**
-     * Gibt an, ob Nachricht fuer alle Spieler sichtbar ist.
+     * Determines if the message is visible for all
      */
     private boolean visibleForAll = true;
+
     /**
-     * List der Spieler, fuer die die Nachricht sichtbar ist.
+     * If not visible for all this contains all players who can see the message
      */
     private List<Player> visibleFor=new ArrayList<Player>();
 
+    /**
+     * The session this object belongs to and where it's registered
+     */
     private GameSession session;
 
+    /**
+     * the global ID of the Object
+     */
     private int iD;
 
 
@@ -39,16 +44,14 @@ public class Message implements Serializable {
             throw new IllegalArgumentException("Session ist null in Message");
 
         this.session = session;
-        try {
+
             iD = session.registerObject(this);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+
     }
 
     /**
-     * Macht die Nachricht sichtbar fuer ausgewaehlte Spieler.
-     * @param p der ausgewaehlte Spieler
+     * Enables the given player to see the message
+     * @param p the player who shall the see message
      */
     public void makeVisibleFor(Player p) {
         if(p == null)
@@ -59,14 +62,12 @@ public class Message implements Serializable {
     }
 
 
-
-
-    //Getter Setter
-
+    /**
+     * Getter/Setter
+     */
     public String getContent() {
         return content;
     }
-
     public void SetContent(String s) {
     content=s;
     }
@@ -74,7 +75,6 @@ public class Message implements Serializable {
     public boolean getVisibleForAll() {
         return visibleForAll;
     }
-
     public void setVisibleForAll(boolean b) {
     visibleForAll=b;
     }
@@ -82,7 +82,6 @@ public class Message implements Serializable {
     public List<Player> getVisibleFor() {
         return visibleFor;
     }
-
     public void setVisibleFor(List<Player> p) {
     visibleFor=p;
     }

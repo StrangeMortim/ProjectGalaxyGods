@@ -1,12 +1,15 @@
 package Action;
 
 /**
- * Created by Fabi on 27.07.2016.
+ * An enum containing all the possible buffs(and some specific actions) an their relevant information
+ * @author Fabi
  */
 public enum BuffInfo  {
     REDUCED_UNIT_COST, SHIELD, HEAL, EMPOWER_SHIELD, HORNET_STYLE, RANGED_STYLE, NONE, DRAGONFIST;
 
-
+    /**
+     * getter methods for the information
+     */
     public int[] getBuffCost(){
         switch (this){
             case REDUCED_UNIT_COST:
@@ -22,7 +25,6 @@ public enum BuffInfo  {
                 return new int[4];
         }
     }
-
 
     public int getRounds(){
         switch (this){
@@ -42,7 +44,7 @@ public enum BuffInfo  {
         }
     }
 
-
+    //for specific buffs
     public int getPower(){
         switch (this){
             case SHIELD:
@@ -59,7 +61,6 @@ public enum BuffInfo  {
         }
     }
 
-
     public int getAtk(){
         switch (this){
             case HORNET_STYLE:
@@ -71,7 +72,6 @@ public enum BuffInfo  {
 
     }
 
-
     public int getDef(){
         switch (this){
             case NONE:
@@ -80,7 +80,6 @@ public enum BuffInfo  {
         }
     }
 
-
     public int getHp(){
         switch (this){
             case NONE:
@@ -88,7 +87,6 @@ public enum BuffInfo  {
                 return 0;
         }
     }
-
 
     public int getRange(){
         switch (this){
@@ -100,7 +98,6 @@ public enum BuffInfo  {
         }
     }
 
-
     public int getMovepoints(){
         switch (this){
             case NONE:
@@ -108,7 +105,6 @@ public enum BuffInfo  {
                 return 0;
         }
     }
-
 
     public boolean isPermanent(){
         switch (this){

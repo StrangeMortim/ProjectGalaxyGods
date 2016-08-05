@@ -20,7 +20,10 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 /**
- * Created by benja_000 on 24.07.2016.
+ * This Screen enables to create a new Account but is buggy an currently unused
+ * not much comment, also because it's mostly displaying stuff and should be self-explaining to the most part
+ *
+ * @author Benjamin
  */
 public class CreateAccountScreen implements Screen {
     private Game game;

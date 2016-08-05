@@ -32,7 +32,10 @@ import java.util.List;
 import static projectgg.gag.GoldAndGreed.reg;
 
 /**
- * Created by Fabi on 03.07.2016.
+ * This screen enables a player to join an existing game an displays all avaible GameSessions on the selected Server
+ * not much comment because it's mostly displaying stuff and should be self-explaining to the most part
+ *
+ * @author Benjamin
  */
 public class NetworkScreen implements Screen {
     private Game game;

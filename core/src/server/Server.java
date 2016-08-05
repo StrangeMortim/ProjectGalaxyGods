@@ -14,33 +14,62 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Fabi on 07.05.2016.
+ * This class provides everyhting necessary for a client to connect to the current computer
+ * and the computer serving as a server
+ * @author Benjamin
  */
 public class Server implements ServerInterface {
 
+    /**
+     * The Server itself
+     */
     static Server serv;
+
+    /**
+     * The registry, save it as attribute to avoid the Server shutting down immediately after starting
+     */
     static Registry reg;
+
+    /**
+     * all current GameSessions, save them so they don't get eaten by garbage collector
+     * and other stuff
+     */
     private List<GameSession> sessions = new ArrayList<>();
 
 
     public  Server(){}
 
-
     /**
-     * Startet den Server.
-     *
-     * @param args
+     * Creates a Server and Registry and binds the Server to the Registry under the Key "ServerInterface"
+     * to enable the access from clients to the Server
      */
-    //@Override
-   // public void main(String args) {
+    public static void init()
+    {
+        try{
+            if(serv == null)
+                serv = new Server();
 
-    //}
+
+            reg = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
+
+            ServerInterface stub = (ServerInterface)UnicastRemoteObject.exportObject(serv,0);
+
+            reg.rebind("ServerInterface",stub);
+
+            System.out.println("Server: Server ready");
+        } catch (Exception e){
+
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+
+    }
 
     /**
-     * Gibt die Session mit jeweiligen Namen zurueck.
+     * Loads the GameSession with the given Name and binds it to the registry, with the name as key
      *
-     * @param sessionName Name der GameSession
-     * @return
+     * @param sessionName the Name of the Session to load
+     * @return the Interface stub, which can also be loaded from the Registry
      */
     @Override
     public IGameSession loadSession(String sessionName){
@@ -70,10 +99,11 @@ public class Server implements ServerInterface {
     }
 
     /**
-     * Speichert eine GameSession.
+     * Saves a GameSession, the GameSession is given by it's corresponding Interface Counterpart
+     * and then identified through it's name
      *
-     * @param session GameSession die gespeichert werdenn soll
-     * @return true ,wenn das Speichern funktioniert hat, sonst false.
+     * @param session the Interface of the Session to save
+     * @return true if savin was success else false
      */
     @Override
     public boolean saveSession(IGameSession session) {
@@ -88,6 +118,11 @@ public class Server implements ServerInterface {
         return false;
     }
 
+    /**
+     * Creates a new session, saves it in the Database and binds it to the registry, with it's name as key
+     * @param name the name of the session to create
+     * @return the name under which the session can be found in the registry
+     */
     @Override
     public String createSession(String name){
         GameSession tmp = new GameSession();
@@ -108,11 +143,11 @@ public class Server implements ServerInterface {
     }
 
     /**
-     * Diese Methode realisiert die Registration eines neuen Accounts.
+     * Just calls same method for the DBManager
      *
-     * @param name     Name vom Account
-     * @param password Passwort vom Account
-     * @return true, wenn Registration geklappt hat, sonst false
+     * @param name     Name of the Account
+     * @param password Password of the Account
+     * @return true if registration was a success else false
      */
     @Override
     public boolean registerAccount(String name, String password) {
@@ -120,11 +155,11 @@ public class Server implements ServerInterface {
     }
 
     /**
-     * Prueft, ob Eingaben zum Account korrekt sind.
+     * Just calls same method for the DBManager
      *
-     * @param name     Name des Accounts
-     * @param password Passwort des Accounts
-     * @return true, wenn Pruefung erfolgreich, sonst false.
+     * @param name     Name of the Account
+     * @param password Password of the Account
+     * @return true if values are valid, else false
      */
     @Override
     public boolean checkAccount(String name, String password)  {
@@ -132,41 +167,16 @@ public class Server implements ServerInterface {
     }
 
     /**
-     * Beendet die Laufzeit des Servers.
-     */
-
-
-    /**
-     * Gibt alle GameSession-Namen zurueck, die auf dem Server gespeichert sind.
+     * Just calls DBManager counterpart
      *
-     * @return Namen der GameSession-Objekte
+     * @return all GameSession names separated with an ;
      */
     @Override
     public String getSessionList()  {
         return new DBManager().getSessionList();
     }
 
-    public static void init()
-    {
-        try{
-            if(serv == null)
-            serv = new Server();
 
-
-            reg = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
-
-            ServerInterface stub = (ServerInterface)UnicastRemoteObject.exportObject(serv,0);
-
-            reg.rebind("ServerInterface",stub);
-
-            System.out.println("Server: Server ready");
-        } catch (Exception e){
-
-            e.printStackTrace();
-            System.out.println(e.getMessage());
-        }
-
-    }
 
 
 }

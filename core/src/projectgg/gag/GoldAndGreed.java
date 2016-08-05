@@ -10,6 +10,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+/**
+ * The Game Class, starts the game not much to say
+ */
 public class GoldAndGreed extends Game {
 
 	public static Registry reg;
@@ -21,12 +24,7 @@ public class GoldAndGreed extends Game {
 	public void create() {
 		String resolution = Gdx.app.getPreferences("GGConfig").getString("res", "1024x768");
 		Gdx.graphics.setWindowedMode(Integer.parseInt(resolution.split("x")[0]),Integer.parseInt(resolution.split("x")[1]));
-		//getViewport().update(Integer.parseInt(resolution.split("x")[0]),Integer.parseInt(resolution.split("x")[1]), true);
 		setScreen(new MenuScreen(this));
-		//if(System.getSecurityManager() == null)
-		//	System.setSecurityManager(new RMIsecurityManager());
-
-
 	}
 
 	@Override

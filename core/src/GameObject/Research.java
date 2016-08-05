@@ -7,11 +7,16 @@ import Player.Player;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Represents all researching that can be done and the corresponding values
+ * @author Fabi
+ */
 public enum Research implements Serializable {
     RESEARCH_ARCHER, RESEARCH_SPEARFIGHTER;
-    /*TODO*/
 
-
+    /**
+     * @return The resource costs for the different enum values(for indeces check Constants enum)
+     */
     public int[] getRessourceCost() {
         switch (this){
             case RESEARCH_ARCHER:
@@ -23,34 +28,25 @@ public enum Research implements Serializable {
         }
     }
 
-
-    public int[] getValues() {
-        return new int[6];
-    }
-
-
-    public List<UnitType> getTargets() {
-        return null;
-    }
-
-
+    /**
+     * @return how many turns it takes for the research to be finished
+     */
     public int getResearchTime() {
         switch (this){
             case RESEARCH_ARCHER:
                 return 0;
             case RESEARCH_SPEARFIGHTER:
-                return 0;
+                return 3;
             default:
                 return 0;
         }
     }
 
-
-    public boolean isPermanet() {
-        return false;
-    }
-
-
+    /**
+     * starts the researching on the given base if possible
+     * @param b the base where the value should be researched
+     * @return whether the researched started correctly or failed
+     */
     public boolean research(Base b){
         switch (this){
             case RESEARCH_ARCHER:
@@ -73,7 +69,11 @@ public enum Research implements Serializable {
         }
     }
 
-
+    /**
+     * -currently useless-
+     * determines which kind of buff the research gives
+     * @return the BuffInfo for achieved Buff
+     */
     public BuffInfo getInfo(){
         switch (this){
             default:

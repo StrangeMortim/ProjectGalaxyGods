@@ -31,9 +31,10 @@ import java.util.List;
 
 
 /**
- * Der Screen fuer ein Spiel...
+ * This Screens Displays a whole GameSession, meaning all the Units, the Field, needed Buttons and so on
+ * not much comment because it's mostly displaying stuff and should be self-explaining to the most part
  *
- * Created by benja_000 on 03.07.2016.
+ * @author Fabi, Benjamin
  */
 public class GameScreen implements Screen, InputProcessor{
 
