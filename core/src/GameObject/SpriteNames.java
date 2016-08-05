@@ -103,6 +103,8 @@ public enum  SpriteNames {
                 return folder+"chestOpen.png";
             case BUTTON_ARCHER:
                 return folder+"buttonArcher.png";
+            case MINE:
+                return folder+"mine.png";
             default:
                 return "";
         }
@@ -197,6 +199,8 @@ public enum  SpriteNames {
                 return 40;
             case BUTTON_ARCHER:
                 return 41;
+            case MINE:
+                return 42;
             default:
                 return 0;
         }
@@ -293,6 +297,8 @@ public enum  SpriteNames {
                 return TEAMBOX_OPEN;
             case 41:
                 return BUTTON_ARCHER;
+            case 42:
+                return MINE;
             default:
                 return NORMAL_FIELD;
         }
@@ -302,7 +308,7 @@ public enum  SpriteNames {
      * @return how many sprites there are currently
      */
     public static int getSpriteAmount(){
-        return 42;
+        return 43;
     }
 
 

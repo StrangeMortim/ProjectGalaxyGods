@@ -70,6 +70,18 @@ public class Base extends Unit implements Serializable {
             }
         }
 
+        //receive resources from units on the other side, since a base takes up 4 fields
+        //with this only up right and down left corner aren't covered, but those are just to far away from a
+        //gate into the town...
+        for(Unit u: currentField.getMap().getField(currentField.getXPos()+1,currentField.getYPos()-1).getNearUnits()){
+            if(u.getOwner() == this.owner){
+                owner.getRessources()[Constants.WOOD] += u.getRessources()[Constants.WOOD];
+                u.getRessources()[Constants.WOOD] = Constants.FINISHED;
+                owner.getRessources()[Constants.IRON] += u.getRessources()[Constants.IRON];
+                u.getRessources()[Constants.IRON] = Constants.FINISHED;
+            }
+        }
+
 
         //count down if lab is in building state
         if(labRoundsRemaining > Constants.FINISHED)
@@ -81,12 +93,12 @@ public class Base extends Unit implements Serializable {
 
         //set the sprite index
         if(caserneRoundsRemaining == Constants.FINISHED){
-            currentField.getMap().getField(currentField.getXPos()+1,currentField.getYPos()).setSpriteIndex(SpriteNames.BASE_DOWN_LEFT_CASERNE.getSpriteIndex());
+            currentField.getMap().getField(currentField.getXPos(),currentField.getYPos()-1).setSpriteIndex(SpriteNames.BASE_DOWN_LEFT_CASERNE.getSpriteIndex());
 
             if(labRoundsRemaining == Constants.FINISHED)
-                currentField.getMap().getField(currentField.getXPos(),currentField.getYPos()-1).setSpriteIndex(SpriteNames.BASE_DOWN_RIGHT_FULL.getSpriteIndex());
+                currentField.getMap().getField(currentField.getXPos()+1,currentField.getYPos()-1).setSpriteIndex(SpriteNames.BASE_DOWN_RIGHT_FULL.getSpriteIndex());
             else
-                currentField.getMap().getField(currentField.getXPos(),currentField.getYPos()-1).setSpriteIndex(SpriteNames.BASE_DOWN_RIGHT_CASERNE.getSpriteIndex());
+                currentField.getMap().getField(currentField.getXPos()+1,currentField.getYPos()-1).setSpriteIndex(SpriteNames.BASE_DOWN_RIGHT_CASERNE.getSpriteIndex());
 
         } else if(labRoundsRemaining == Constants.FINISHED){
             currentField.getMap().getField(currentField.getXPos()+1,currentField.getYPos()-1).setSpriteIndex(SpriteNames.BASE_DOWN_RIGHT_LAB.getSpriteIndex());
@@ -146,7 +158,7 @@ public class Base extends Unit implements Serializable {
         Field current = null;
 
         //iterate as long as the range does not exceed the map bounds in every way
-        // Y-Range is a bit short than x-range so currently some fields aren't covered TODO
+        // Y-Range is a bit short than x-range so currently some fields aren't covered
         while (yRange < Constants.FIELDYLENGTH/2) {
             //iterate on column level
             for (int i = yPos - yRange; i <= yPos + yRange; ++i) {
@@ -281,7 +293,6 @@ public class Base extends Unit implements Serializable {
             for(int i=Constants.WOOD; i<=Constants.MANA;++i)
                 owner.getRessources()[i] += (ressourcesLeft*originalCost[i]);
         }
-        /*TODO check*/
     }
 
     /**
@@ -370,7 +381,7 @@ public class Base extends Unit implements Serializable {
             researched.add(research);
             return true;
         }
-                /*TODO check*/
+
         return false;
     }
 

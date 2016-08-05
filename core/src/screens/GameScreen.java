@@ -265,7 +265,7 @@ public class GameScreen implements Screen, InputProcessor{
                                 selectionUpRight.setText("");
                                 selectionUpRight.getStyle().up = skin.getDrawable("spearfighterIcon");
                                 selectionDownLeft.setVisible(session.checkHasSelectedUnit(UnitType.ARCHER));
-                                selectionDownLeft.setText("Bogenschuetze");
+                                selectionDownLeft.setText("");
                                 selectionDownLeft.getStyle().up = skin.getDrawable("archerIcon");
                                 selectionDownRight.setVisible(true);
                                 selectionDownRight.setText("");
@@ -339,7 +339,10 @@ public class GameScreen implements Screen, InputProcessor{
 
                         } else if (session.isSelectedClassOf(Selectable.FIELD)) {
                             selectionUpLeft.setVisible(session.isSelectedRessourceType(Constants.IRON));
-                            selectionUpLeft.setText("Mine bauen");
+                            if(session.checkIsBuilding(Building.MINE))
+                                selectionUpLeft.setText("Mine wird gebaut");
+                            else
+                                selectionUpLeft.setText("Mine bauen");
                             selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
 
                             selectionUpRight.setVisible(session.checkPathFull(player, Constants.TECHTREE_CULTURE)

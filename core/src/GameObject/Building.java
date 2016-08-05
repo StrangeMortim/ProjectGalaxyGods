@@ -16,7 +16,7 @@ public enum Building implements Serializable {
         switch (this)
         {
             case LABOR:
-                return 0;
+                return 1;
             case CASERNE:
                 return 0;
             case MINE:
