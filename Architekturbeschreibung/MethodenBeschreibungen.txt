@@ -1,0 +1,244 @@
+Config:
+\textbf{Methoden:}
+\begin{itemize}
+	\item \textbf{addServer/removeServer:} Fügt einen Server hinzu oder entfernt einen. Bekommt die IP des Servers als Parameter in Stringform übergeben.
+\end{itemize}
+
+
+Screens:
+\subsubsection{AbstractGameScreen}
+Diese Klasse stellt das Template dar welches alle Bildschirme erfüllen müssen. Die Funktionen sind dabei durch das LibGdx-Framework gegeben. Fast alle Screen-Objekte besitzen keine speziell definierten eigenen Attribute oder Methoden, da diese für die Architektur irrelevant wären, daher wird bei ihnen lediglich ihre Rolle beschrieben und welche Funktionen verfügbar sein müssen.\\
+
+\textbf{Attribute:}\\
+\begin{itemize}
+\item \textbf{game:} Diese Attribut speichert dass aktuell laufende Programm und dient als Schnittstelle um den Bildschirm zu wechseln.
+\item \textbf{gamesession:} Diese Attribut speichert das aktuelle Spiel und wird verwendet um auf alle benötigten Informationen des Spiels zu zugreifen. Da das Spiel frühestens im NetworkScreen geladen wird, ist diese Attribut für alle vorherigen Screens(ConfigScreen und MenuScreen) \textbf{null}.
+\item \textbf{stage:} Diese Attribut stellt das aktuelle Level des Spiels dar.
+\item \textbf{configuration:} Hier wird das ConfigObjekt gespeichert, wodurch lokale Einstellungen eines Computers abgerufen werden können.
+\end{itemize}
+
+\textbf{Methoden:}
+\begin{itemize}
+\item \textbf{render:} Die Methoden bestimmt was im nächsten Bild dargestellt wird. Der Parameter ''deltaTime'' wird vom Framework gegeben und gibt die Zeit zum letzten Bild an. Dies wird benötigt um die Berechnungen Frame-unabhängig zu gestalten.In dieser Methode wird auch auf die Assets zu gegriffen.
+\item \textbf{resize:} Diese Funktion wird verwendet um die Größe des dargestellten Fensters zu ändern(ausgenommen Vollbild). Die Parameter sind selbsterklärend.
+\item \textbf{show:} Hiermit wird ein Bildschirm aktiv geschaltet.
+\item \textbf{hide:} Diese Methode deaktiviert einen Bildschirm wieder.
+\item \textbf{pause:} Mit dieser Methode kann das Rendern des Spiels pausiert werden, ist durch das Framework gegeben, für Desktop-Applikationen jedoch irrelevant.
+\item \textbf{rebuildStage:} Hiermit kann das Level auf den Ursprungszustand zurück gesetzt werden.
+\end{itemize}
+
+
+
+\subsubsection{ConfigScreen}
+
+In diesem Bildschirm können die Werte für das Configuration Objekt eingestellt werden.
+
+\subsubsection{MenuScreen}
+
+Dieser Bildschirm stellt das Hauptmenü dar und ist der initiale Bildschirm nach dem Start.
+
+Es müssen folgende Funktionen verfügbar sein:
+\begin{itemize}
+	\item \textbf{Wechseln zu ''NetworkScreen''}
+	\item \textbf{Wechseln zu ''ConfigScreen''}
+	\item \textbf{Beenden des Spiels}
+	\item \textbf{Registrieren von neuem Account}
+\end{itemize} 
+
+\subsubsection{NetworkScreen}
+
+Der NetworkScreen liefert eine Liste mit allen verfügbaren Spielen, sowie die Möglichkeit ein neues Spiel zu erstellen.\\
+
+Es müssen folgende Funktionen verfügbar sein:
+\begin{itemize}
+\item \textbf{Einloggen in Account.}
+\item \textbf{Wechseln zu ''MenuScreen''.}
+\item \textbf{Auswählen eines existenten Spiels zum Beitreten bzw. Laden.} Führt zu ''InitScreen'', wobei das ausgewählte Spiel übergeben wird.
+\item \textbf{Erstellen eines neuen Spiels.} Führt zu ''InitScreen'', ohne das ein Spiel übergeben wird.
+\end{itemize}
+
+\subsubsection{InitScreen}
+Dieser Screen liefert einen Überblick über die Einstellungen des Spiels und ermöglicht es sie zu bearbeiten sofern das Spiel neu erstellt wird.\\
+
+Es müssen folgende Funktionen verfügbar sein:
+\begin{itemize}
+\item \textbf{Zurückkehren zu ''NetworkScreen''.}
+\item \textbf{Auswählen eines Teams.}
+\item \textbf{Minimale und maximale (pro Team) Spieleranzahl angeben.} Host exklusiv.
+\item \textbf{Auswählen der Spielmap.} Host exklusiv.
+\item \textbf{Spiel starten.} Host exklusiv.
+\end{itemize}
+
+\subsubsection{GameScreen}
+Hier wird das laufende Spiel dargestellt. Um eine einwandfreie Darstellung zu gewährleisten, sollen hier die Hilfsklassen ''WorldController'' und ''WorldRenderer'' verwendet werden, daher werden diese als Attribute gespeichert. \\
+
+Es müssen folgende Funktionen verfügbar sein:
+\begin{itemize}
+\item \textbf{Alle in den Mindestanforderungen genannten Möglichkeiten eines Spielers innerhalb eines laufenden Spiels.} Details: Siehe Mindestanforderungen.
+\end{itemize}
+
+\subsubsection{MarketScreen}
+In diesem Bildschirm wird der Marktplatz eines Spiels dargestellt.\\
+
+Es müssen folgende Funktionen verfügbar sein:
+\begin{itemize}
+\item \textbf{Kaufen/Verkaufen von Holz.}
+\item \textbf{Kaufen/Verkaufen von Eisen.}
+\item \textbf{Zurückkehren zum GameScreen.}
+\end{itemize}
+
+\subsubsection{GuildScreen}
+
+Hier werden Teamrelevante Informationen angezeigt und Funktionen zur Verfügung gestellt.\\
+
+Es müssen folgende Funktionen verfügbar sein:
+\begin{itemize}
+\item \textbf{Teamnachrichten schreiben und lesen.}
+\item \textbf{In die Teamkasse einzahlen und Kassenstand betrachten.}
+\item \textbf{Zurückkehren zum GameScreen.}
+\end{itemize}
+
+\subsubsection{ChatScreen}
+
+Hier erhält der Spieler Zugriff auf seine Chatunterhaltungen.\\
+
+Es müssen folgende Funktionen verfügbar sein:
+\begin{itemize}
+\item \textbf{Zurückkehren zum vorherigen Screen.}
+\item \textbf{Nachrichten in einem Chat schreiben und lesen.}
+\end{itemize}
+
+\subsubsection{WorldController}
+
+Dies ist eine Hilfsklasse, für die Kontrolle des Spiellevels, welche nach dem Framework verwendet wird, daher keine genauere Erklärung.
+
+\subsubsection{WorldRenderer}
+
+Dies ist eine Hilfsklasse, für die Darstellung des Spiellevels, welche nach dem Framework verwendet wird, daher keine genauere Erklärung.
+
+Server:
+
+\textbf{Methoden:}
+\begin{itemize}
+\item \textbf{main:} Initialisiert das System und stellt eine Registry zur Verfügung.
+\item \textbf{loadSession:} Leitet die Anfrage an die gleichnamige DBManager Funktion weiter. Daher siehe DBManager.
+\item \textbf{saveSession:} Leitet die Anfrage an die gleichnamige DBManager Funktion weiter. Daher siehe DBManager.
+\item \textbf{registerAccount:} Leitet die Anfrage an die gleichnamige DBManager Funktion weiter. Daher siehe DBManager.
+\item \textbf{checkAccount:} Leitet die Anfrage an die gleichnamige DBManager Funktion weiter. Daher siehe DBManager.
+\item \textbf{shutdown:} Speichert alle ungespeicherten Spiele und beendet die Registry, sowie den Server.
+\item \textbf{getSessionList:} Liefert eine Liste mit den Namen aller auf dem Server verfügbaren Spielen, unter Verwendung des DBManagers zurück.
+\item \textbf{deleteAccount:} Leitet die Anfrage an die gleichnamige DBManager Funktion weiter. Daher siehe DBManager.
+\item \textbf{deleteSession:} Leitet die Anfrage an die gleichnamige DBManager Funktion weiter. Daher siehe DBManager.
+\end{itemize}
+
+GameSession:
+\textbf{Methoden:}
+\begin{itemize}
+\item \textbf{update:} Fordert alle Objekte des Spiels auf sich zu aktualisieren.
+\item \textbf{addTeam:} Fügt ''teams'' das übergebene Objekt hinzu.
+\item \textbf{removeTeam:} Entfernt das übergebene Team aus ''teams'', wenn es nicht vorhanden ist passiert nichts.
+\item \textbf{sendMessage:} Fügt dem Spielchat die übergebene Nachricht hinzu.
+\item \textbf{addBuffs:} Fügt eine Liste von Buffs zu ''buffs'' hinzu. Wird nur von ActionProcessor verwendet.
+\item \textbf{removeBuff:} Analog zu ''removeTeam'' für ''buffs''.
+\item \textbf{startTurn:} Initialisiert den nächsten Zug, d.h. wechselt den aktiven Player.
+\item \textbf{finishTurn:} Beendet den aktuellen Zug, d.h. fordert den ActionProcessor auf seine Inhalte zu verarbeiten, speichert alle Änderungen und ruft startTurn auf.
+\item \textbf{playerJoin:} Fügt einen neuen Spieler mit dem übergebenen Account zu dem übergebenen Team hinzu(sowie zu identities). Rückgabewert gibt an ob der Vorgang erfolgreich war.
+\item \textbf{playerLeave:} Entfernt den übergebenen Spieler aus dem Spiel und damit auch alle zugehörigen Objekte.
+\item \textbf{save:} Weist den Server an die Sitzung zu speichern. Rückgabewert gibt an ob der Vorgang erfolgreich war.
+\item \textbf{finish:} Beendet das Spiel. Es wird nicht beachtet ob das Spiel gespeichert ist. Gibt es einen Sieger wird dies angegeben und das Spiel danach gelöscht. Rückgabewert gibt an ob der Vorgang erfolgreich war.
+\item \textbf{createAction:} Dient zum Erstellen einer neuen Action, so dass das Action-Interface nur für die Funktionalität benötigt wird. Der erste Paramter gibt an um was für eine Action es sich handeln soll(z.B. ''Fight''). Die weiteren Parameter entsprechen den Grundattributen einer Action. Alle spezifischeren Attribute werden danach über die setter gesetzt. Der Rückgabewert entspricht der erstellen Action.
+\end{itemize}
+
+ActionProcess:
+\textbf{Methoden:}
+\begin{itemize}
+\item \textbf{addAction:} Fügt die übergebene Action zu ''toProcess'' hinzu.
+\item \textbf{removeAction:} Entfernt die übergeben Action aus ''toProcess'', sofern vorhanden, ansonsten passiert nichts.
+\item \textbf{execute:} Führt alle Actions in toProcess aus und überprüft ob sich dadurch neue Actions oder Buffs ergeben. Neue Actions werden ebenfalls ausgeführt, Buffs werden zu ''toReturn'' hinzu gefügt. Am Ende wird ''toReturn'' zurück gegeben, damit die Buffs in der GameSession gespeichert werden können.
+\end{itemize}
+
+Action:
+\textbf{Methoden:}
+\begin{itemize}
+\item \textbf{execute:} Führt die Aktion aus. Konkreter Inhalt ist von den jeweiligen Aktionen abhängig.
+\end{itemize}
+
+Market:
+\textbf{Methoden:}
+\begin{itemize}
+\item \textbf{buy:} Lässt den angegebenen Spieler die angegebene Menge Holz oder Eisen kaufen. Type bestimmt ob Holz oder Eisen(0=Holz, 1=Eisen). Kein Rückgabewert, die Werte werden direkt manipuliert. Zuletzt wird der jeweilige Preis neu berechnet in Abhängigkeit von einem Standardwert und der vorhandenen Menge.
+\item \textbf{sell:} Analog zu ''buy'', nur dass hier die Ressourcen verkauft und nicht gekauft werden.
+\end{itemize}
+
+Chat:
+
+\textbf{Methoden:}
+\begin{itemize}
+\item \textbf{addMessage:} Fügt die übergebene Nachricht zu ''backlog'' hinzu.
+\item \textbf{removeMessage:} Entfernt die übergebene Nachricht aus ''backlog'', sofern vorhanden, ansonsten passiert nichts.
+\item \textbf{addParticipant:} Analog zu addMessage für ''participants''.
+\item \textbf{removeParticipant:} Analog zu removeMessage für ''participants''.
+\item \textbf{blockPlayer:} Verschiebt den angegebenen Spieler von ''participants'' zu ''readOnly''. Ist der Spieler nicht vorhanden oder bereits in ''readOnly'' passiert nichts.
+\item \textbf{unblockPlayer:} Analog zu blockPlayer in umgekehrter Richtung(also ''readOnly'' zu ''participants'').
+\item \textbf{clear:} Leert den backlog des Chat.
+\end{itemize}
+
+Message:
+
+\textbf{Methoden:}
+\begin{itemize}
+\item \textbf{makeVisibleFor:} Fügt einen Spieler zu ''visibleFor'' hinzu und ermöglicht ihm so die Nachricht zu lesen. Der Vorgang kann nicht rückgängig gemacht werden.
+\end{itemize}
+
+Map:
+\textbf{Methoden:}
+\begin{itemize}
+\item \textbf{init:} Diese Methode generiert die Felder der Karte, sowie max/minPlayer. Zu Beginn wird eine Karte Hard-gecoded. Wenn im Laufe des Projektes genügend Zeit übrig ist werden Karten in Dateien gespeichert und bei init ausgelesen, wobei die Datei über ''levelName'' identifiziert wird.
+\item \textbf{generateRandom:} Generiert eine zufällige Karte. Wird nur bei genug übriger Zeit des Projektes implementiert.
+\item \textbf{saveConfiguration:} Speichert die Karte in einer Datei, wird erst implementiert wenn genug Zeit im Projektverlauf übrig ist.
+\item \textbf{update:} Fordert alle Felder dazu auf sich zu aktualisieren.
+\item \textbf{getField:} Gibt das Feld mit den Koordinaten X und Y zurück.
+\end{itemize}
+
+Unit:
+\textbf{Methoden:}
+\begin{itemize}
+\item \textbf{update:} Aktualisiert die Einheit, derzeit nur für Base nötig, später jedoch eventuell noch für andere.
+\end{itemize}
+
+
+Base:
+\textbf{Methoden:}
+\begin{itemize}
+\item \textbf{createUnit:} Rekrutiert eine Einheit des übergebenen Typs. Rückgabewert gibt an ob der Vorgang erfolgreich war.
+\item \textbf{abortCreation:} Bricht den Rekrutierungsvorgang der übergebenen Einheit ab, sofern vorhanden. Analog zu ''abortBuild'' von Field.
+\item \textbf{buildLab:} Startet den Bau des Labors. Rückgabewert gibt an ob der Vorgang erfolgreich war.
+\item \textbf{abortLab:} Analog zu ''abortCreation'' für das Labor(wobei es immer nur ein Labor-Bauauftrag geben kann, daher kein Parameter).
+\item \textbf{buildCaserne:} Analog zu ''buildLab'' für die Kaserne.
+\item \textbf{abortCaserne:} Analog zu ''abortLab'' für die Kaserne.
+\item \textbf{research:} Erforscht die übergebene Forschung bzw. Verbesserung. Rückgabewert gibt an ob der Vorgang erfolgreich war.
+\item \textbf{abortResearch:} Bricht den Forschungsauftrag der übergebenen Forschung ab, wenn vorhanden, sonst passiert nichts.
+\end{itemize}
+
+
+DBManager:
+\textbf{Methoden:}
+\begin{itemize}
+\item \textbf{loadSession:} Lädt das Spiel mit dem übergebenen Namen aus der Datenbank und gibt es zurück. Falls kein passendes Spiel existiert wird \textbf{null} zurück gegeben.
+\item \textbf{saveSession:} Speichert das übergebene Spiel in der Datenbank. Rückgabewert gibt an ob das Speichern funktioniert hat.
+\item \textbf{registerAccount:} Speichert einen neuen Account mit dem übergebenen Name und Passwort in der Datenbank. Rückgabewert gibt an ob der Vorgang erfolgreich war.
+\item \textbf{checkAccount:} Überprüft die übergebenen Werte auf einen korrekten Account in der Datenbank. Rückgabewert gibt an ob die Werte korrekt sind oder nicht.
+\item \textbf{deleteAccount:} Löscht den angegebenen Account aus der Datenbank, sofern er existiert, sonst passiert nichts.
+\item \textbf{deleteSession:} Löscht die GameSession aus der Datenbank, sofern sie existiert, sonst passiert nichts.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+

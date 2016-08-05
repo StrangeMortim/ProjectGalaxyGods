@@ -1,0 +1,11 @@
+Entwicklungszeitraum X													
+Entwicklungsbudget X
+Gradle X
+RMI X
+DB X
+Funktionen X
+Multiplayer X
+Spielfeld X
+Rundenbasiert X
+exzellenz anforderungen X
+Server-Client zusammen X

@@ -1,0 +1,42 @@
+Fall 1: 
+Beschreibung: 
+Ein Spieler rekrutiert eine neue Einheit und erforscht eine Erweiterung für diese Einheit.
+
+Ablauf:
+Spieler wählt Basis aus.
+Spieler wählt Einheitenbutton aus.
+Eine neue Rekrutierungsanfrage wird an Server gesendet. (Eventuell ne Action dazu damit man sie besser identifizieren kann?)
+Server sendet Feedback über Erfolg oder Misserfolg.
+Spieler wählt Labor(Basis aus).
+Spieler wählt Forschung aus.
+Forschungsanfrage wird an Server gesendet.
+Server sendet Feedback über Erfolg/Misserfolg.
+Spieler wählt Runde Beenden aus.
+GameSession überprüft alle Felder auf weitere Aktionen. Keine.
+ActionProcessor führt execute aus.
+Erste Action wird ausgeführt.
+Zweite Action wird ausgeführt.
+Liste mit Buff aus zweiter Action wird zurück gegeben.
+GameSession führt finishTurn aus.
+Ende
+
+
+Fall 2:
+Beschreibung:
+Ein Spieler besitzt eine Sammlereinheit in Ressourcenreichweite. Außerdem bewegt er eine andere Einheit in Angriffsreichweite für eine andere Einheit.
+
+Ablauf:
+Spieler wählt Kampfeinheit aus.
+Spieler wählt Zielfeld aus.
+Movement Action wird an Server gesendet.
+Spieler wählt Zug beenden aus.
+GameSession überprüft wieder alle Felder auf zusätzliche Aktionen. Ressourcen Vergabe wird erkannt.
+Ressourcenvergabe wird ausgeführt/Action generiert und ActionProcessor hinzu gefügt.
+ActionProcessor führt execute aus.
+Bewegungsaction wird ausgeführt.
+Bewegungsaction überprüft am Ende Position. Feindliche Einheit in Reichweite wird erkannt.
+Bewegungsaction generiert Fight Action.
+Fight Action wird ausgeführt.
+Leere Liste wird zurück gegeben.
+GameSession führt finishTurn aus.
+Ende
