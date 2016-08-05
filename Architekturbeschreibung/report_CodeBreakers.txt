@@ -1,0 +1,277 @@
+
+Noten fuer die Gruppe CodeBreakers
+==================================
+
+Mitglieder
+----------
+
+  Benjamin Brennecke           brennben@uni-bremen.de   
+  Fabian Schneekloth           fa_sc1@uni-bremen.de     
+  Falko Schröder               fa_sc@uni-bremen.de      
+  Joshua Hoffmann              jo_ho1@uni-bremen.de     
+  Lukas Deckner                deckner@uni-bremen.de    
+  Susanne Bös                  susboes@uni-bremen.de    
+
+Gesamtnote
+----------
+
+For groups: 3.0
+
+Kommentare
+----------
+
+
+1 Architekturentwurf
+====================
+
+
+Gesamteindruck
+    Das Dokument ist Euch zufriedenstellend gelungen.
+    
+    Hauptschwachpunkt ist die Tatsache, dass die Design-Entscheidungen hinsichtlich Eurer Architektur nicht nachvollziehbar sind. Ihr habt zwar eine globale Analyse durchgeführt - diese aber im Dokument isoliert. Damit sind diverse architekturbezogene Entscheidungen scheinbar willkürlich getroffen und der Zweck des Dokumentes wird nicht wirklich erreicht.
+
+0 äußere Form:
+
+0a Versionierung:
+    Das Dokument hat ein Datum und eine Version auf dem Deckblatt. Die Versionsgeschichte fehlt leider.
+    
+    Trotzdem gut.
+
+0b Rechtschreibung:
+    Es gibt einige Rechtschreibfehler und unvollständige bzw. grammatikalisch falsche Sätze.
+    
+    Insgesamt zufriedenstellend bis gut.
+
+0c Übersichtlichkeit:
+    Euer Tutor ist nicht eingetragen auf dem Deckblatt.
+    Hinweise zur Versions- und Änderungsgeschichte aus dem Vorlagendokument sind noch enthalten.
+    
+    Die Tabellen (globale Analyse) haben sind nicht nummeriert und haben keine Bildunterschrift.
+    
+    Die Lesbarkeit weniger Abbildungen ist grenzwertig.
+    
+    Die schriftliche Abgabe ist eine getackerte Blattsammlung.
+    
+    Insgesamt dennoch fast gut.
+
+1 Einführung:
+
+    Den Zweck des Dokumentes habt Ihr sehr verklausuliert dargestellt. In erster Linie richtet sich das Dokument doch an die EntwicklerInnen während der Implementierungsphase (habt Ihr eher implizit erwähnt) und natürlich an TesterInnen (das habt Ihr gar nicht erwähnt).
+    
+    Status: Das hilft so nicht weiter. Was bedeutet denn "erste Version"? Ist das eine finale Version oder wird noch weiter daran gearbeitet?
+    
+    Im Abschnitt zu Definitionen habt Ihr - alphabetisch sortiert - einige Begriffe aus der Anwendungsdomäne aufgezählt und einige technische Begriffe. Die Erläuterungen sind allerdings wenig hilfreich und oft zu knapp und fehlerhaft. Architektur ist nicht die Art und Weise, in der das Programm aufgebaut wird. Barrierefreiheit hat nichts mit einem klaren und übersichtlichen Aufbau des Programs zu tun. GlassFish ist nicht irgendeine Serversoftware. Ein PrimaryKey in einem Datenbank-Eintrag hat doch eine andere Bedeutung, als Dinge zu referenzieren. Statt Secondary Key meintet Ihr vmtl. Foreign Key. In beiden Fällen fragt sich allerdings, warum die Begriffe erläutert werden, denn sie kommen ja im restlichen Dokument gar nicht mehr vor?!?
+    
+    Die Referenzen sind nicht im Sinne eines Literaturverzeichnisses angegeben und daher nutzlos. Zudem fehlt hier doch auch die Vorlage und damit der IEEE-Standard, auf dem das Dokument basiert. 
+    
+    Die Übersicht über den Aufbau des Dokumentes ist ok.
+    
+    Insgesamt ok bis ausreichend.
+
+2 globale Analyse:
+
+2.1 Faktoren:
+    Ihr habt 20 Einflussfaktoren genannt. Sie sind eindeutig nummeriert und haben einen Namen und eine kurze Beschreibung. Leider sind die Faktoren nicht untergliedert, z. B. wie in der Vorlesung gezeigt in organisatorische und technische Faktoren sowie Produktfaktoren.
+    
+    Die Flexibilität habt Ihr in fast allen Fällen nachvollziehbar und sinnvoll analysiert. In Faktor 13 ist unklar, inwiefern alles über Rollentrennung und bestimmte Rollen hinaus unflexibel ist. In Faktor 6 ist die Flexibilität tatsächlich nicht gegeben, da eine Gruppe aus exakt 6 Personen bestehen muss bei Projektstart. Da ist allerdings eine Veränderlichkeit gegeben, denn während des Projektes könnte sich die Zahl der Teilnehmenden verringern.
+    
+    Veränderlichkeit habt Ihr selten korrekt analysiert. Es geht ja dabei nicht darum, ob sich mit den Mindestanforderungen etwas ändert, sondern ob sich der Faktor im Laufe der Lebenszeit des Systems ändern kann. Gleich der erste Faktor, Einsatz von GlassFish, kann sich doch im Laufe der Zeit ändern - völlig unabhängig von den Mindestanforderungen. Etwa, weil es schnellere Container gibt oder der Support eingestellt wird, oder, oder, oder...ganz analog dazu Faktor 5. Es muss das Derby-DBMS genutzt werden. Das könnte doch aber im Laufe der Produktlebenszeit ausgetauscht werden - das ist doch sogar sehr wahrscheinlich!
+    
+    Der Punkt "Auswirkungen" bezieht sich auf die Architektur bzw. auf andere Faktoren. Hier soll analysiert werden, inwiefern die Existenz eines Faktors oder die Änderung eines Faktors sich auf die Architektur oder einen anderen Faktor auswirkt. Letzteres fehlt bei Euch völlig. Nicht alle Auswirkungen sind architekturrelevant - z.B. gleich in Faktor 1: Die Tatsache, dass das Team den Umgang mit GlassFish erst erlernen muss und dieses Zeit in Anspruch nimmt, ist keine Auswirkung auf die Architektur sondern auf das Projektmanagement!
+    
+    Gelegentlich habt Ihr in den Auswirkungen die Beschreibung ergänzt. Einige Dinge sind allerdings völlig unklar und nicht nachvollziehbar, wie z.B. in Faktor 17: Wieso muss eine universelle Zeitangabe geschaffen werden und wieso darf die Computeruhr des Servers durch Benutzer verändert werden? Es genügt doch, die Uhr des Servers für die Abgaben zu verwenden...auf die lokalen Computeruhren der Clients kann doch eh nicht zugegriffen werden.
+    
+    Faktor 18 wird in den Problemkarten nicht verwendet, ist also offensichtlich nicht architekturrelevant.
+    
+    Insgesamt noch gut.
+
+2.2 Problemkarten:
+
+2.2a Relevanz und Anzahl:
+    Ihr habt 26 Problemkarten angegeben. Nicht alle Strategien sind wirklich architekturrelevant (siehe Details unten).
+    
+    Insgesamt habt Ihr die Idee der globalen Analyse nicht wirklich verstanden. Dabei gäbe es gute Ansätze. 
+    Ein Beispiel:
+    Es gibt bei Euch das Problem der Verschlüsselung (S. 20 oben). Ihr entscheidet Euch für Verschlüsselung mit AES und JBCrypt. Dadurch werden diese beiden Entscheidungen zu neuen Faktoren. Es gibt also jetzt den Faktor "Verschlüsselung mit AES" und den Faktor "Verschlüsselung mit JBCrypt". Diese Faktoren sind nicht flexibel (da Ihr das am Projektstart so festlegt und umsetzen wollt), wohl aber veränderlich (da sich ein Verfahren als unsicher oder nicht performant genug herausstellen könnte und dann ausgetauscht werden müsste). Dazu gäbe es dann zunächst eine neue Problemkarte, die mindestens diese beiden Einflussfaktoren (vmtl. zusammen mit 10.1) berücksichtigt. Dazu gäbe es dann zwei architekturrelevante Strategien: die Verschlüsselungsalgorithmen werden selbst implementiert oder es werden Drittbibliotheken eingebunden (gegen die dann programmiert werden muss). Eine weitere Problemkarte würde sich dem Problem widmen, dass die Verschlüsselungsalgorithmen austauschbar sein müssen (ergibt sich aus der Veränderlichkeit des Faktors). Damit könnte eine Strategie lauten, dass die Verschlüsselung in einer eigenen, streng gekapselten Komponente realisiert wird (um so einen Austausch zu erleichtern).
+    
+    Details:
+    Problemkarte "Vermeidung der Korruption von Daten durch Importe"
+    Warum ist der Einflussfaktor "Exporte" für Importe relevant? Das ist nicht nachvollziehbar.
+    Die Strategien beziehen sich nur sehr indirekt auf die Architektur.
+    
+    Problemkarte "Verwendung einer Derby-Datenbank"
+    Die Strategien sind in erster Linie dem Projektmanagement zugeordnet. Die Auswirkungen auf die Architektur sind auch hier eher indirekt.
+    
+    Problemkarte "Anzahl der Entwickler"
+    Die erste Strategie ist reines Projektmanagement. Begründung zur Strategieauswahl bezieht sich ebenfalls auf das Projektmanagement.
+    
+    Problemkarte "Browser GUI"
+    Hier ist eine Menge unklar. Wieso schließt Barrierefreiheit Funktionalität aus?!? Die Logik soll dann in den Netzwerken laufen? Welche Netzwerke? Wieso mehrere? Wieso führt ein Verzicht von Logik in der Darstellung (was ja ohnehin gute Strukturierung wäre) zu Barrierefreiheit?!?
+    
+    Problemkarte "Vernünftige Einschränkung der Konfigurierbarkeit"
+    Es gibt keinen Faktor 21. Der Faktor Barrierefreiheit ist Faktor 19. Die Strategien sind nicht relevant für die Architektur.
+    
+    Problemkarte "Schwierigkeit bei der Rückangigmachung der Konfigurationseinstellung"
+    Die Strategien sind nicht architekturrelevant, sondern beschreiben Möglichkeiten der Interaktion mit dem System.
+    
+    Problemkarte "Einhaltung der Datenschutzrichtlinie"
+    Recherche von Datenschutzrichtlinien ist eine Strategie, die nichts mit der Architektur zu tun hat.
+    
+    Problemkarte "Bestimmte Daten müssen im System verschlüsselt werden"
+    Auch hier wird aus den Strategien die Architekturrelevanz nicht unmittelbar deutlich.
+    
+    Problemkarte "Gewährleistung des Datenschutzes auch bei nicht aktuellen Semestern"
+    Die verwandte Strategie ist ohne Relevanz für die Architektur, da hier nur ein Speichermedium festgelegt wird.
+    
+    Problemkarte "Es müssen beliebig große Datenmengen gespeichert werden können"
+    Die erste Strategie ist ohne Relevanz für die Architektur.
+    
+    Problemkarte "Das System muss wartbar sein"
+    Strategie ist nicht architekturrelevant, denn WIE ein System konkret implementiert wird, hat nichts mit dessen Struktur zu tun.
+    
+    Insgesamt trotzdem zufriedenstellend.
+
+2.2b Beschreibung:
+    Eure Problemkarten haben eindeutige Namen und eine Beschreibung, sowie eine (meist einelementige) Liste der Einflussfaktoren, die zum Problem beitragen bzw. aus denen sich das Problem ergibt.
+    
+    Ihr habt neben den Lösungsstrategien alternative Strategien angegeben und eine Begründung für Eure Wahl gegeben.
+    
+    Leider sind die Strategien nicht eindeutig nummeriert, was eine Referenzierung im folgenden Dokument erschwert.
+    
+    Es gibt auch Inkonsistenzen: Manchmal sind alternative Strategien sind auf der Problemkarte angegeben, manchmal werden sie nur im Begründungstext erwähnt.
+    
+    Bei verwandten Strategien werden gelegentlich alternative Strategien angegeben.
+    
+    Manchmal fehlen alternative Strategien völlig.
+    
+    In den Begründungen wird gelegentlich Interaktionsdesign beschrieben und dafür Entscheidungen getroffen. Eine Auswirkung auf die Architektur muss dann von LeserInnen selbst erschlossen werden. In den Strategien kommt das auch vor.
+    
+    Insgesamt noch gut.
+
+3 konzeptionelle Sicht:
+
+3a Nachvollziehbarkeit:
+    Die Abbildung der Strategien auf die konzeptionelle Sicht fehlt leider völlig. Ihr habt lediglich nötige Änderungen der konzeptionellen Sicht angegeben, falls sich Dinge in den Anforderungen ändern.
+    
+    Hier habt Ihr die globale Analyse missverstanden.
+    
+    Leider nicht ausreichend.
+
+3b Diagramm:
+    Das Diagramm hält sich im Wesentlichen an die geforderte Notation.
+    
+    Die Ports haben keine Namen. Es ist unklar, ob es sich bei der Kommunikation der Komponenten um Kontroll- oder Datenfluss handelt.
+    
+    Der GlassFish-Server als eigene Komponente fehlt (und damit eine externe Schnittstelle).
+    
+    Die DerbyDB ist nicht Teil Eurer Server-Anwendung, sondern ein externes System. Auch hier fehlt damit eine externe Schnittstelle.
+    
+    Insgesamt zufriedenstellend bis gut.
+
+3c textuelle Beschreibung:
+    Eine textuelle Beschreibung ist vorhanden und liefert auch Zusatzinformationen. Leider wird auch hier nicht explizit erwähnt, ob es sich bei den Kommunikationsmechanismen um Datenfluss oder Kontrollfluss handelt. Es wird auch nicht klar, ob es sich um asynchrone oder synchrone Kommunikation handelt.
+    
+    Insgesamt noch gut.
+
+4 Modulsicht:
+
+4a Nachvollziehbarkeit:
+    Eine Abbildung der Strategien auf die Modulsicht fehlt völlig.
+    
+    Die Abbildung der konzeptionellen Sicht auf die Modulsicht fehlt ebenfalls und eine reine Zuordnung über Paketnamen schlägt fehlt, da unklar ist, zu welcher Komponente das zentrale Paket "System" gehört.
+    
+    Leider nicht ausreichend.
+
+4b textuelle Beschreibung:
+    Die textuelle Beschreibung ist konsistent zu den Diagrammen und liefert Zusatzinformationen zu Abhängigkeiten.
+    
+    Gut!
+
+4c Diagramme:
+    Die Modulsicht selbst ist syntaktisch grundsätzlich ok, aber inhaltlich seltsam. Die Module "Model" und "System" sind doch keine Module von GlassFish, sondern Module Eurer Webapplikation. Ihr erweitert oder ändert doch GlassFish nicht. Die außerhalb dargestellte View ist ebenfalls seltsam, aber im Text ausreichend begründet. Das ist gut.
+    
+    Ihr habt in allen Diagrammen Attribute in den Klassen angegeben, die eigentlich Teil der Datensicht sind. Das ist nicht verboten, stört aber in der Modulsicht die Übersichtlichkeit.
+    
+    Zu Abb. 3 (Actorspackage): Dass der User mehrere Notes besitzen kann, ist eigentlich eine Information, die in der Datensicht relevant wird, d.h. diese Assoziation ist hier wenig hilfreich.
+    
+    In Abb. 4 (Eventpackage): Hier gibt es wieder das Problem, dass die Assoziationen eigentlich für die Datensicht relevant sind und für die Modulsicht keine nützliche Information liefern.
+    
+    Generell habt Ihr die Assoziationen zwischen den Modulen weggelassen. In der Modulsicht wäre es gerade sinnvoll, dass z. B. die Assoziation zwischen LogicHandler und DataHandler im Diagramm eingezeichnet ist, damit visuell klar wird, welche Zusammenhänge/Abhängigkeiten es gibt. Bei Euch muss ich erst eine Vielzahl von in diesem Kontext nicht interessierenden Attributen durchsuchen, bis ich so eine Abhängigkeit finde. Auch die Multiplizitäten muss ich mir erst aus den Datentypen erschliessen.
+    
+    Der DataHandler steht vollkommen isoliert und hat keine Attribute. Wie greift er denn dann auf die Datenbank zu?
+    
+    Das Diagramm ist konsistent zur textuellen Beschreibung.
+    
+    Insgesamt zufriedenstellend.
+
+4d Schnittstellenbeschreibung:
+    Die Schnittstellenbeschreibung fehlt im Abschnitt Modulsicht völlig. Etwas ähnliches findet sich im Ansatz im Kapitel Datensicht. Dort gibt es für einige Methoden kurze Beschreibungen. Vor- und Nachbedingungen bzw. Protokolle (d.h. hier Reihenfolgen von Methodenaufrufen) und erlaubte Werte für Parameter fehlen allerdings völlig.
+    
+    Das ist ingesamt noch zufriedenstellend.
+
+5 Datensicht:
+
+    Die Datensicht habt Ihr nicht wirklich verstanden. Hier ist ein UML-Klassendiagramm gefragt, dass die vom System verarbeiteten Daten und deren Beziehungen untereinander darstellt. Dieses Diagramm bildet eine direkte Grundlage für die Tabellen und Fremdschlüssel-Beziehungen in der relationen Datenbank.
+    
+    Das Diagramm fehlt - es gibt nur einen beschreibenden Text.
+    
+    Die Datenklassen Actor, Note, Student, Lecturer, Event, Tutorial, EventPerformance, PerformanceInterpreter und TimeReport werden beschrieben. Leider auch die Methoden dazu - diese haben in der Datensicht nichts verloren (denn es geht ja gerade um Daten). Der LogicHandler, der zur Laufzeit die Listen der Datenentitäten hält, ist hier nicht relevant. Das gilt analog für den DataHandler und den Encrypter.
+    
+    Generell fällt hier die oft verwendete ID als interne Hauptidentifikation der Objekte auf. Was soll das sein? Ein Objekt in Java hat doch bereits eine eigene Identifikation - nämlich sich selbst. Für die Speicherung in der Datenbank wird möglicherweise ein Primärschlüssel benötigt - das ist hier aber nicht zwingend anzugeben (und außerdem wird am Anfang angemerkt, dass diese ID nichts mit der ID in der Datenbank zu tun hat).
+    
+    Ein Actor kann verschiedene Rollen haben...diese werden bei Euch fix als Bitstring gespeichert. Ist das denn sinnvoll? Letztlich ist doch die Rolle abhängig von der Veranstaltung...
+    
+    Tutorial: Warum wird die Anzahl der teilnehmenden Studierenden explizit als Attribut gespeichert? Das kann doch aus der Anzahl der Elemente der participants-List berechnet werden?
+    
+    Unklar ist die Idee der Bewertungen. Es gibt die EventPerformance. Diese stellt scheinbar sowohl die Prüfungsleistung als auch die konkrete Bewertung dar. Das ist nicht sinnvoll, denn auf diese Art und Weise ist ja z. B. in PI für jedes Ergebnis eines Übungsblattes die gesamte Information über die Aufgabenstellung dupliziert. Die Aufgabenstellung und die Bewertung sollten auf jeden Fall getrennt werden!
+    
+    Es gibt keine Zuordnung von EventPerformances zu Gruppen. Es kann also nicht festgestellt werden, in welchem Gruppenkontext ein Studi eine Leistung erbracht hat. Eine Gruppenleistung sollte auch einer Gruppe zugeordnet werden, sonst wird es schwierig.
+    
+    Insgesamt ist das nur ausreichend.
+
+6 Ausführungssicht:
+
+    DIe Notation Eures DIagramms entspricht den Vorgaben.
+    
+    Das Diagramm ist ingesamt nachvollziehbar und die Multiplizitäten ok.
+    
+    Warum sind die Browser nicht eingezeichnet? So hängt eine Kommunikationskante in der Luft.
+    
+    Ist es denn wirklich so, dass der Browser direkt mit einer XHTML-Seite kommuniziert? Die hat doch gar keine Funktionalität, um solche Anfragen entgegenzunehmen. Hier fehlt der GlassFish-Prozess!
+    
+    Wenn das DBMS auf einem eigenen Hardware-Server laufen kann, warum stellt Ihr das dann nicht entsprechend dar? Diese Tatsache ist doch auf einem Produktiv-System wahrscheinlich später eine gute Wahl...
+    
+    Die textuelle Beschreibung liefert nützliche Zusatzinformationen (insbesondere erklärt es die fehlenden Browser im Diagramm).
+    
+    Leider fehlt eine konkrete Abbildung der Modulsicht auf diese Ausführungssicht. Das kann nur implizit über die Namen der Ausführungseinheiten und den Text erschlossen werden.
+    
+    Ebenso fehlt eine Abbildung der Strategien auf die Ausführungssicht.
+    
+    Insgesamt noch gut.
+
+7 Sequenzdiagramme:
+
+    Beide Sequenzen in einem Diagramm darzustellen ist nicht sehr übersichtlich.
+    
+    Die konkret übergebenen Parameter fehlen bei einigen Methodenaufrufen.
+    
+    Kurios ist, dass der Dozent nach dem Anlegen einer Veranstaltung nichts weiter tun muss um einen Tutor anzulegen. Der Browser zeigt dem Dozenten die gerade erstellte Veranstaltung an und initialisiert dann einfach mal einen neuen Controller, der eine vom LogicHandler eine EventID bekommt. Vermutlich merkt sich der Controller diese.
+    
+    Die verwendeten Klassen und Methoden sind konsistent zur Modulsicht.
+    
+    Das update() des Browsers ist seltsam. Wie wird denn eine update()-Methode auf dem Browser durch Eure Controller-Klasse aufgerufen?
+    
+    Eine textuelle Beschreibung ist vorhanden und konsistent zum Diagramm.
+    
+    Insgesamt noch gut.
+
+8 Evolution:
+
+    Die Rollen sind doch bereits laut Mindestanforderungen veranstaltungsspezifisch. Jemand ist doch nicht überall Tutor, sondern nur in manchen Veranstaltungen!
+    
+    "Networkmanagement": nicht nachvollziehbar. Die Anzahl der verwalteten Sessions hängt ja nicht von JSF ab, sondern in erster Linie vom Container. Ein eigener NetworkManager würde da nicht helfen.
+    
+    Hier wären Aussagen interessant gewesen zu Veränderungen, die Ihr in der globalen Analyse als wahrscheinlich eingestuft habt. Was wäre zum Beispiel nötig, wenn das Datenbankmanagementsystem gewechselt wird? Oder wenn eine Anbindung an MEMS geschaffen werden soll?
+    
+    Insgesamt ok.
+

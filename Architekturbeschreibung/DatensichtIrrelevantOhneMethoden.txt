@@ -1,0 +1,18 @@
+\subsubsection{Server(Klasse)}
+
+Dies ist die Startklasse des Servers, hier wird der Server initialisiert und der Zugriff für Clients ermöglicht, außerdem wird hier der DBManager angesprochen.
+
+\textbf{Attribute:}
+\begin{itemize}
+\item	\textbf{reg:} Ein statisches Attribut für die Registry, wird nicht in der Datenbank gespeichert. Wenn beim Initialisieren eine Registry existiert wird diese geladen, ansonsten wird eine neue angelegt.
+\end{itemize}
+
+\subsubsection{DBManager}
+
+Diese Klasse übernimmt die Kommunikation mit der Datenbank.
+
+\textbf{Attribute:}
+Keine.
+
+
+

@@ -215,6 +215,7 @@ public class GameScreen implements Screen, InputProcessor{
                 }
             }
             if (shield != null) shield.update((float)timer);
+            if (dragonfist != null) dragonfist.update((float)timer);
 
             batch.setProjectionMatrix(camera.combined);
             shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
@@ -429,6 +430,8 @@ public class GameScreen implements Screen, InputProcessor{
                 pe.draw(batch);
             if (shield != null)
                 shield.draw(batch);
+            if (dragonfist != null)
+                dragonfist.draw(batch);
             batch.end();
 
             try {
@@ -1266,11 +1269,12 @@ try {
                         if(session.activateHeroPower(player,false)) {
                             if (session.hasCalledTheDragon(session.getHero(player))) {
                                 dragonfist = new ParticleEffect();
-                                dragonfist.load(Gdx.files.internal("assets/sprites/dragonfist.party"), Gdx.files.internal("assets/sprites/"));
+                                dragonfist.load(Gdx.files.internal("assets/sprites/dragonFist.party"), Gdx.files.internal("assets/sprites/"));
                                 dragonfist.getEmitters().first().setPosition(session.getSelectedX(session.getHero(player)) * 100 + 50, session.getSelectedY(session.getHero(player)) * 100 + 50);
                                 dragonfist.setDuration(1/2);
                                 dragonfist.scaleEffect(2);
                                 dragonfist.start();
+                                session.deactivateTheDragon(session.getHero(player));
                             } else {
                                 shield = new ParticleEffect();
                                 shield.load(Gdx.files.internal("assets/sprites/shield.party"), Gdx.files.internal("assets/sprites/"));

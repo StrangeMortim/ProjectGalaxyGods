@@ -1,0 +1,80 @@
+\contentsline {section}{\numberline {1}Einf\IeC {\"u}hrung}{5}{section.1}
+\contentsline {subsection}{\numberline {1.1}Zweck}{5}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}Status}{5}{subsection.1.2}
+\contentsline {subsection}{\numberline {1.3}Definitionen, Akronyme und Abk\IeC {\"u}rzungen}{5}{subsection.1.3}
+\contentsline {subsection}{\numberline {1.4}Referenzen}{7}{subsection.1.4}
+\contentsline {subsection}{\numberline {1.5}\IeC {\"U}bersicht \IeC {\"u}ber das Dokument}{7}{subsection.1.5}
+\contentsline {section}{\numberline {2}Globale Analyse}{8}{section.2}
+\contentsline {subsection}{\numberline {2.1}Einflussfaktoren}{8}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Probleme und Strategien}{12}{subsection.2.2}
+\contentsline {section}{\numberline {3}Konzeptionelle Sicht}{14}{section.3}
+\contentsline {subsection}{\numberline {3.1}Datenbank}{14}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Server}{14}{subsection.3.2}
+\contentsline {subsubsection}{\numberline {3.2.1}DBController}{15}{subsubsection.3.2.1}
+\contentsline {subsubsection}{\numberline {3.2.2}GameLogic}{15}{subsubsection.3.2.2}
+\contentsline {subsubsection}{\numberline {3.2.3}GameObjects}{16}{subsubsection.3.2.3}
+\contentsline {subsection}{\numberline {3.3}Client}{16}{subsection.3.3}
+\contentsline {subsubsection}{\numberline {3.3.1}Game}{16}{subsubsection.3.3.1}
+\contentsline {subsubsection}{\numberline {3.3.2}Screens}{16}{subsubsection.3.3.2}
+\contentsline {subsubsection}{\numberline {3.3.3}Assets}{16}{subsubsection.3.3.3}
+\contentsline {subsubsection}{\numberline {3.3.4}ConfigurationData}{17}{subsubsection.3.3.4}
+\contentsline {subsubsection}{\numberline {3.3.5}Window}{17}{subsubsection.3.3.5}
+\contentsline {subsection}{\numberline {3.4}Bezug zu den Strategien}{17}{subsection.3.4}
+\contentsline {section}{\numberline {4}Modulsicht}{18}{section.4}
+\contentsline {subsection}{\numberline {4.1}Server-Modul}{19}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Chat}{19}{subsection.4.2}
+\contentsline {subsection}{\numberline {4.3}GameObject}{20}{subsection.4.3}
+\contentsline {subsection}{\numberline {4.4}Action}{22}{subsection.4.4}
+\contentsline {subsection}{\numberline {4.5}Player}{23}{subsection.4.5}
+\contentsline {subsection}{\numberline {4.6}Screens}{24}{subsection.4.6}
+\contentsline {section}{\numberline {5}Datensicht}{27}{section.5}
+\contentsline {subsection}{\numberline {5.1}Client}{27}{subsection.5.1}
+\contentsline {subsubsection}{\numberline {5.1.1}MainGame}{27}{subsubsection.5.1.1}
+\contentsline {subsubsection}{\numberline {5.1.2}Configuration}{27}{subsubsection.5.1.2}
+\contentsline {subsection}{\numberline {5.2}Server}{28}{subsection.5.2}
+\contentsline {subsubsection}{\numberline {5.2.1}GameSession}{28}{subsubsection.5.2.1}
+\contentsline {subsubsection}{\numberline {5.2.2}ActionProcessor}{29}{subsubsection.5.2.2}
+\contentsline {subsubsection}{\numberline {5.2.3}Action}{29}{subsubsection.5.2.3}
+\contentsline {subsubsection}{\numberline {5.2.4}Fight}{30}{subsubsection.5.2.4}
+\contentsline {subsubsection}{\numberline {5.2.5}Movement}{30}{subsubsection.5.2.5}
+\contentsline {subsubsection}{\numberline {5.2.6}Buff}{30}{subsubsection.5.2.6}
+\contentsline {subsubsection}{\numberline {5.2.7}Market}{31}{subsubsection.5.2.7}
+\contentsline {subsubsection}{\numberline {5.2.8}Chat}{31}{subsubsection.5.2.8}
+\contentsline {subsubsection}{\numberline {5.2.9}Message}{31}{subsubsection.5.2.9}
+\contentsline {subsubsection}{\numberline {5.2.10}Team:}{31}{subsubsection.5.2.10}
+\contentsline {subsubsection}{\numberline {5.2.11}Player}{32}{subsubsection.5.2.11}
+\contentsline {subsubsection}{\numberline {5.2.12}Account}{32}{subsubsection.5.2.12}
+\contentsline {subsubsection}{\numberline {5.2.13}TechnologyTree}{33}{subsubsection.5.2.13}
+\contentsline {subsubsection}{\numberline {5.2.14}Map}{33}{subsubsection.5.2.14}
+\contentsline {subsubsection}{\numberline {5.2.15}Field}{33}{subsubsection.5.2.15}
+\contentsline {subsubsection}{\numberline {5.2.16}Unit}{34}{subsubsection.5.2.16}
+\contentsline {subsubsection}{\numberline {5.2.17}UnitType}{35}{subsubsection.5.2.17}
+\contentsline {subsubsection}{\numberline {5.2.18}Hero}{35}{subsubsection.5.2.18}
+\contentsline {subsubsection}{\numberline {5.2.19}Base}{35}{subsubsection.5.2.19}
+\contentsline {subsubsection}{\numberline {5.2.20}Research}{36}{subsubsection.5.2.20}
+\contentsline {section}{\numberline {6}Ausf\IeC {\"u}hrungssicht}{36}{section.6}
+\contentsline {section}{\numberline {7}Zusammenh\IeC {\"a}nge zwischen Anwendungsf\IeC {\"a}llen und Architektur}{37}{section.7}
+\contentsline {subsection}{\numberline {7.1}Erstellen einer Einheit}{38}{subsection.7.1}
+\contentsline {subsection}{\numberline {7.2}Einheit wurde bewegt}{39}{subsection.7.2}
+\contentsline {section}{\numberline {8}Evolution}{40}{section.8}
+\contentsline {section}{\numberline {9}Dokumentation}{41}{section.9}
+\contentsline {subsection}{\numberline {9.1}Screens:}{41}{subsection.9.1}
+\contentsline {subsubsection}{\numberline {9.1.1}AbstractGameScreen}{41}{subsubsection.9.1.1}
+\contentsline {subsubsection}{\numberline {9.1.2}Config:}{42}{subsubsection.9.1.2}
+\contentsline {subsubsection}{\numberline {9.1.3}WorldController}{42}{subsubsection.9.1.3}
+\contentsline {subsubsection}{\numberline {9.1.4}WorldRenderer}{42}{subsubsection.9.1.4}
+\contentsline {subsection}{\numberline {9.2}ServerMain:}{42}{subsection.9.2}
+\contentsline {subsubsection}{\numberline {9.2.1}Server:}{42}{subsubsection.9.2.1}
+\contentsline {subsubsection}{\numberline {9.2.2}DBManager:}{43}{subsubsection.9.2.2}
+\contentsline {subsection}{\numberline {9.3}GameObject:}{43}{subsection.9.3}
+\contentsline {subsubsection}{\numberline {9.3.1}GameSession:}{43}{subsubsection.9.3.1}
+\contentsline {subsubsection}{\numberline {9.3.2}Map:}{44}{subsubsection.9.3.2}
+\contentsline {subsubsection}{\numberline {9.3.3}Unit:}{44}{subsubsection.9.3.3}
+\contentsline {subsubsection}{\numberline {9.3.4}Base:}{45}{subsubsection.9.3.4}
+\contentsline {subsubsection}{\numberline {9.3.5}Market:}{45}{subsubsection.9.3.5}
+\contentsline {subsection}{\numberline {9.4}Action:}{45}{subsection.9.4}
+\contentsline {subsubsection}{\numberline {9.4.1}ActionProcessor}{45}{subsubsection.9.4.1}
+\contentsline {subsubsection}{\numberline {9.4.2}Action:}{46}{subsubsection.9.4.2}
+\contentsline {subsection}{\numberline {9.5}Chat:}{46}{subsection.9.5}
+\contentsline {subsubsection}{\numberline {9.5.1}Chat(Klasse):}{46}{subsubsection.9.5.1}
+\contentsline {subsubsection}{\numberline {9.5.2}Message:}{46}{subsubsection.9.5.2}
