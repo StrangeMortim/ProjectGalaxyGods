@@ -180,7 +180,7 @@ public class Field implements Serializable {
             for(int k=xPos-1; k<=xPos+1; ++k){
                 try {
                     Unit tmp = map.getField(k,i).getCurrent();
-                    if(tmp != null){
+                    if(tmp != null&&tmp!=current){
                        result.add(tmp);
                     }
                 } catch (NullPointerException e){

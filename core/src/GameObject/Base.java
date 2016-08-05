@@ -57,9 +57,9 @@ public class Base extends Unit implements Serializable {
             currentField.getMap().getField(currentField.getXPos()+1,currentField.getYPos()).setSpriteIndex(SpriteNames.BASE_DOWN_LEFT_CASERNE.getSpriteIndex());
 
             if(labRoundsRemaining == Constants.FINISHED)
-                currentField.getMap().getField(currentField.getXPos()+1,currentField.getYPos()-1).setSpriteIndex(SpriteNames.BASE_DOWN_RIGHT_FULL.getSpriteIndex());
+                currentField.getMap().getField(currentField.getXPos(),currentField.getYPos()-1).setSpriteIndex(SpriteNames.BASE_DOWN_RIGHT_FULL.getSpriteIndex());
             else
-                currentField.getMap().getField(currentField.getXPos()+1,currentField.getYPos()-1).setSpriteIndex(SpriteNames.BASE_DOWN_RIGHT_CASERNE.getSpriteIndex());
+                currentField.getMap().getField(currentField.getXPos(),currentField.getYPos()-1).setSpriteIndex(SpriteNames.BASE_DOWN_RIGHT_CASERNE.getSpriteIndex());
 
         } else if(labRoundsRemaining == Constants.FINISHED){
             currentField.getMap().getField(currentField.getXPos()+1,currentField.getYPos()-1).setSpriteIndex(SpriteNames.BASE_DOWN_RIGHT_LAB.getSpriteIndex());
