@@ -10,15 +10,16 @@ import java.rmi.RemoteException;
 import java.sql.*;
 
 /**
- * Diese Klasse realisiert das Speichern,Erstellen sowie Laden von GameSession- und Account-Objekten.
- * Sie nutzt dazu eine Derby Datenbank mit der sie ueber JDBC kommuniziert.
+ * This class realises all communication with the Database using JDBC-Embedded
+ * therefore she takes care of all saving an loading processes for GameSessions and Account-Objects
+ * @author Benjamin
  */
 public class DBManager {
     //Verbindungsadresse der Datenbank.
     final static String DB_URL = "jdbc:derby:DerbyDB;create=true";
 
     /**
-     * Dieser Konstruktor erstellt, bei Bedarf, fehlende Bereiche der Datenbank.
+     * The Constructor, Initializes missing Parts of the Database if needed
      */
     public DBManager()
     {
@@ -44,9 +45,9 @@ public class DBManager {
 
 
     /**
-     * Laedt die GameSession mit spezifischem Namen.
-     * @param sessionName Name der GameSession
-     * @return GameSession mit dem jeweiligen Namen, sonst null.
+     * Loads the GameSession with the given Name
+     * @param sessionName Name of the GameSession
+     * @return the GameSession if found, otherwise null
      */
     public static GameSession loadSession(String sessionName){
         GameSession session=null;
@@ -72,9 +73,9 @@ public class DBManager {
     }
 
     /**
-     *Speichert die uebergebene GameSession.
-     * @param gs zu speichernde GameSession
-     * @return true, falls Speichern erfolgreich, sonst false.
+     * Saves the GameSession
+     * @param gs the GameSession to save
+     * @return true if saving was successfull else false
      */
     public boolean saveSession(GameSession gs){
 
@@ -123,11 +124,11 @@ public class DBManager {
     }
 
     /**
-     * Diese Methode realisiert die Registration eines neuen Accounts.
+     * Registers a new Account with the given Data, in the Database
      *
-     * @param name     Name vom Account
-     * @param password Passwort vom Account
-     * @return true, wenn Registration geklappt hat, sonst false
+     * @param name     Name of the Account
+     * @param password Password of the Account
+     * @return true if registration was a success else false
      */
     public static boolean registerAccount(String name, String password){
 try {
@@ -149,11 +150,11 @@ try {
     }
 
     /**
-     * Prueft, ob Eingaben zum Account korrekt sind.
+     * Checks the given Data to it's corresponding Account counterpart in the Database
      *
-     * @param name     Name des Accounts
-     * @param password Passwort des Accounts
-     * @return true, wenn Pruefung erfolgreich, sonst false.
+     * @param name     Name of the Account
+     * @param password Password of the Account
+     * @return true if the given Data is correct else false
      */
     public static boolean checkAccount(String name, String password){
         if(getAccountList().matches("(.*)"+name+"(.*)")) {
@@ -196,8 +197,8 @@ try {
     }
 
     /**
-     * Gibt alle GameSession-Namen zurueck, die auf dem Server gespeichert sind.
-     * @return Namen der GameSession-Objekte
+     * Returns all GameSession names in the Database
+     * @return All name separated with an ;
      */
     public static String getSessionList(){
         String list="";
@@ -220,8 +221,8 @@ try {
     }
 
     /**
-     * Gibt alle Accountnamen zurueck, die auf dem Server gespeichert sind.
-     * @return Namen der Accounts
+     * Returns all account names in the Database
+     * @return All accountNames separated with an ;
      */
     public static String getAccountList(){
         String list="";
@@ -244,7 +245,7 @@ try {
     }
 
     /**
-     * Loescht alle Datenbankeintraege der GameSessions und Accounts
+     * Deletes every GameSession and Account entry in the Database
      */
     public static void dropTables()
     {
@@ -265,9 +266,9 @@ try {
     }
 
     /**
-     * Loescht die GameSession mit eingegebenen Namen.
-     * @param name Name des GameSession-Objektes
-     * @return true, falls es geklappt hat, sonst false
+     * Deletes the GameSession with the given Name
+     * @param name Name of the GameSession to delete
+     * @return true if deleting was a succcess, else false
      */
     public static Boolean deleteGameSession(String name){
         try{
@@ -287,9 +288,8 @@ try {
     }
 
     /**
-     * Erstellt die Tabelle in der die GameSession-Objekte mit ihren spezifischen Namen
-     * gespeichert werden sollen.
-     * @param conn Verbindung zu der Datenbank
+     * Creates Table for GameSession
+     * @param conn The connection to use
      */
     public static void buildGameSessionTable(Connection conn)
     {
@@ -303,8 +303,8 @@ try {
     }
 
     /**
-     * Erstellt die Tabelle in der die Account-Daten gespeichert werden.
-     * @param conn
+     * Creates the Table for the Accounts
+     * @param conn The connection to use
      */
     public static void buildAccountTable(Connection conn){
         try{

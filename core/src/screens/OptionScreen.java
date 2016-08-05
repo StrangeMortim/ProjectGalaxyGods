@@ -26,7 +26,10 @@ import java.util.List;
 
 
 /**
- * Created by Fabi on 29.06.2016.
+ * This Screens displays the Configuration-Options an enables the User to change those accordingly,
+ * it also saves the values, using libGdx Preferences
+ * not much comment because it's mostly displaying stuff and should be self-explaining to the most part
+ * @author Fabi
  */
 public class OptionScreen implements Screen {
     private Game game;

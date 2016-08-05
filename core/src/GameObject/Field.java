@@ -9,7 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-
+/**
+ * This class represents a single field on the map
+ *
+ * @author Fabi
+ */
 public class Field implements Serializable {
 
   //  private static final long serialVersionUID = -7532038227070675590L;
@@ -39,11 +43,8 @@ public class Field implements Serializable {
         this.yPos = yPos;
         this.map = map;
         this.session = session;
-        try {
-            iD = session.registerObject(this);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+        iD = session.registerObject(this);
+
 
         //Choose random default Fieldsprite, increase number for new sprites,
         //sprites must be named "normal" + number(next higher int) and be png files
@@ -66,11 +67,9 @@ public class Field implements Serializable {
     }
 
     /**
-     * Aktualisiert das Objekt auf dem Feld
-     * Und die bestehenden Bauprozesse
-     * Außerdem werden Ressourcen verteilt
+     * Updates the current Unit on the field,
+     * distributes resources to units and updates building processes
      */
-
     public List<Buff> update() {
 
         this.updateBuildingProcesses();
@@ -80,14 +79,12 @@ public class Field implements Serializable {
         return current.update();
         else
             return new ArrayList<Buff>();
-        /*TODO check*/
     }
 
     /**
-     * Verteilt Ressourcen an alle umstehenden Einheiten, falls das Feld ressourcen besitzt
+     * If the field has resources, distribute them to all (Worker)units around the field
      */
     private void distributeRessources(){
-        /*TODO specify how ressources are distributed*/
         //if field has ressources
         if(resType != Constants.NONE_OR_NOT_SET) {
             List<Unit> nearUnits = null;
@@ -130,7 +127,7 @@ public class Field implements Serializable {
     }
 
     /**
-     * Aktualisiert die Bauprozesse
+     * updates the building processes
      */
     private void updateBuildingProcesses(){
         /*TODO check*/
@@ -173,7 +170,6 @@ public class Field implements Serializable {
      * Searches all Unit in the direct environment to the Field(the (max) 8 surrounding Fields
      * @return the found Units
      */
-
     public List<Unit> getNearUnits(){
         List<Unit> result = new ArrayList<>();
         for(int i=yPos-1; i<=yPos+1; ++i){
@@ -190,14 +186,13 @@ public class Field implements Serializable {
         }
 
         return result;
-        /*TODO check*/
     }
 
     /**
-     * Faengt an eine Basis auf dem Feld zu bauen
+     * Starts building a base for the given player on the field
      *
-     * @param player der Spieler der die Basis baut
-     * @return gibt an ob der Spieler die Basis bauen kann oder nicht
+     * @param player the player who wants to build the base
+     * @return whether the player could start the building or not
      */
 
     public boolean buildBase(Player player) {
@@ -229,15 +224,14 @@ public class Field implements Serializable {
                 }
             }
 
-        /*TODO check*/
         return false;
     }
 
     /**
-     * Bricht den Bau der Basis ab, findet keiner statt passiert nichts
+     * Cancels the building process of the base, if it is active
      *
-     * @param player der Spieler der versucht den Bau abzubrechen
-     * @return Ob der Vorgang erfolgreich war oder nicht(ob nach dem Methodenaufruf kein Bau mehr stattfindet oder nicht)
+     * @param player the player trying to cancel the process
+     * @return if the cancelling was a success or not
      */
 
     public boolean abortBuild(Player player) {
@@ -264,10 +258,10 @@ public class Field implements Serializable {
     }
 
     /**
-     * Startet den Bau einer Mine, der Bau kann nicht abgebrochen werden
+     * starts building a mine on the field, cannot be canceled
      *
-     * @param player der Spieler der den Bau starten will
-     * @return gibt an ob das Starten erfolgreich war
+     * @param player the player who wants to build the mine
+     * @return whether the player could start the building or not
      */
 
     public boolean buildMine(Player player) {
@@ -284,25 +278,24 @@ public class Field implements Serializable {
                 }
         }
 
-        /*TODO check*/
         return false;
     }
 
-
+    /**
+     * @return if the field has a unit on it, return the unit, else the field itself
+     */
     public Object select(){
         return (current == null) ? this : current;
     }
 
 
-    public int getId() throws RemoteException {
-        return iD;
-    }
-
     /**
      * Getter und setter
      *
-     * @param resType
      */
+    public int getId()  {
+        return iD;
+    }
 
     public void setResType(int resType) {
         if(resType < Constants.NONE_OR_NOT_SET || resType > Constants.MANA)
@@ -320,12 +313,9 @@ public class Field implements Serializable {
                         : SpriteNames.NORMAL_FIELD.getSpriteIndex();
         
     }
-
-
     public int getResType() {
         return resType;
     }
-
 
     public void setResValue(int resValue){
         if(resValue < 0) {
@@ -336,12 +326,9 @@ public class Field implements Serializable {
 
 
     }
-
-
     public int getResValue(){
         return resValue;
     }
-
 
     public void setXPos(int xPos) {
         if(xPos < 0 || xPos > Constants.FIELDXLENGTH)
@@ -349,12 +336,9 @@ public class Field implements Serializable {
 
         this.xPos = xPos;
     }
-
-
     public int getXPos() {
         return xPos;
     }
-
 
     public void setYPos(int yPos) {
         if(yPos < 0 || yPos > Constants.FIELDYLENGTH)
@@ -362,12 +346,9 @@ public class Field implements Serializable {
 
         this.yPos = yPos;
     }
-
-
     public int getYPos() {
         return yPos;
     }
-
 
     public void setCurrent(Unit current) {
         if(current==null){
@@ -399,22 +380,16 @@ public class Field implements Serializable {
         }
         walkable=false;
     }
-
-
     public Unit getCurrent() {
         return current;
     }
 
-
     public void setWalkable(boolean walkable) {
         this.walkable = walkable;
     }
-
-
     public boolean getWalkable() {
         return walkable;
     }
-
 
     public void setRoundsRemain(int roundsRemain) {
         if(roundsRemain < Constants.NONE_OR_NOT_SET)
@@ -422,13 +397,9 @@ public class Field implements Serializable {
         else
             this.roundsRemain = roundsRemain;
     }
-
-
     public int getRoundsRemain() {
         return roundsRemain;
     }
-
-    //Sprite name must contain sprite folder
 
     public void setSpriteIndex(int spriteIndex) {
         if(spriteIndex < 0)
@@ -437,31 +408,21 @@ public class Field implements Serializable {
         this.spriteIndex = spriteIndex;
        // this.texture = new Texture(Gdx.files.internal("assets/"+this.spriteIndex));
     }
-
-
     public int getSpriteIndex() {
         return spriteIndex;
     }
 
-
     public void setHasMine(boolean hasMine) {
         this.hasMine = hasMine;
     }
-
-
     public boolean getHasMine() {
         return hasMine;
     }
 
-
     public void setMap(Map map) {
         this.map = map;
     }
-
-
     public Map getMap() {
         return map;
     }
-
-
 }

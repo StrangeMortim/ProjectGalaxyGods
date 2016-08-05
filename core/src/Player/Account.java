@@ -3,10 +3,20 @@ package Player;
 
 import java.io.Serializable;
 
+/**
+ * Realises an account for players
+ * @author Benjamin
+ */
 public class Account implements Serializable {
 
-   // private static final long serialVersionUID = -2953331051227985322L;
+    /**
+     * The name of the account
+     */
     private String name;
+
+    /**
+     * The password of the account
+     */
     private String password;
 
     public Account(String name, String password){
@@ -17,22 +27,19 @@ public class Account implements Serializable {
         this.password = password;
     }
 
-
+    /**
+     * Getter/setter
+     */
     public void setName(String name) {
         this.name = name;
     }
-
-
     public String getName() {
         return name;
     }
 
-
     public void setPassword(String pw) {
         this.password = pw;
     }
-
-
     public String getPassword() {
         return password;
     }

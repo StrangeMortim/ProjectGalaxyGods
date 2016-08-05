@@ -3,13 +3,15 @@ package GameObject;
 import java.io.Serializable;
 
 /**
- * Created by Fabi on 14.06.2016.
+ * an enum for everything that can be builded
+ * containing getter for their relevant information
  */
 public enum Building implements Serializable {
     BASE,LABOR, CASERNE, MINE, MARKET;
 
-
-
+    /**
+     * the getter
+     */
     public int getBuildTime() {
         switch (this)
         {
@@ -23,7 +25,6 @@ public enum Building implements Serializable {
                 return 0;
         }
     }
-
 
     public int[] getRessourceCost() {
         switch (this)
@@ -40,7 +41,6 @@ public enum Building implements Serializable {
                 return new int[]{0,0,0,0};
         }
     }
-
 
     public int[] getInitialCost(){
         switch (this){

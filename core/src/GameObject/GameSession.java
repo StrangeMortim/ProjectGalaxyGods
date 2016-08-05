@@ -14,80 +14,89 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Diese Klasse umfasst alle Daten und Relationen, die fuer das Spiel relevant sind. Sie realisiert
- * damit die Speicherung und Verwaltung des gesamten Spielzustandes.
+ * This class represents all Data and References in one game, therefor she realises the whole status
+ * of the game
+ *
+ * @author Benjamin, Fabi
  */
 public class GameSession implements IGameSession, Serializable{
 
-   // private static final long serialVersionUID = -3697414040192093513L;
     /**
-     * Name der GameSession.
+     * Name of the GameSession.
      */
     private String name = "TestSession";
     /**
-     * Passwort der GameSesion.
+     * Password of the GameSesion. -currently unused-
      */
     private String password = "GameSession";
     /**
-     * Liste mit den verbuendeten Spielern.
+     * List with the Teams
      */
     private List<Team> teams;
     /**
-     * Realisiert das Spielfeld.
+     * The Map that is played on
      */
     private Map level;
     /**
-     * Spieler der am Zug ist.
+     * The player who is on turn
      */
     private Player active;
     /**
-     * Liste mit Buffs, die aktiv sind.
+     * All currently active Buffs
      */
     private List<Buff> buffs;
     /**
-     * Liste mit den Accounts und zugehoerigen Spielern.
+     * Identifier for Account-Player relations
      */
     private HashMap<Account,Player> identities;
 
     /**
-     * Der Chat des Spiels.
+     * The global Chat of the GameSession
      */
     private Chat sessionChat;
     /**
-     * Die Spielrunde in der sich die Spieler befinden.
+     * The current turn number
      */
     private int turn = 1;
 
     /**
-     * DIe maximale Rundenanzahl
+     * How many rounds the game should proceed at most -currently unused-
      */
     private int round = 0;
     /**
-     * Die Anzahl der maximalen Spieler pro Team.
+     * How many players can join
      */
     private int maxPlayers = 2;
     /**
-     * Gibt an, ob die Runde gestartet ist.
+     * determines if the game has started or is still waiting for players
      */
     private boolean hasStarted = false;
     /**
-     * Der Marktplatz des Spiels.
+     * The marketplace for all player
      */
     private Market market;
     /**
-     * Max Anzahl an Spielern
+     * How many players are in the game
      */
     private int numberOfPlayers=0;
 
+    /**
+     * Id counter for the global IDs
+     */
     private int currentId = 1;
 
+    /**
+     * Archives every registered object, so that it can be easily accessed via the ID
+     */
     private HashMap<Integer,Object> archive = new HashMap<>();
 
+    /**
+     * The currently selected object
+     */
     private Object selected = null;
 
-
     /**
-     * Das Gewinnerteam
+     * The winning team
      */
     private Team winner;
 
@@ -107,12 +116,15 @@ public class GameSession implements IGameSession, Serializable{
     }
 
     /**
-     * Ruft bei allen Klassen, die von der GameSession verwaltet werden, die Update-Methode auf.
+     * Updates all objects in the game, starting with the level(which updates the fields and so on)
+     * also updates every Buff an removes it if needed
+     * at last distributes gold to the players
      */
     @Override
     public void update(){
             level.update();
 
+        //active buffs
         Iterator<Buff> it = buffs.iterator();
         while (it.hasNext())
             if(it.next().execute())
@@ -121,6 +133,7 @@ public class GameSession implements IGameSession, Serializable{
         for(Team t: teams)
             for(Player p: t.getPlayers()){
                 p.getRessources()[Constants.GOLD] += Constants.GOLD_RES_VALUE+p.getRessourceBoni()[Constants.GOLD];
+                //remove the reference Buff objects in Player
                 it = p.getTemporaryBuffs().iterator();
                 while (it.hasNext())
                     if(it.next().execute())
@@ -130,8 +143,8 @@ public class GameSession implements IGameSession, Serializable{
     }
 
     /**
-     *
-     * @param u
+     * provides a new unit with all buffs applying for it
+     * @param u the unit to register
      */
     @Override
     public void registerUnit(Unit u) {
@@ -149,9 +162,12 @@ public class GameSession implements IGameSession, Serializable{
     }
 
     /**
-     * Entfernt alle Buffs für die uebergebene Einheit
+     * Removes a Unit and her Buffs from the Game,
+     * and provides the resources for the owning player out of the teamCheck
+     * also arranges the conquering of a base and sets the field free if the unit
+     * was not base
      *
-     * @param u
+     * @param u the Unit to remove
      */
     @Override
     public void removeUnit(Unit u) {
@@ -170,10 +186,17 @@ public class GameSession implements IGameSession, Serializable{
                 p.getTeam().getCheck()[i] = 0;
             }
         }
+
+        if(!(u instanceof Base))
+            u.getField().setCurrent(null);
     }
 
     /**
-     * Erstellt eine Nachricht, die ausgewaehlte Spieler sehen koennen.
+     * sends a chat message
+     *
+     * @param playerId the id of the sending player
+     * @param team     determines if it should be send in the team chat or not
+     * @param content  the content of the message
      */
     @Override
     public void sendMessage(int playerId, boolean team, String content) {
@@ -192,8 +215,8 @@ public class GameSession implements IGameSession, Serializable{
     }
 
     /**
-     * Entfernt ein Team aus dem Spiel.
-     * @param t Team das entfernt werden soll.
+     * Removes a team from the game
+     * @param t The Team that shall be removed
      */
     @Override
     public void removeTeam(Team t) {
@@ -201,8 +224,8 @@ public class GameSession implements IGameSession, Serializable{
     }
 
     /**
-     * Fuegt ein Team dem Spiel hinzu.
-     * @param t Team das hinzugefuegt werden soll.
+     * Adds a team to the game
+     * @param t The team that shall be added
      */
     @Override
     public void addTeam(Team t) {
@@ -211,14 +234,18 @@ public class GameSession implements IGameSession, Serializable{
 
 
     /**
-     * Fuegt dem Spiel eine Liste von Buffs hinzu.
-     * @param b Liste von Buffs, die hinzugefuegt werden sollen.
+     * Adds a list of active Buffs to the game
+     * @param b The buffs that shall be added to the active ones
      */
     @Override
     public void addBuffs(List<Buff> b){
         buffs.addAll(b);
     }
 
+    /**
+     * adds a single active Buff to the game
+     * @param b the Buff to add
+     */
     @Override
     public void addSingleBuff(Buff b)  {
         if(b == null)
@@ -228,8 +255,8 @@ public class GameSession implements IGameSession, Serializable{
     }
 
     /**
-     * Entfernt Buff aus der Liste von Buffs.
-     * @param b Buff der entfernt werden soll.
+     * Removes a Buff from the active ones
+     * @param b the Buff to Remove
      */
     @Override
     public void removeBuff(Buff b){
@@ -237,7 +264,8 @@ public class GameSession implements IGameSession, Serializable{
     }
 
     /**
-     * Leitet alle noetigen Schritte fuer den Beginn eines Zuges ein.
+     * Does everything needed, at the start of a turn
+     * -which is currently nothing-
      */
     @Override
     public void startTurn(){
@@ -245,7 +273,11 @@ public class GameSession implements IGameSession, Serializable{
     };
 
     /**
-     * Leitet alle noetigen Schritte fuer das Beenden eines Zuges ein.
+     * Finishes a turn for the given player and sets the next player active,
+     * also triggers update, saving of the game and the check if a player/team has won
+     * also distributes gold to all players
+     *
+     * @param playerId the id of the player who wants to finish the turn, must be the same as active.ID
      */
     @Override
     public void finishTurn(int playerId){
@@ -280,8 +312,8 @@ public class GameSession implements IGameSession, Serializable{
     }
 
     /**
-     * Entfernt Spieler aus dem Spiel und alle seine Einheiten.
-     * @param playerId
+     * Removes a player from the game an kills all of his Units
+     * @param playerId the id of the removing player
      */
     @Override
     public void playerLeave(int playerId) {
@@ -310,10 +342,10 @@ public class GameSession implements IGameSession, Serializable{
     }
 
     /**
-     * Fuegt Spieler dem Spiel hinzu.
-     * @param a Account des Spielers.
-     * @param teamColor das Team zu dem er gehoert.
-     * @return true, wenn er hinzugefuegt werden konnte, sonst false.
+     * Lets an account join the game in the given team and if needed creates a player for the account
+     * @param a Account to join
+     * @param teamColor the team he shall belong to
+     * @return the id of the corresponding player-object
      */
     @Override
     public int playerJoin(Account a, String teamColor) {
@@ -361,6 +393,9 @@ public class GameSession implements IGameSession, Serializable{
 
     }
 
+    /**
+     * Prints out some Information about the Session, for Debug Purposes
+     */
     @Override
     public void showSessionDetails(){
         GameSession session=this;
@@ -400,8 +435,8 @@ public class GameSession implements IGameSession, Serializable{
 
 
     /**
-     * Speichert dieses Objekt in der Datenbank.
-     * @return true, wenn es geklappt hat, sonst false
+     * Prompts the DBManager to save the session
+     * @return whether the action was a success or not
      */
     @Override
     public boolean save(){
@@ -409,8 +444,8 @@ public class GameSession implements IGameSession, Serializable{
     }
 
     /**
-     * Prueft, ob ein Team oder ein Spieler das Spiel gewonnen hat.
-     * @return true, wenn jemand gewonnen hat.
+     * Checks if any team is the remaining winner team
+     * @return true if a team has won, else false
      */
     @Override
     public boolean finish() {
@@ -421,23 +456,14 @@ public class GameSession implements IGameSession, Serializable{
         return false;
     }
 
-
-    //Getter Setter
-    @Override
-    public int getMap() {
-        return level.getId();
-    }
-
-    @Override
-    public int getNumberOfPlayers() {
-        return numberOfPlayers;
-    }
-
-    @Override
-    public void setNumberOfPlayers(int number) {
-       numberOfPlayers=number;
-    }
-
+    /**
+     * Registers a new buff as an active one an creates instances for all Unit
+     * it applies to
+     * @param originID   the unit the Buff is meant for(if a specific one)
+     * @param playerId   the id of the player who registers the buff
+     * @param info       the info on which the buff is based
+     * @return           if the action was a success or not
+     */
     @Override
     public boolean registerBuff(int originID, int playerId, BuffInfo info) {
         try {
@@ -452,7 +478,7 @@ public class GameSession implements IGameSession, Serializable{
                         b = new ReduceUnitCosts(null, player, this);
                         break;
                     default:
-                        Unit u = (Unit)archive.get(originID);
+                        Unit u = (Unit) archive.get(originID);
                         b = new Buff(u, player, info, this);
                         break;
                 }
@@ -467,6 +493,7 @@ public class GameSession implements IGameSession, Serializable{
                 for (int j = Constants.WOOD; j <= Constants.MANA; ++j)
                     b.getPlayer().getRessources()[j] -= b.getBuffInfo().getBuffCost()[j];
 
+                //case of a normal Buff, register it for all existing units
                 if (b.getClass().isAssignableFrom(Buff.class)) {
                     Buff current = null;
                     Unit currentUnit = null;
@@ -495,6 +522,7 @@ public class GameSession implements IGameSession, Serializable{
                         }
                     }
                 } else {
+                    //case special buff, just activate it
                     b.execute();
                 }
 
@@ -508,121 +536,13 @@ public class GameSession implements IGameSession, Serializable{
         return false;
     }
 
+    /**
+     * Registers a new created Object
+     * @param toRegister  the Object who wants itself register
+     * @return the id of the new registered object
+     */
     @Override
-    public Chat getSessionChat() {
-        return sessionChat;
-    }
-
-    @Override
-    public void setSessionChat(Chat sessionChat) {
-        this.sessionChat = sessionChat;
-    }
-
-    @Override
-    public int getTurn() {
-        return turn;
-    }
-
-    @Override
-    public void setTurn(int turn){
-        this.turn = turn;
-    }
-
-    @Override
-    public boolean isHasStarted(){
-        return hasStarted;
-    }
-
-    @Override
-    public void setHasStarted(boolean hasStarted){
-        this.hasStarted = hasStarted;
-    }
-
-    public int getMaxPlayers(){
-        return maxPlayers;
-    }
-
-    public void setMaxPlayers(int maxPlayers) {
-        this.maxPlayers = maxPlayers;
-    }
-
-    @Override
-    public List<Team> getTeams(){
-        return teams;
-    }
-
-
-    @Override
-    public int getActive(){
-        if(active==null)
-            return -1;
-        else
-        return active.getId();
-    }
-
-    @Override
-    public void setActive(Player active){
-        this.active = active;
-        active.setTurn(true);
-    }
-
-    @Override
-    public List<Buff> getBuffs(){
-        return buffs;
-    }
-
-    @Override
-    public int getMarket(){
-            return market.getId();
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(String name){
-        if(name.length()>100){
-            this.name=name.substring(0,99);
-        }else{
-        this.name = name;
-        }
-    }
-
-    @Override
-    public int getRound() {
-        return round;
-    }
-
-    @Override
-    public void setRound(int round) {
-        this.round = round;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public Player getPlayerPerName(String name){
-        for(java.util.Map.Entry<Account,Player> entry: identities.entrySet())
-            if(entry.getKey().getName().equals(name))
-                return entry.getValue();
-
-        return null;
-    }
-
-
-    ////////////////////////////////////////////
-    @Override
-    public int registerObject(Object toRegister) throws RemoteException {
+    public int registerObject(Object toRegister)  {
         if(toRegister == null)
             throw new IllegalArgumentException("Cannot Register null");
 
@@ -632,8 +552,14 @@ public class GameSession implements IGameSession, Serializable{
         return id;
     }
 
+    /**
+     * selects the Object on the given coordinates-> see Field.select
+     * @param x  the x coordinate
+     * @param y  the y coordinate
+     * @return   the id of the selected object
+     */
     @Override
-    public int select(int x, int y) throws RemoteException {
+    public int select(int x, int y)  {
         if(x < 0 || x > Constants.FIELDXLENGTH || y < 0 || y > Constants.FIELDYLENGTH){
             selected = null;
             return -1;
@@ -644,12 +570,18 @@ public class GameSession implements IGameSession, Serializable{
             else if (selected instanceof Unit)
                 return ((Unit)selected).getId();
             else
-            throw new IllegalArgumentException("Das Feld hat ein unerlaubtes Objekt als current erhalten");
+                throw new IllegalArgumentException("Das Feld hat ein unerlaubtes Objekt als current erhalten");
         }
     }
 
+    /**
+     * Returns the correct spriteIndex for the prepared Textures, on the given coordinates
+     * @param x  the x coordinate
+     * @param y  the y coordinate
+     * @return the SpriteIndex
+     */
     @Override
-    public int[] getSpriteIndex(int x, int y) throws RemoteException {
+    public int[] getSpriteIndex(int x, int y)  {
         if(x < 0 || x > Constants.FIELDXLENGTH || y < 0 || y > Constants.FIELDYLENGTH)
             return new int[2];
 
@@ -660,15 +592,21 @@ public class GameSession implements IGameSession, Serializable{
         } else if(tmp instanceof Field || tmp instanceof Base){
             return new int[]{level.getField(x,y).getSpriteIndex(),-1};
         } else if(tmp instanceof Unit){
-                return new int[]{((Unit)tmp).getSpriteIndex(),((Unit)tmp).getId()};
-            }
+            return new int[]{((Unit)tmp).getSpriteIndex(),((Unit)tmp).getId()};
+        }
 
         System.out.println("Das Feld: (" + x+","+y + ") besitzt kein Sprite");
         return new int[2];
     }
 
+    /**
+     * gets the Unit-Information for the given ID, if the id doesn't belong to a unit
+     * the values are "-1/-1"
+     * @param id the id of the Unit
+     * @return  a List of Strings, each corresponding to 1 Attribute Info
+     */
     @Override
-    public List<String> getInformation(int id) throws RemoteException {
+    public List<String> getInformation(int id){
         Object tmp = archive.get(id);
         if(tmp == null) {
             //System.out.println("Id: " + id + " besitzt kein Objekt");
@@ -685,8 +623,12 @@ public class GameSession implements IGameSession, Serializable{
         return failSafe;
     }
 
+    /**
+     * @param playerId  the id of the wanted player
+     * @return the current resources of the player
+     */
     @Override
-    public int[] getRessources(int playerId) throws RemoteException {
+    public int[] getRessources(int playerId){
         Object tmp = archive.get(playerId);
 
         if(tmp == null) {
@@ -701,8 +643,13 @@ public class GameSession implements IGameSession, Serializable{
         return new int[0];
     }
 
+    /**
+     * checks if the given player ID is the one of the owner of selected
+     * @param playerId the id of the player to check
+     * @return whether the given player is the owner or not
+     */
     @Override
-    public boolean isSelectedOwner(int playerId) throws RemoteException {
+    public boolean isSelectedOwner(int playerId){
         if(selected == null)
             return false;
 
@@ -719,6 +666,11 @@ public class GameSession implements IGameSession, Serializable{
         return false;
     }
 
+    /**
+     * checks if the given player has access to the market
+     * @param playerId the id of the player to check
+     * @return  true if the id belongs to a player and he has access to the market, else false
+     */
     @Override
     public boolean checkMarket(int playerId){
         Object tmp = archive.get(playerId);
@@ -734,6 +686,12 @@ public class GameSession implements IGameSession, Serializable{
         return false;
     }
 
+    /**
+     * checks if the given player has reached the end of the given path on his TechTree
+     * @param playerId  the id of the player to check
+     * @param treePath  the path on the tree to check
+     * @return whether the player has reached the end or not
+     */
     @Override
     public boolean checkPathFull(int playerId, int treePath){
         Object tmp = archive.get(playerId);
@@ -756,6 +714,10 @@ public class GameSession implements IGameSession, Serializable{
         return false;
     }
 
+    /**
+     * checks if selected is a field an blocked
+     * @return true if selected is a field an not free, else false
+     */
     @Override
     public boolean hasSelectedCurrent(){
         if(selected instanceof Field)
@@ -765,6 +727,11 @@ public class GameSession implements IGameSession, Serializable{
         return false;
     }
 
+    /**
+     * checks if the current selected object is  of the given type
+     * @param classType one of the selectable class types
+     * @return if selectable is instanceof of the given type or not
+     */
     @Override
     public boolean isSelectedClassOf(Selectable classType){
         switch (classType){
@@ -781,6 +748,11 @@ public class GameSession implements IGameSession, Serializable{
         }
     }
 
+    /**
+     * checks if selected is a field and of the given resource-type
+     * @param type  the resource index to check(see Constants)
+     * @return true if selected is field and of the given resource type, else false
+     */
     @Override
     public boolean isSelectedRessourceType(int type){
         if(!(selected instanceof Field)){
@@ -791,6 +763,11 @@ public class GameSession implements IGameSession, Serializable{
         return ((Field)selected).getResType() == type;
     }
 
+    /**
+     * gets the x coordinate for the object with the given id
+     * @param id the id of the object
+     * @return the x coordinate
+     */
     @Override
     public int getSelectedX(int id){
         Object tmp = archive.get(id);
@@ -808,6 +785,11 @@ public class GameSession implements IGameSession, Serializable{
         return -1;
     }
 
+    /**
+     * gets the y coordinate for the object with the given id
+     * @param id the id of the object
+     * @return the y coordinate
+     */
     @Override
     public int getSelectedY(int id){
         Object tmp = archive.get(id);
@@ -825,11 +807,13 @@ public class GameSession implements IGameSession, Serializable{
         return -1;
     }
 
+    /**
+     * checks if selected is a base an the given unitType is available for it
+     * @param type the UnitType to check if available
+     * @return whether selected is a base and the UnitType is available
+     */
     @Override
     public boolean checkHasSelectedUnit(UnitType type){
-        if(selected == null)
-            return false;
-
         if(selected instanceof Base)
             return ((Base)selected).getAvaibleUnits().contains(type);
         else{
@@ -838,11 +822,13 @@ public class GameSession implements IGameSession, Serializable{
         }
     }
 
+    /**
+     * checks if the given building has finished building
+     * @param b the building to check
+     * @return true if selected is a Base and the building has finished, else false
+     */
     @Override
     public boolean checkSelectedBuildingFinished(Building b){
-        if(selected == null)
-            return false;
-
         if(selected instanceof Base) {
             switch (b){
                 case LABOR:
@@ -859,11 +845,13 @@ public class GameSession implements IGameSession, Serializable{
         }
     }
 
+    /**
+     * checks if the given building is currently building
+     * @param b the building to check
+     * @return true if selected is a Base and the building is currently building, else false
+     */
     @Override
     public boolean checkIsBuilding(Building b){
-        if(selected == null)
-            return false;
-
         if(selected instanceof Base) {
             switch (b){
                 case LABOR:
@@ -880,11 +868,22 @@ public class GameSession implements IGameSession, Serializable{
         }
     }
 
+    /**
+     * checks if the field is free or not
+     * @param x the x coordinate of the field
+     * @param y the y coordinate of the field
+     * @return whether the field is free or not
+     */
     @Override
     public boolean checkWalkable(int x, int y){
         return level.getField(x,y).getWalkable();
     }
 
+    /**
+     * gets the Teamcheck of the given player
+     * @param playerId the player of whom you want the teamcheck
+     * @return the team resources or a 0-filled array if the id doesn't belong to a player
+     */
     @Override
     public int[] getTeamRessources(int playerId){
         Object tmp = archive.get(playerId);
@@ -906,6 +905,11 @@ public class GameSession implements IGameSession, Serializable{
         return new int[4];
     }
 
+    /**
+     * returns the account name to the given player
+     * @param playerId the id of the searched player
+     * @return the name of the player or "Not_a_Player_or_not_existent" if the id doesn't belong to a player
+     */
     @Override
     public String getPlayerName(int playerId){
         Object tmp = archive.get(playerId);
@@ -913,9 +917,15 @@ public class GameSession implements IGameSession, Serializable{
         if(tmp instanceof Player)
             return ((Player)tmp).getAccount().getName();
 
-        return "Not a Player or not existent";
+        return "Not_a_Player_or_not_existent";
     }
 
+    /**
+     * gets the chat for the given player
+     * @param playerId the id of the player
+     * @param team whether we want the session chat or the teamchat
+     * @return the chat-content in form,where every entry is an entry in the list
+     */
     @Override
     public List<String> getChatBackLog(int playerId, boolean team){
         Object player = archive.get(playerId);
@@ -935,19 +945,29 @@ public class GameSession implements IGameSession, Serializable{
         }
 
         for(Message m: backLog)
-            if(m.getVisibleForAll() || m.getVisibleFor().contains(player))
+            if(m.getVisibleForAll() || m.getVisibleFor().contains(player)) // check if the player is allowed to see
                 result.add(m.getContent());
 
         return result;
     }
 
+    /**
+     * @return the current values on the market
+     */
     @Override
     public int[] getMarketInfo(){
         return market.getMarketInfo();
     }
 
+    /**
+     * Lets the given player add some of his resources to the check of his team
+     * @param playeriD      the player that wants to add some resources
+     * @param resourceType which resource should be added(see Constants)
+     * @param amount        how much of the resource should be added
+     * @return whether the action was a success or not
+     */
     @Override
-    public boolean addTeamRessources(int playeriD, int ressourceType, int amount){
+    public boolean addTeamRessources(int playeriD, int resourceType, int amount){
         Object player = archive.get(playeriD);
 
         if(!(player instanceof Player)){
@@ -955,7 +975,7 @@ public class GameSession implements IGameSession, Serializable{
             return false;
         }
 
-        switch (ressourceType){
+        switch (resourceType){
             case Constants.WOOD:
                 if(((Player)player).getRessources()[Constants.WOOD]<amount){
                     return false;
@@ -980,11 +1000,17 @@ public class GameSession implements IGameSession, Serializable{
                     ((Player)player).getTeam().getCheck()[Constants.GOLD] += amount;
                     return true;
                 }
-                default:
-                    return false;
+            default:
+                return false;
         }
     }
 
+    /**
+     * Recruits a unit on the selected object if it is a base
+     * @param selectedId to check if it's the correct selected object
+     * @param type  the type that should be created
+     * @return  whether the action was a success
+     */
     @Override
     public boolean createUnit(int selectedId, UnitType type){
         if(selected instanceof Base){
@@ -1000,6 +1026,14 @@ public class GameSession implements IGameSession, Serializable{
         return false;
     }
 
+    /**
+     * starts the building-process of a building or aborts it
+     * @param playerId    the player who wants to build something
+     * @param selectedId  the id of selected, to check if it's the right one, in case it's a base
+     * @param building    which building should be build or cancelled
+     * @param abort       whether the process should be aborted or not(in that case started)
+     * @return   whether the action was a success or not
+     */
     @Override
     public boolean buildOrAbortBuildingOnSelected(int playerId, int selectedId,Building building, boolean abort){
         Object player = archive.get(playerId);
@@ -1015,58 +1049,64 @@ public class GameSession implements IGameSession, Serializable{
                 return false;
             }
 
-            System.out.println("Lv1");
-            if(selected instanceof Field){
-                System.out.println("Lv2");
-                if(abort){
-                    switch (building){
-                        case BASE:
-                            return ((Field)selected).abortBuild(((Player)player));
-                        default:
-                            return false;
-                    }
-                }else{
-                    switch (building){
-                        case BASE:
-                            return ((Field)selected).buildBase((Player)player);
-                        case MINE:
-                            return ((Field)selected).buildMine(((Player)player));
-                        default:
-                            return false;
-                    }
+        System.out.println("Lv1");
+        if(selected instanceof Field){
+            System.out.println("Lv2");
+            if(abort){
+                switch (building){
+                    case BASE:
+                        return ((Field)selected).abortBuild(((Player)player));
+                    default:
+                        return false;
                 }
-            } else if(selected instanceof Base) {
-                System.out.println("Funktioniert bis hierhin");
-                if (abort) {
-                    switch (building) {
-                        case LABOR:
-                            ((Base) selected).abortLab();
-                            return true;
-                        case CASERNE:
-                            ((Base) selected).abortCaserne();
-                            return true;
-                        default:
-                            return false;
-                    }
-                } else {
-                    switch (building) {
-                        case MARKET:
-                            return ((Base)selected).buildMarket();
-                        case LABOR:
-                            return ((Base) selected).buildLab();
-                        case CASERNE:
-                            return ((Base) selected).buildCaserne();
-                        default:
-                            return false;
-                    }
+            }else{
+                switch (building){
+                    case BASE:
+                        return ((Field)selected).buildBase((Player)player);
+                    case MINE:
+                        return ((Field)selected).buildMine(((Player)player));
+                    default:
+                        return false;
                 }
             }
+        } else if(selected instanceof Base) {
+            System.out.println("Funktioniert bis hierhin");
+            if (abort) {
+                switch (building) {
+                    case LABOR:
+                        ((Base) selected).abortLab();
+                        return true;
+                    case CASERNE:
+                        ((Base) selected).abortCaserne();
+                        return true;
+                    default:
+                        return false;
+                }
+            } else {
+                switch (building) {
+                    case MARKET:
+                        return ((Base)selected).buildMarket();
+                    case LABOR:
+                        return ((Base) selected).buildLab();
+                    case CASERNE:
+                        return ((Base) selected).buildCaserne();
+                    default:
+                        return false;
+                }
+            }
+        }
 
 
         System.out.println("Build Or Abort wurde auf einem nicht-Base Objekt aufgerufen");
         return false;
     }
 
+    /**
+     * Activates a hero skill of the given player
+     * @param playerId the id of the player
+     * @param left if the left hand skill should be activated or not(other case is right hand)
+     * @return  whether the activation was a success or not(also false if playerId doesn't belong to a player)
+     */
     @Override
     public boolean activateHeroPower(int playerId, boolean left){
         Object player = archive.get(playerId);
@@ -1086,6 +1126,11 @@ public class GameSession implements IGameSession, Serializable{
         return false;
     }
 
+    /**
+     * returns the hero id of the given player
+     * @param playerId the id of the player
+     * @return the hero id or -1 if playerId doesn't belong to a player
+     */
     @Override
     public int getHero(int playerId){
         Object player = archive.get(playerId);
@@ -1098,21 +1143,40 @@ public class GameSession implements IGameSession, Serializable{
         return ((Player)player).getHero().getId();
     }
 
+    /**
+     * checks if a field has units around it or not
+     * @param x the x coordinate of the field
+     * @param y the y coordinate of the field
+     * @return whether there are units or not
+     */
     @Override
     public boolean hasNearUnits(int x, int y){
         return !(level.getField(x,y).getNearUnits().isEmpty());
     }
 
+    /**
+     * starts a research on the selected object
+     * @param selectedId the id of selected to check if it's the correct object
+     * @param r what should be researched
+     * @return true if selected is a base and the action a success, else false
+     */
     @Override
     public boolean researchOnSelected(int selectedId, Research r){
         if(!(selected instanceof Base) || ((Base)selected).getId() != selectedId){
-                System.out.println("Client selected ID und selected sind nicht mehr synchron");
-                return false;
-            }
+            System.out.println("Client selected ID und selected sind nicht mehr synchron");
+            return false;
+        }
 
-       return Research.RESEARCH_ARCHER.research((Base) selected);
+        return Research.RESEARCH_ARCHER.research((Base) selected);
     }
 
+    /**
+     * lets a player buy something on the market
+     * @param playerId the player who want sot buy
+     * @param type   which resource he wants to buy
+     * @param amount  how much he wants to buy
+     * @return whether he could buy it or not
+     */
     @Override
     public boolean buyOnMarket(int playerId, int type, int amount){
         Object player = archive.get(playerId);
@@ -1125,6 +1189,13 @@ public class GameSession implements IGameSession, Serializable{
         return market.buy((Player)player,type,amount);
     }
 
+    /**
+     * lets a player sell something on the market
+     * @param playerId the player who want sot sell
+     * @param type   which resource he wants to sell
+     * @param amount  how much he wants to sell
+     * @return whether he could sell it or not
+     */
     @Override
     public boolean sellOnMarket(int playerId, int type, int amount){
         Object player = archive.get(playerId);
@@ -1137,6 +1208,12 @@ public class GameSession implements IGameSession, Serializable{
         return market.sell((Player)player,type,amount);
     }
 
+    /**
+     * lets a player add a tree-element on his techTree
+     * @param playerId  the id of the player who wants to add an element
+     * @param element   the element he wants to add
+     * @return  whether he could add it or not
+     */
     @Override
     public boolean advanceOnTechtree(int playerId, TreeElement element){
         Object player = archive.get(playerId);
@@ -1149,6 +1226,15 @@ public class GameSession implements IGameSession, Serializable{
         return ((Player)player).advanceOnTechTree(element);
     }
 
+    /**
+     * moves the selected object the given amount of fields
+     * also triggers a fight afterwards if enemy units are near enough
+     * @param playerId   check if it's the rightful owner
+     * @param selectedId check if it's the right object
+     * @param x number fields in x direction
+     * @param y number fields in y direction
+     * @return
+     */
     @Override
     public int[] moveSelected(int playerId, int selectedId, int x, int y){
         Object player = archive.get(playerId);
@@ -1175,20 +1261,20 @@ public class GameSession implements IGameSession, Serializable{
             if (obj instanceof Field) {
                 Unit unit = ((Unit) selected);
                 Field target = (Field) obj;
-                    if(unit.getOwner()==player)
-                        try {
-                            int diff=Math.max(Math.abs(unit.getField().getXPos() - target.getXPos()), Math.abs(unit.getField().getYPos() - target.getYPos()));
-                            if (target.getWalkable()&&diff <= unit.getMovePointsLeft()) {
-                                if(unit.getField().getYPos()<target.getYPos()){unit.setDirection(1);}else{unit.setDirection(0);}
-                                unit.getField().setCurrent(null);
-                                target.setCurrent(unit);
-                                unit.setMovePointsLeft(unit.getMovePointsLeft()-diff);
-                                return fight(unit);
+                if(unit.getOwner()==player)
+                    try {
+                        int diff=Math.max(Math.abs(unit.getField().getXPos() - target.getXPos()), Math.abs(unit.getField().getYPos() - target.getYPos()));
+                        if (target.getWalkable()&&diff <= unit.getMovePointsLeft()) {
+                            if(unit.getField().getYPos()<target.getYPos()){unit.setDirection(1);}else{unit.setDirection(0);}
+                            unit.getField().setCurrent(null);
+                            target.setCurrent(unit);
+                            unit.setMovePointsLeft(unit.getMovePointsLeft()-diff);
+                            return fight(unit);
 
-                            }
-                        }catch(Exception e){
-                            e.printStackTrace();
                         }
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
             }
         }
 
@@ -1196,6 +1282,11 @@ public class GameSession implements IGameSession, Serializable{
 
     }
 
+    /**
+     * checks all possible fields to attack enemy units and triggers duel if one fitting enemy is found
+     * @param u the unit to check the fields for
+     * @return an int-array containing 0 or 1 for each direction, determining if there was a fight or not(1=fight, 0=no fight)
+     */
     private int[] fight(Unit u){
         Unit unit = u;
         boolean both=false;
@@ -1204,22 +1295,22 @@ public class GameSession implements IGameSession, Serializable{
             //positive y direction
             try{
                 if(level.getField(unit.getField().getXPos(),unit.getField().getYPos()).getCurrent()instanceof Unit)
-            {
-                if(level.getField(unit.getField().getXPos(),unit.getField().getYPos()+x).getCurrent().getOwner()!=active){
-                final Unit enemy=level.getField(unit.getField().getXPos(),unit.getField().getYPos()+x).getCurrent();
+                {
+                    if(level.getField(unit.getField().getXPos(),unit.getField().getYPos()+x).getCurrent().getOwner()!=active){
+                        final Unit enemy=level.getField(unit.getField().getXPos(),unit.getField().getYPos()+x).getCurrent();
 
-                if(enemy.getRange()>=x)
-                    both=true;
+                        if(enemy.getRange()>=x)
+                            both=true;
 
-                result[0] = 1;
+                        result[0] = 1;
 
-                //fightAnimation(unit, enemy,50,100,both);
-                    if(duel(unit,enemy,both))
-                        return result;
+                        //fightAnimation(unit, enemy,50,100,both);
+                        if(duel(unit,enemy,both))
+                            return result;
 
-                break;
+                        break;
+                    }
                 }
-            }
             }catch(Exception e){
                 e.printStackTrace();
             }
@@ -1227,22 +1318,22 @@ public class GameSession implements IGameSession, Serializable{
             //negative y direction
             try{
                 if(level.getField(unit.getField().getXPos(),unit.getField().getYPos()-x).getCurrent()instanceof Unit)
-            {
-                if(level.getField(unit.getField().getXPos(),unit.getField().getYPos()-x).getCurrent().getOwner()!=active){
-                final Unit enemy=level.getField(unit.getField().getXPos(),unit.getField().getYPos()-x).getCurrent();
+                {
+                    if(level.getField(unit.getField().getXPos(),unit.getField().getYPos()-x).getCurrent().getOwner()!=active){
+                        final Unit enemy=level.getField(unit.getField().getXPos(),unit.getField().getYPos()-x).getCurrent();
 
-                if(enemy.getRange()>=x)
-                    both=true;
+                        if(enemy.getRange()>=x)
+                            both=true;
 
-                    result[1] = 1;
+                        result[1] = 1;
 
-                //fightAnimation(unit, enemy,50,0,both);
-                    if(duel(unit,enemy,both))
-                        return result;
+                        //fightAnimation(unit, enemy,50,0,both);
+                        if(duel(unit,enemy,both))
+                            return result;
 
-                break;
+                        break;
+                    }
                 }
-            }
             }catch(Exception e){
                 e.printStackTrace();
             }
@@ -1250,21 +1341,21 @@ public class GameSession implements IGameSession, Serializable{
             //negative x direction
             try{
                 if(level.getField(unit.getField().getXPos()-x,unit.getField().getYPos()).getCurrent()instanceof Unit)
-            {
-                if(level.getField(unit.getField().getXPos()-x,unit.getField().getYPos()).getCurrent().getOwner()!=active){
-                final Unit enemy=level.getField(unit.getField().getXPos()-x,unit.getField().getYPos()).getCurrent();
+                {
+                    if(level.getField(unit.getField().getXPos()-x,unit.getField().getYPos()).getCurrent().getOwner()!=active){
+                        final Unit enemy=level.getField(unit.getField().getXPos()-x,unit.getField().getYPos()).getCurrent();
 
-                if(enemy.getRange()>=x)
-                    both=true;
+                        if(enemy.getRange()>=x)
+                            both=true;
 
-                    result[2] = 1;
-                //fightAnimation(unit, enemy,0,50,both);
-                    if(duel(unit,enemy,both))
-                        return result;
+                        result[2] = 1;
+                        //fightAnimation(unit, enemy,0,50,both);
+                        if(duel(unit,enemy,both))
+                            return result;
 
-                break;
+                        break;
+                    }
                 }
-            }
             }catch(Exception e){
                 e.printStackTrace();
             }
@@ -1272,21 +1363,21 @@ public class GameSession implements IGameSession, Serializable{
             //positive x direction
             try{
                 if(level.getField(unit.getField().getXPos()+x,unit.getField().getYPos()).getCurrent()instanceof Unit)
-            {
-                if(level.getField(unit.getField().getXPos()+x,unit.getField().getYPos()).getCurrent().getOwner()!=active){
-                final Unit enemy=level.getField(unit.getField().getXPos()+x,unit.getField().getYPos()).getCurrent();
+                {
+                    if(level.getField(unit.getField().getXPos()+x,unit.getField().getYPos()).getCurrent().getOwner()!=active){
+                        final Unit enemy=level.getField(unit.getField().getXPos()+x,unit.getField().getYPos()).getCurrent();
 
-                if(enemy.getRange()>=x)
-                    both=true;
+                        if(enemy.getRange()>=x)
+                            both=true;
 
-                    result[3] = 1;
-                //fightAnimation(unit, enemy,100,50,both);
-                    if(duel(unit,enemy,both))
-                        return result;
+                        result[3] = 1;
+                        //fightAnimation(unit, enemy,100,50,both);
+                        if(duel(unit,enemy,both))
+                            return result;
 
-                break;
+                        break;
+                    }
                 }
-            }
             }catch(Exception e){
                 e.printStackTrace();
             }
@@ -1295,6 +1386,13 @@ public class GameSession implements IGameSession, Serializable{
         return result;
     }
 
+    /**
+     * arranges an direct fight between two units, calc's all the damage and calls if needed remove unit
+     * @param unit   the attacking unit
+     * @param enemy  the defending unit
+     * @param both   if the defending unit shall attack back
+     * @return whether the attacker died or not
+     */
     private boolean duel(Unit unit, Unit enemy, boolean both){
         unit.setMovePointsLeft(0);
         enemy.setCurrentHp(enemy.getCurrentHp() - (unit.getAtk()-enemy.getDef()));
@@ -1315,7 +1413,8 @@ public class GameSession implements IGameSession, Serializable{
                 enemy.setOwner(unit.getOwner());
                 enemy.setCurrentHp(enemy.getMaxHp());
             }
-            enemy.getField().setCurrent(null);
+
+
         }
         if(both){
             unit.setCurrentHp(unit.getCurrentHp() - (enemy.getAtk()-unit.getDef()));
@@ -1329,7 +1428,12 @@ public class GameSession implements IGameSession, Serializable{
         return false;
     }
 
-
+    /**
+     * checks if the given player is the active player(is on turn) or not
+     * @param playerId the id of the player to check
+     * @return true if he is the active, else false(also if playerId doesn't belong to a player)
+     */
+    @Override
     public boolean isActive(int playerId){
         Object player = archive.get(playerId);
 
@@ -1341,16 +1445,14 @@ public class GameSession implements IGameSession, Serializable{
         return active == player;
     }
 
-    public BuffInfo getActiveBuff(int id){
-        Object unit = archive.get(id);
-
-        if(!(unit instanceof Unit)){
-            return BuffInfo.NONE;
-        }
-
-        return ((Unit)unit).getSignificantBuff();
-    }
-
+    /**
+     * checks if the Shield(Macht des Drachen) skill of the Hero
+     * was triggered as Shield or as Dragonfist
+     *
+     * @param heroId the id of the hero to check
+     * @return true if it was dragonfist, else false
+     */
+    @Override
     public boolean hasCalledTheDragon(int heroId){
         Object hero = archive.get(heroId);
 
@@ -1360,10 +1462,135 @@ public class GameSession implements IGameSession, Serializable{
         return false;
     }
 
+    /**
+     * resets the hasCalledTheDragon value of the given hero back to false
+     *
+     * @param heroId the id of the hero to reset
+     */
+    @Override
     public void deactivateTheDragon(int heroId){
         Object hero = archive.get(heroId);
 
         if(hero instanceof Hero)
             ((Hero)hero).setCalledTheDragon(false);
     }
-}
+
+
+    //Getter Setter
+    @Override
+    public int getMap() {
+        return level.getId();
+    }
+
+    @Override
+    public int getNumberOfPlayers() {
+        return numberOfPlayers;
+    }
+    @Override
+    public void setNumberOfPlayers(int number) {
+       numberOfPlayers=number;
+    }
+
+    @Override
+    public Chat getSessionChat() {
+        return sessionChat;
+    }
+    @Override
+    public void setSessionChat(Chat sessionChat) {
+        this.sessionChat = sessionChat;
+    }
+
+    @Override
+    public int getTurn() {
+        return turn;
+    }
+    @Override
+    public void setTurn(int turn){
+        this.turn = turn;
+    }
+
+    @Override
+    public boolean isHasStarted(){
+        return hasStarted;
+    }
+    @Override
+    public void setHasStarted(boolean hasStarted){
+        this.hasStarted = hasStarted;
+    }
+
+    public int getMaxPlayers(){
+        return maxPlayers;
+    }
+    public void setMaxPlayers(int maxPlayers) {
+        this.maxPlayers = maxPlayers;
+    }
+
+    @Override
+    public List<Team> getTeams(){
+        return teams;
+    }
+
+    @Override
+    public int getActive(){
+        if(active==null)
+            return -1;
+        else
+        return active.getId();
+    }
+    @Override
+    public void setActive(Player active){
+        this.active = active;
+        active.setTurn(true);
+    }
+
+    @Override
+    public List<Buff> getBuffs(){
+        return buffs;
+    }
+
+    @Override
+    public int getMarket(){
+            return market.getId();
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+    @Override
+    public void setName(String name){
+        if(name.length()>100){
+            this.name=name.substring(0,99);
+        }else{
+        this.name = name;
+        }
+    }
+
+    @Override
+    public int getRound() {
+        return round;
+    }
+    @Override
+    public void setRound(int round) {
+        this.round = round;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+    @Override
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public Player getPlayerPerName(String name){
+        for(java.util.Map.Entry<Account,Player> entry: identities.entrySet())
+            if(entry.getKey().getName().equals(name))
+                return entry.getValue();
+
+        return null;
+    }
+
+ }

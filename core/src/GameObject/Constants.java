@@ -1,7 +1,8 @@
 package GameObject;
 
 /**
- * Created by Fabi on 19.07.2016.
+ * An enum with some global Constant values
+ * @author Fabi
  */
 public final class  Constants {
     public final static int WOOD =0;

@@ -31,9 +31,10 @@ import java.util.List;
 
 
 /**
- * Der Screen fuer ein Spiel...
+ * This Screens Displays a whole GameSession, meaning all the Units, the Field, needed Buttons and so on
+ * not much comment because it's mostly displaying stuff and should be self-explaining to the most part
  *
- * Created by benja_000 on 03.07.2016.
+ * @author Fabi, Benjamin
  */
 public class GameScreen implements Screen, InputProcessor{
 
@@ -118,7 +119,7 @@ public class GameScreen implements Screen, InputProcessor{
         this.player = playerId;
         batch=new SpriteBatch();
         this.session = session;
-        System.out.println(session.toString());
+        //System.out.println(session.toString());
         try {
             session.showSessionDetails();
         } catch (RemoteException e) {
@@ -254,8 +255,8 @@ public class GameScreen implements Screen, InputProcessor{
                         unitOwner.setText("");
                     }
 
-                    if(session.isSelectedOwner(player) && session.isActive(player)) {
-                        if (session.isSelectedClassOf(Selectable.BASE)) {
+                    if(session.isActive(player)) {
+                        if (session.isSelectedClassOf(Selectable.BASE) && session.isSelectedOwner(player)) {
                             if (baseRecruitButtons) {
                                 selectionUpLeft.setVisible(true);
                                 selectionUpLeft.setText("");
@@ -266,7 +267,7 @@ public class GameScreen implements Screen, InputProcessor{
                                 selectionUpRight.getStyle().up = skin.getDrawable("spearfighterIcon");
                                 selectionDownLeft.setVisible(session.checkHasSelectedUnit(UnitType.ARCHER));
                                 selectionDownLeft.setText("Bogenschuetze");
-                                selectionDownLeft.getStyle().up = skin.getDrawable("defaultIcon");
+                                selectionDownLeft.getStyle().up = skin.getDrawable("archerIcon");
                                 selectionDownRight.setVisible(true);
                                 selectionDownRight.setText("");
                                 selectionDownRight.getStyle().up = skin.getDrawable("workerIcon");
@@ -324,13 +325,13 @@ public class GameScreen implements Screen, InputProcessor{
                                 selectionDownRight.setText("Marktplatz bauen");
                                 selectionDownRight.getStyle().up = skin.getDrawable("defaultIcon");
                             }
-                        } else if (session.isSelectedClassOf(Selectable.HERO)) {
+                        } else if (session.isSelectedClassOf(Selectable.HERO)&& session.isSelectedOwner(player)) {
                             selectionUpLeft.setVisible(true);
-                            selectionUpLeft.setText("Heldenfaehigkeit links");
+                            selectionUpLeft.setText("Heilung");
                             selectionUpLeft.setTouchable(Touchable.enabled);
                             selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
                             selectionUpRight.setVisible(true);
-                            selectionUpRight.setText("Heldenfaehigkeit rechts");
+                            selectionUpRight.setText("Macht des Drachen");
                             selectionUpRight.getStyle().up = skin.getDrawable("defaultIcon");
                             selectionDownLeft.setVisible(false);
                             selectionDownRight.setVisible(false);
@@ -690,10 +691,12 @@ try {
         skin.add("marketIcon",tmp);
         tmp = new NinePatch(textures[SpriteNames.MENU_BG.getSpriteIndex()], 10, 10, 10, 10);
         skin.add("background",tmp);
-        tmp = new NinePatch(textures[SpriteNames.SPEARFIGHTER.getSpriteIndex()], 10, 10, 10, 10);
+        tmp = new NinePatch(textures[SpriteNames.BUTTON_SPEARFIGHTER.getSpriteIndex()], 10, 10, 10, 10);
         skin.add("spearfighterIcon",tmp);
-        tmp = new NinePatch(textures[SpriteNames.SWORDFIGHTER.getSpriteIndex()], 10, 10, 10, 10);
+        tmp = new NinePatch(textures[SpriteNames.BUTTON_SWORDFIGHTER.getSpriteIndex()], 10, 10, 10, 10);
         skin.add("swordfighterIcon",tmp);
+        tmp = new NinePatch(textures[SpriteNames.BUTTON_ARCHER.getSpriteIndex()], 10, 10, 10, 10);
+        skin.add("archerIcon",tmp);
         tmp = new NinePatch(textures[SpriteNames.TECHTREE.getSpriteIndex()], 10, 10, 10, 10);
         skin.add("treeBackground",tmp);
 

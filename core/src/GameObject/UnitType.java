@@ -3,37 +3,17 @@ package GameObject;
 
 import java.io.Serializable;
 
+/**
+ * An enum for all Type of Unis there are
+ * with getter method for the different attributes, should be self-explaining
+ * @author Fabi
+ */
 public enum UnitType implements Serializable {
-    BASE, SPEARFIGHTER, ARCHER, SWORDFIGHTER, WORKER,HERO/*TODO Add Types*/
+    BASE, SPEARFIGHTER, ARCHER, SWORDFIGHTER, WORKER,HERO
     ;
 
     /**
-     * Ermöglicht Zugriff auf die verschiedenen UnitTypes ueber einen String
-     *
-     * @param name der Name des gesuchten Typs
-     * @return der zugehoerige Typ
-     */
-    public UnitType getTypeByName(String name) {
-        switch (name.toLowerCase())
-        {
-            case "base":
-                return BASE;
-            case "spearfighter":
-                return SPEARFIGHTER;
-            case "archer":
-                return ARCHER;
-            case "swordfighter":
-                return SWORDFIGHTER;
-            case "hero":
-                return HERO;
-            default:
-                System.out.println("getTypeByName got non existent unitName: " + name.toLowerCase());
-        }
-        return null;
-    }
-
-    /**
-     * Getter fuer die jeweiligen werte der spezifischen einheit
+     * Getter for the attributes of the different types
      */
     public int getMaxHp() {
         switch (this){
@@ -47,11 +27,12 @@ public enum UnitType implements Serializable {
                 return 50;
             case HERO:
                 return 200;
+            case WORKER:
+                return 10;
             default:
                 return 0;
         }
     }
-
 
     public int getAtk() {
         switch (this){
@@ -65,11 +46,12 @@ public enum UnitType implements Serializable {
                 return 25;
             case HERO:
                 return 40;
+            case WORKER:
+                return 5;
             default:
                 return 0;
         }
     }
-
 
     public int getDef() {
         switch (this){
@@ -88,24 +70,24 @@ public enum UnitType implements Serializable {
         }
     }
 
-
     public int getMovePoints() {
         switch (this){
             case BASE:
                 return 0;
             case SPEARFIGHTER:
-                return 8;
+                return 6;
             case ARCHER:
-                return 5;
-            case SWORDFIGHTER:
                 return 3;
+            case SWORDFIGHTER:
+                return 5;
             case HERO:
                 return 5;
+            case WORKER:
+                return 4;
             default:
                 return 0;
         }
     }
-
 
     public int getRange() {
         switch (this){
@@ -119,11 +101,12 @@ public enum UnitType implements Serializable {
                 return 1;
             case HERO:
                 return 1;
+            case WORKER:
+                return 1;
             default:
                 return 0;
         }
     }
-
 
     public int getSpriteIndex() {
         switch (this){
@@ -144,7 +127,6 @@ public enum UnitType implements Serializable {
         }
     }
 
-
     public int getRecruitingTime(){
         switch (this){
             case BASE:
@@ -160,7 +142,6 @@ public enum UnitType implements Serializable {
         }
     }
 
-
     public int[] getRessourceCost() {
 
         switch (this){
@@ -172,11 +153,12 @@ public enum UnitType implements Serializable {
                 return new int[]{20,0,10,0};
             case SWORDFIGHTER:
                 return new int[]{5,15,30,0};
+            case WORKER:
+                return new int[]{5,5,0,0};
             default:
                 return new int[]{0,0,0,0};
         }
     }
-
 
     public int[] getReducedCost() {
 

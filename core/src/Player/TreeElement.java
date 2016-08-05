@@ -5,7 +5,9 @@ import GameObject.Constants;
 import java.rmi.RemoteException;
 
 /**
- * Created by Fabi on 22.07.2016.
+ * An enum containing the 15 nodes of the TechnologyTree and their
+ * relevant information, also enable advancing on the tree
+ * @author Fabi
  */
 public enum TreeElement{
     STEEL1, STEEL2, STEEL3, STEEL4, STEEL5,
@@ -37,7 +39,6 @@ public enum TreeElement{
                 return "";
         }
     }
-
 
     public int getPreRequisiteIndex() {
         switch (this) {
@@ -76,7 +77,6 @@ public enum TreeElement{
         }
     }
 
-
     public int[] getRessourceCosts(){
         switch (this) {
             case STEEL1:
@@ -114,7 +114,10 @@ public enum TreeElement{
         }
     }
 
-
+    /**
+     * Lets the Player advance on his Tree
+     * @param player the Player who wants to advance
+     */
     public void activate(Player player){
         if (player == null)
             throw new IllegalArgumentException("Player is null");
@@ -204,6 +207,9 @@ public enum TreeElement{
     }
 
 
+    /**
+     * Helper methods for increasing the resources Boni
+     */
     private void activateSteelDefault(Player p){
         p.getRessourceBoni()[Constants.WOOD] += Constants.WOOD_BONI_VALUE;
         p.getRessourceBoni()[Constants.IRON] += Constants.IRON_BONI_VALUE;

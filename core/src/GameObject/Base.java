@@ -9,27 +9,53 @@ import java.rmi.RemoteException;
 import java.util.*;
 import java.util.Map;
 
+/**
+ * represents the Base of a Player
+ * @author Benjamin, Fabi
+ */
 public class Base extends Unit implements Serializable {
 
-   // private static final long serialVersionUID = 5924482865156690756L;
-
+    /**
+     * How many turns remain until the lab is finished
+     */
     private int labRoundsRemaining=Constants.NONE_OR_NOT_SET;
-    private int caserneRoundsRemaining=Constants.NONE_OR_NOT_SET;
-    private HashMap<Unit, Integer> recruiting = new HashMap<Unit, Integer>();
-    private List<UnitType> avaibleUnits = new ArrayList<UnitType>();
-    private HashMap<Research, Integer> researching = new HashMap<Research,Integer>();
-    private List<Research> researched = new ArrayList<Research>();
 
+    /**
+     * How many turns remain until the caserne is finished
+     */
+    private int caserneRoundsRemaining=Constants.NONE_OR_NOT_SET;
+
+    /**
+     * Contains the units that are currently being recruited
+     */
+    private HashMap<Unit, Integer> recruiting = new HashMap<Unit, Integer>();
+
+    /**
+     * which units can be created in this base
+     */
+    private List<UnitType> avaibleUnits = new ArrayList<UnitType>();
+
+    /**
+     * Contains the researches that are currently being researched
+     */
+    private HashMap<Research, Integer> researching = new HashMap<Research,Integer>();
+
+    /**
+     * finished researches
+     */
+    private List<Research> researched = new ArrayList<Research>();
 
     public Base(UnitType type, Player owner, GameSession session) {
         super(type, owner, session);
-       // avaibleUnits.add(UnitType.ARCHER);
-        //avaibleUnits.add(UnitType.SPEARFIGHTER);
         avaibleUnits.add(UnitType.SWORDFIGHTER);
         avaibleUnits.add(UnitType.WORKER);
-        /*TODO implement*/
     }
 
+    /**
+     * updates the building, recruiting and research processes
+     * also sets the correct sprite-Indeces on the other fields
+     * @return a list of buffs if the researches generated some
+     */
     @Override
     public List<Buff> update(){
         List<Buff> result = new ArrayList<Buff>();
@@ -53,6 +79,7 @@ public class Base extends Unit implements Serializable {
         if(caserneRoundsRemaining > Constants.FINISHED)
             caserneRoundsRemaining--;
 
+        //set the sprite index
         if(caserneRoundsRemaining == Constants.FINISHED){
             currentField.getMap().getField(currentField.getXPos()+1,currentField.getYPos()).setSpriteIndex(SpriteNames.BASE_DOWN_LEFT_CASERNE.getSpriteIndex());
 
@@ -76,7 +103,6 @@ public class Base extends Unit implements Serializable {
             }
         }
 
-        /*TODO add research*/
         //count all researches down and if finished add them to the return list
         it = researching.entrySet().iterator();
         Buff current = null;
@@ -103,50 +129,13 @@ public class Base extends Unit implements Serializable {
         return result;
     }
 
-    //region Deprecated
-  /*  private List<Buff> registerNewBuff(Research toRegister){
-        Field tmp[][] = currentField.getMap().getFields();
-        List<Buff> result = new ArrayList<>();
-
-        Buff current = null;
-        Unit currentUnit = null;
-                if(toRegister.isPermanet()){
-                    current = new Buff(null, null, owner, toRegister.getInfo());
-                    current.setSource(toRegister);
-                    for(Field[] fArray: tmp){
-                        for(Field f: fArray){
-                            currentUnit = f.getCurrent();
-                            if(currentUnit != null){
-                                current.setOrigin(currentUnit);
-                                current.execute();
-                                current.setFirstTime(false);
-                            }
-                        }
-                    }
-                } else {
-                    for(Field[] fArray: tmp){
-                        for(Field f: fArray){
-                            currentUnit = f.getCurrent();
-                            if(currentUnit != null){
-                                current = new Buff(currentUnit,null,owner, toRegister.getInfo());
-                                current.setSource(toRegister);
-                                result.add(current);
-                            }
-                        }
-                    }
-                }
-        return result;
-
-    }*/
-    //endregion
-
     /**
-     * Hilfsmethode zum spawnen von einheiten, iteriert solange durch bis ein freies feld gefunden wurde
-     * und platziert dann die einheit, wird kein feld gefunden und der such bereich( startpunkt +- 7) überschritte
-     * beendet die methode ohne die einheit zu platzieren und gibt false zurück
+     * Helpermethod for spawning units, iterates through the near fields starting with the fields directly
+     * around, increasing the radius, for everytime there was no free field. if the radius reached 7 and
+     * still no field is found, the method stops an returns false
      *
-     * @param u die zu platzierende Einheit
-     * @return gibt an ob ein feld gefunden wurde
+     * @param u the unit to spawn
+     * @return true if a field was found, else false
      */
     private boolean spawnUnit(Unit u){
         int xPos = currentField.getXPos();
@@ -172,7 +161,7 @@ public class Base extends Unit implements Serializable {
                             currentField.getMap().getSession().registerUnit(u);
                             return true;
                         }
-                    }catch (Exception e){
+                    }catch (Exception e){//case there is no field with these coordinates
                         continue;
                     }
 
@@ -184,10 +173,10 @@ public class Base extends Unit implements Serializable {
     }
 
     /**
-     * Erstellt eine neue Unit vom uebergebenen Typ
+     * Creates a new unit from the given type
      *
-     * @param type der Typ der gewuenschten Unit
-     * @return ob der Vorgang moeglich ist(und dementsprechend ausgefuehrt wird)
+     * @param type the type of the wanted unit
+     * @return if the action was a success or not
      */
 
     public boolean createUnit(UnitType type) {
@@ -219,17 +208,20 @@ public class Base extends Unit implements Serializable {
                     spawnUnit(new Unit(type, owner, session));
 
         }
-        /*TODO check*/
         return true;
     }
 
     /**
+     * cancels the creation of a unit, currently unused, therefore no further comment
+     *
+     * ////////////////////////////////////////////////////////////////////////////////////////////
      * Wird direkt ausgefuehrt nicht erst am Ende der Runde
      *
      * Bricht das Erstellen der uebergebenen Einheit ab,
      * wenn diese Einheit bereits fertig erstellt ist oder nicht existiert(null) passiert nichts)
+     * ////////////////////////////////////////////////////////////////////////////////////////////
      *
-     * @param which die Einheit deren Erstellung abgebrochen werden soll
+     * @param which the one to cancel
      */
 
     public void abortCreation(Unit which) {
@@ -245,13 +237,12 @@ public class Base extends Unit implements Serializable {
 
             recruiting.remove(which);
         }
-                    /*TODO check*/
     }
 
     /**
-     * Startet den Bau des Labors
+     * starts building the labor
      *
-     * @return gibt an ob der Bau gestartet ist, false wenn nicht alle bedingungen erfuellt sind
+     * @return true if starting was a success, else false
      */
 
     public boolean buildLab() {
@@ -272,15 +263,13 @@ public class Base extends Unit implements Serializable {
             labRoundsRemaining = Building.LABOR.getBuildTime();
             return true;
         }
-                /*TODO check*/
         return false;
     }
 
     /**
-     * Bricht den Bau des Labors ab, wenn er statt findet sonst passiert nichts
-     * Der Spieler erhaelt einen Teil der Einheiten zurueck, abhaengig vom Fortschritt
+     * cancels the building-process if it's active, otherwise does nothing
+     * The player gets back some of the starting costs, depending on how much time has passed
      */
-
     public void abortLab() {
         if(labRoundsRemaining > Constants.FINISHED){
             float ressourcesLeft = labRoundsRemaining / Building.LABOR.getBuildTime();
@@ -296,9 +285,8 @@ public class Base extends Unit implements Serializable {
     }
 
     /**
-     * Analog zu buildLab fuer die Kaserne
+     * same as with buildingLab, but for caserne
      */
-
     public boolean buildCaserne() {
         if(caserneRoundsRemaining == Constants.NONE_OR_NOT_SET){
             int[] ressourceCost = Building.CASERNE.getRessourceCost();
@@ -317,14 +305,12 @@ public class Base extends Unit implements Serializable {
             caserneRoundsRemaining = Building.CASERNE.getBuildTime();
             return true;
         }
-                /*TODO check*/
         return false;
     }
 
     /**
-     * Analog zu abortLab fuer die Kaserne
+     * same as with abortLab, but for caserne
      */
-
     public void abortCaserne() {
         if(caserneRoundsRemaining > Constants.FINISHED){
             float ressourcesLeft = caserneRoundsRemaining / Building.CASERNE.getBuildTime();
@@ -336,13 +322,11 @@ public class Base extends Unit implements Serializable {
             for(int i=Constants.WOOD; i<=Constants.MANA;++i)
                 owner.getRessources()[i] += (ressourcesLeft*originalCost[i]);
         }
-        /*TODO check*/
     }
 
     /**
-     * Baut den Marktplatz
+     * builds the marketplace
      */
-
     public boolean buildMarket() {
         if(owner.getMarket())
             return true;
@@ -359,6 +343,8 @@ public class Base extends Unit implements Serializable {
     }
 
     /**
+     * researches stuff but deprecated and currently unused therefore no further comment
+     * ///////////////////////////////////////////////////////////////
      * Startet das Erforschen des uebergebenen Forschungsobjektes
      *
      * @param research
@@ -389,6 +375,8 @@ public class Base extends Unit implements Serializable {
     }
 
     /**
+     *  cancels research stuff but deprecated and currently unused therefore no further comment
+     * ///////////////////////////////////////////////////////////////
      * Bricht die Erforschung der uebergebenen Forschung ab
      * wird die Forschung nicht erforscht passiert nichts
      *
@@ -422,66 +410,12 @@ public class Base extends Unit implements Serializable {
 
 
         }
-        /*TODO check*/
     }
 
     /**
-     * Getter und Setter
-     *
-     * @param remaining
+     * Spawns a hero for the owner of the base
+     * @return true if a hero was spawned, else false because owner has already a hero
      */
-
-    public void setLabRoundsRemaining(int remaining) {
-        if(remaining < Constants.NONE_OR_NOT_SET)
-            this.labRoundsRemaining = Constants.NONE_OR_NOT_SET;
-        else
-        this.labRoundsRemaining = remaining;
-    }
-
-
-    public int getLabRoundsRemaining() {
-        return labRoundsRemaining;
-    }
-
-
-    public void setCaserneRoundsRemaining(int remaining) {
-        if(remaining < Constants.NONE_OR_NOT_SET)
-            this.caserneRoundsRemaining = Constants.NONE_OR_NOT_SET;
-        else
-            this.caserneRoundsRemaining = remaining;
-    }
-
-
-    public int getCaserneRoundsRemaining() {
-        return caserneRoundsRemaining;
-    }
-
-
-    public void setAvaibleUnits(List<UnitType> avaibleUnits) {
-        if(avaibleUnits != null)
-            this.avaibleUnits = avaibleUnits;
-    }
-
-
-    public List<UnitType> getAvaibleUnits() {
-        return avaibleUnits;
-    }
-
-
-    public void setResearched(List<Research> researched) {
-        if(researched != null)
-            this.researched = researched;
-    }
-
-
-    public List<Research> getResearched() {
-        return researched;
-    }
-
-    public HashMap<Unit, Integer> getRecruiting(){
-        return recruiting;
-    }
-
     public boolean spawnHero(){
         if(owner.getHero() == null){
             spawnUnit(new Hero(UnitType.HERO,owner,owner.getAccount().getName(),session));
@@ -490,4 +424,48 @@ public class Base extends Unit implements Serializable {
 
         return false;
     }
+
+    /**
+     * Getter/Setter
+     */
+    public void setLabRoundsRemaining(int remaining) {
+        if(remaining < Constants.NONE_OR_NOT_SET)
+            this.labRoundsRemaining = Constants.NONE_OR_NOT_SET;
+        else
+        this.labRoundsRemaining = remaining;
+    }
+    public int getLabRoundsRemaining() {
+        return labRoundsRemaining;
+    }
+
+    public void setCaserneRoundsRemaining(int remaining) {
+        if(remaining < Constants.NONE_OR_NOT_SET)
+            this.caserneRoundsRemaining = Constants.NONE_OR_NOT_SET;
+        else
+            this.caserneRoundsRemaining = remaining;
+    }
+    public int getCaserneRoundsRemaining() {
+        return caserneRoundsRemaining;
+    }
+
+    public void setAvaibleUnits(List<UnitType> avaibleUnits) {
+        if(avaibleUnits != null)
+            this.avaibleUnits = avaibleUnits;
+    }
+    public List<UnitType> getAvaibleUnits() {
+        return avaibleUnits;
+    }
+
+    public void setResearched(List<Research> researched) {
+        if(researched != null)
+            this.researched = researched;
+    }
+    public List<Research> getResearched() {
+        return researched;
+    }
+
+    public HashMap<Unit, Integer> getRecruiting(){
+        return recruiting;
+    }
+
 }

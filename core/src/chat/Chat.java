@@ -12,26 +12,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Fabi on 11.05.2016. (mod. 12.06)
- * Die Chat-Klasse ermoeglicht den Nachrichtenaustausch zwischen den Spielern.
+ * This class enables Chatting between Players
  */
 public class Chat implements Serializable {
 
-   // private static final long serialVersionUID = 1987963162254788571L;
     /**
-     * Nachrichtenverlauf dieses Chats.
+     * All the Messages in the Chat
      */
     private List<Message> backLog = new ArrayList<Message>();
     /**
-     * Spieler die in diesem Chat schreiben können.
+     * All player who have the right to write in this Chat
      */
     private List<Player> participants = new ArrayList<Player>();
     /**
-     * Spieler die in diesem Chat nur lesen dürfen.
+     * Player who may only read but not write in the Chat
      */
     private List<Player> readOnly = new ArrayList<Player>();
 
+    /**
+     * The Session this Object belongs to and where it's registered
+     */
     private GameSession session;
+
+    /**
+     * The global ID of the Object
+     */
     private int iD;
 
     public Chat(GameSession session){
@@ -39,13 +44,15 @@ public class Chat implements Serializable {
             throw new IllegalArgumentException("Session ist null in Chat");
 
         this.session = session;
-        try {
             iD = session.registerObject(this);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+
     }
 
+    /**
+     * Adds a new Message to the Chat
+     * @param player the message sending player
+     * @param msg the content of the message
+     */
     public void addMessage(Player player, String msg) {
         if(player == null)
             throw new IllegalArgumentException("addMessage: Player is null");
@@ -59,21 +66,10 @@ public class Chat implements Serializable {
     }
 
 
-
     /**
-     * Diese Methode ermoeglicht das Loeschen einer Nachricht.
+     * Adds a new participant in the chat
      *
-     * @param m zu loeschende Message
-     */
-
-    public void deleteMessage(Message m) {
-        backLog.remove(m);
-    }
-
-    /**
-     * Diese Methode fuegt einen Spieler dem Chat hinzu.
-     *
-     * @param p Player (Spieler) der hinzugefuegt werden soll.
+     * @param p the player to add
      */
 
     public void addParticipant(Player p) {
@@ -87,7 +83,7 @@ public class Chat implements Serializable {
     }
 
     /**
-     * Loescht den Chat.
+     * Clears the Chat
      */
 
     public void clear() {
@@ -95,10 +91,9 @@ public class Chat implements Serializable {
     }
 
     /**
-     * Diese Methode blockiert einen Spieler, wodurch er keine Nachrichten
-     * im Chat schreiben kann.
+     * Disables a player from writing in the chat
      *
-     * @param p zu blockierender Spieler
+     * @param p the player to disable
      */
 
     public void blockPlayer(Player p) {
@@ -108,8 +103,12 @@ public class Chat implements Serializable {
         readOnly.add(p);
     }
 
-
-    public void unblockPlayer(Player p) throws RemoteException {
+    /**
+     * enables a blocked player to write again
+     *
+     * @param p the blocked player to be enabled
+     */
+    public void unblockPlayer(Player p)  {
         if(p == null)
             throw new IllegalArgumentException("blockPlayer: player is null");
 
@@ -117,9 +116,9 @@ public class Chat implements Serializable {
     }
 
     /**
-     * Diese Methode entfernt einen Spieler aus dem Chat.
+     * Removes a participant from the chat
      *
-     * @param p Spieler der entfernt werden soll
+     * @param p the player to remove
      */
 
     public void removeParticipant(Player p) {
@@ -137,21 +136,17 @@ public class Chat implements Serializable {
         return backLog;
     }
 
-
     public List<Player> getParticipants() {
         return participants;
     }
-
 
     public List<Player> getReadOnly() {
         return readOnly;
     }
 
-
     public void setReadOnly(List<Player> p) {
      readOnly=p;
     }
-
 
     public void setParticipants(List<Player> p) {
      participants=p;
