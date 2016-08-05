@@ -170,6 +170,9 @@ public class GameSession implements IGameSession, Serializable{
                 p.getTeam().getCheck()[i] = 0;
             }
         }
+
+        if(!(u instanceof Base))
+            u.getField().setCurrent(null);
     }
 
     /**
@@ -1315,7 +1318,8 @@ public class GameSession implements IGameSession, Serializable{
                 enemy.setOwner(unit.getOwner());
                 enemy.setCurrentHp(enemy.getMaxHp());
             }
-            enemy.getField().setCurrent(null);
+
+
         }
         if(both){
             unit.setCurrentHp(unit.getCurrentHp() - (enemy.getAtk()-unit.getDef()));

@@ -118,7 +118,7 @@ public class GameScreen implements Screen, InputProcessor{
         this.player = playerId;
         batch=new SpriteBatch();
         this.session = session;
-        System.out.println(session.toString());
+        //System.out.println(session.toString());
         try {
             session.showSessionDetails();
         } catch (RemoteException e) {
@@ -253,8 +253,8 @@ public class GameScreen implements Screen, InputProcessor{
                         unitOwner.setText("");
                     }
 
-                    if(session.isSelectedOwner(player) && session.isActive(player)) {
-                        if (session.isSelectedClassOf(Selectable.BASE)) {
+                    if(session.isActive(player)) {
+                        if (session.isSelectedClassOf(Selectable.BASE) && session.isSelectedOwner(player)) {
                             if (baseRecruitButtons) {
                                 selectionUpLeft.setVisible(true);
                                 selectionUpLeft.setText("");
@@ -323,13 +323,13 @@ public class GameScreen implements Screen, InputProcessor{
                                 selectionDownRight.setText("Marktplatz bauen");
                                 selectionDownRight.getStyle().up = skin.getDrawable("defaultIcon");
                             }
-                        } else if (session.isSelectedClassOf(Selectable.HERO)) {
+                        } else if (session.isSelectedClassOf(Selectable.HERO)&& session.isSelectedOwner(player)) {
                             selectionUpLeft.setVisible(true);
-                            selectionUpLeft.setText("Heldenfaehigkeit links");
+                            selectionUpLeft.setText("Heilung");
                             selectionUpLeft.setTouchable(Touchable.enabled);
                             selectionUpLeft.getStyle().up = skin.getDrawable("defaultIcon");
                             selectionUpRight.setVisible(true);
-                            selectionUpRight.setText("Heldenfaehigkeit rechts");
+                            selectionUpRight.setText("Macht des Drachen");
                             selectionUpRight.getStyle().up = skin.getDrawable("defaultIcon");
                             selectionDownLeft.setVisible(false);
                             selectionDownRight.setVisible(false);

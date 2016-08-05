@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static projectgg.gag.GoldAndGreed.reg;
+
 /**
  * Created by Fabi on 03.07.2016.
  */
@@ -58,7 +60,8 @@ public class NetworkScreen implements Screen {
     private Table gameTable;
 
 
-    public NetworkScreen(Game game){this.game = game;
+    public NetworkScreen(Game game){
+        this.game = game;
 
     }
 

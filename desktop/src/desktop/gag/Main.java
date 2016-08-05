@@ -18,7 +18,6 @@ public class Main {
 		cfg.width = 1024;
 		cfg.height = 768;
 		cfg.resizable = true;
-		try{server.Server.init();}catch(Exception e){}
 		new LwjglApplication(new GoldAndGreed(), cfg);
 	}
 }

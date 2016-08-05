@@ -47,6 +47,8 @@ public enum UnitType implements Serializable {
                 return 50;
             case HERO:
                 return 200;
+            case WORKER:
+                return 10;
             default:
                 return 0;
         }
@@ -65,6 +67,8 @@ public enum UnitType implements Serializable {
                 return 25;
             case HERO:
                 return 40;
+            case WORKER:
+                return 5;
             default:
                 return 0;
         }
@@ -94,13 +98,15 @@ public enum UnitType implements Serializable {
             case BASE:
                 return 0;
             case SPEARFIGHTER:
-                return 8;
+                return 6;
             case ARCHER:
-                return 5;
-            case SWORDFIGHTER:
                 return 3;
+            case SWORDFIGHTER:
+                return 5;
             case HERO:
                 return 5;
+            case WORKER:
+                return 4;
             default:
                 return 0;
         }
@@ -118,6 +124,8 @@ public enum UnitType implements Serializable {
             case SWORDFIGHTER:
                 return 1;
             case HERO:
+                return 1;
+            case WORKER:
                 return 1;
             default:
                 return 0;
@@ -172,6 +180,8 @@ public enum UnitType implements Serializable {
                 return new int[]{20,0,10,0};
             case SWORDFIGHTER:
                 return new int[]{5,15,30,0};
+            case WORKER:
+                return new int[]{5,5,0,0};
             default:
                 return new int[]{0,0,0,0};
         }

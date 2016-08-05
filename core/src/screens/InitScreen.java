@@ -81,8 +81,10 @@ public class InitScreen implements Screen {
         //instanziiert Labels und Buttons+Listener
         lID=new Label("Spielname:",skin);
         lPW=new Label("Passwort:",skin);
+        lPW.setVisible(false);
         lTeam=new Label("Team",skin);
         lRunden=new Label("Rundenanzahl:",skin);
+        lRunden.setVisible(false);
         lSpielerzahl=new Label("Spieleranzahl:",skin);
         lError=new Label("",skin);
         lMessage=new Label("",skin);
@@ -93,15 +95,17 @@ public class InitScreen implements Screen {
         bHero=new TextButton("Held konfigurieren",skin);
         tID=new TextArea("",skin);
         tPW=new TextArea("",skin);
+        tPW.setVisible(false);
         //instanziiert Auswahlmenues
         sTeam    = new SelectBox<>(skin);
         sSpieler = new SelectBox<>(skin);
         sRunden  = new SelectBox<>(skin);
+        sRunden.setVisible(false);
         sTeam.setItems((Object[]) new String[]{"Rot", "Blau"});
         sTeam.setSelected("Rot");
         sSpieler.setItems((Object[]) new String[]{"2", "3", "4"});
         sRunden.setItems((Object[]) new String[]{"15", "20", "30", "40", "50", "75", "100", "Endlos"});
-        sTeam.setVisible(false);
+        //sTeam.setVisible(false);
 
         if(session!=null){
             try {
@@ -224,9 +228,9 @@ public class InitScreen implements Screen {
         tLeft.row().padBottom(40).fill().width(350).height(50);
         tLeft.add(lID);
         tLeft.add(tID);
-        tLeft.row().padBottom(40).fill().width(350).height(50);
-        tLeft.add(lPW);
-        tLeft.add(tPW);
+//        tLeft.row().padBottom(40).fill().width(350).height(50);
+//        tLeft.add(lPW);
+//        tLeft.add(tPW);
         tLeft.row().padBottom(40).fill().width(350).height(50);
         tLeft.add(lSpielerzahl);
         tLeft.add(sSpieler);

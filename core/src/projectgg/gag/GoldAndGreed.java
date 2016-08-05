@@ -26,14 +26,7 @@ public class GoldAndGreed extends Game {
 		//if(System.getSecurityManager() == null)
 		//	System.setSecurityManager(new RMIsecurityManager());
 
-		try{
-			reg = LocateRegistry.getRegistry();
-			ServerInterface stub = (ServerInterface) reg.lookup("ServerInterface");
-		} catch (RemoteException e) {
-			System.out.println(e.getMessage());
-		} catch (NotBoundException e) {
-			System.out.println(e.getMessage());
-		}
+
 	}
 
 	@Override

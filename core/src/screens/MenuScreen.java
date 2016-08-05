@@ -1,30 +1,22 @@
 package screens;
 
-import GameObject.GameSession;
-import Player.Account;
-import Player.Player;
-import Player.Team;
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import server.ServerInterface;
 
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
 
 /**
  * Created by Benjamin Brennecke on 08.05.2016.
@@ -38,7 +30,7 @@ public class MenuScreen implements Screen{
 
     private Table table;
     private TextButton networkButton;
-    private TextButton accountButton;
+    private TextButton serverButton;
     private TextButton optionButton;
     private TextButton exitButton;
     private TextButton newGameButton;
@@ -52,7 +44,7 @@ public class MenuScreen implements Screen{
         skin = new Skin(Gdx.files.internal("assets/uiskin.json"));
         stage = new Stage(new ScreenViewport());
         bg = new Texture(Gdx.files.internal("assets/stone.png"));
-        checkAccount();
+
     }
 
     @Override
@@ -67,10 +59,9 @@ public class MenuScreen implements Screen{
 
         ///////////////////////Button Generierung///////////////////////////////////////
         networkButton = new TextButton("Start", skin);
-        accountButton = new TextButton("Account erstellen", skin);
+        serverButton = new TextButton("Server starten", skin);
         optionButton = new TextButton("Optionen", skin);
         exitButton = new TextButton("Beenden", skin);
-        newGameButton = new TextButton("Demo", skin);
         createGameButton=new TextButton("Erstelle Spiel",skin);
         //////////////////////Listener Generierung/////////////////////////////////////
 
@@ -79,9 +70,18 @@ public class MenuScreen implements Screen{
             public void clicked(InputEvent event, float x, float y) { game.setScreen(new NetworkScreen(game));}
         });
 
-        accountButton.addListener(new ClickListener() {
+        serverButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) { game.setScreen(new CreateAccountScreen(game));}
+            public void clicked(InputEvent event, float x, float y) {
+                try{
+                    server.Server.init();
+                    checkAccount();
+                    serverButton.setText("Server ist gestartet");
+                    serverButton.setTouchable(Touchable.disabled);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
         });
 
         optionButton.addListener(new ClickListener(){
@@ -101,49 +101,6 @@ public class MenuScreen implements Screen{
             }
         });
 
-        newGameButton.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y){
-               /* GameSession tmp = new GameSession();
-
-                Account acc1 = new Account("Spieler 1","password1");
-                Player p1 = new Player(acc1);
-                ArrayList<Player> t1 = new ArrayList<Player>();
-                t1.add(p1);
-                Team teamRot = new Team(t1, "Rot");
-                teamRot.setCheck(new int[]{0,0,0});
-                try {
-                    p1.setTeam(teamRot);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-
-                Account acc2 = new Account("Spieler 2","password2");
-                Player p2 = new Player(acc2);
-                ArrayList<Player> t2 = new ArrayList<Player>();
-                t2.add(p2);
-                Team teamBlau = new Team(t2, "Blau");
-                teamBlau.setCheck(new int[]{0,0,0});
-                try {
-                    p2.setTeam(teamBlau);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-
-                Account acc3 = new Account("Spieler 3","password3");
-                Player p3 = new Player(acc3);
-                t1.add(p3);
-
-                Account acc4 = new Account("Spieler 4","password4");
-                Player p4 = new Player(acc4);
-                t2.add(p4);
-
-                tmp.playerJoin(acc1, p1, teamRot);
-                tmp.playerJoin(acc3, p3, teamRot);
-                tmp.playerJoin(acc4, p4, teamBlau);
-                    tmp.setActive(p2);
-                game.setScreen(new GameScreen(game, tmp, tmp.playerJoin(acc2, p2, teamBlau) ));*/
-            }});
 
 
         /////////////////////Bauen der Tabelle////////////////////////////////////////
@@ -153,11 +110,9 @@ public class MenuScreen implements Screen{
         table.row().padBottom(10).fill().width(150).height(50);
         table.add(createGameButton);
         table.row().padBottom(10).fill().width(150).height(50);
-        table.add(newGameButton);
-        table.row().padBottom(10).fill().width(150).height(50);
         table.add(optionButton);
         table.row().padBottom(10).fill().width(150).height(50);
-        table.add(accountButton);
+        table.add(serverButton);
         table.row().fill().width(150).height(50);
         table.add(exitButton);
         stage.addActor(table);
