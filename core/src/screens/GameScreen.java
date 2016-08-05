@@ -265,7 +265,7 @@ public class GameScreen implements Screen, InputProcessor{
                                 selectionUpRight.getStyle().up = skin.getDrawable("spearfighterIcon");
                                 selectionDownLeft.setVisible(session.checkHasSelectedUnit(UnitType.ARCHER));
                                 selectionDownLeft.setText("Bogenschuetze");
-                                selectionDownLeft.getStyle().up = skin.getDrawable("defaultIcon");
+                                selectionDownLeft.getStyle().up = skin.getDrawable("archerIcon");
                                 selectionDownRight.setVisible(true);
                                 selectionDownRight.setText("");
                                 selectionDownRight.getStyle().up = skin.getDrawable("workerIcon");
@@ -687,10 +687,12 @@ try {
         skin.add("marketIcon",tmp);
         tmp = new NinePatch(textures[SpriteNames.MENU_BG.getSpriteIndex()], 10, 10, 10, 10);
         skin.add("background",tmp);
-        tmp = new NinePatch(textures[SpriteNames.SPEARFIGHTER.getSpriteIndex()], 10, 10, 10, 10);
+        tmp = new NinePatch(textures[SpriteNames.BUTTON_SPEARFIGHTER.getSpriteIndex()], 10, 10, 10, 10);
         skin.add("spearfighterIcon",tmp);
-        tmp = new NinePatch(textures[SpriteNames.SWORDFIGHTER.getSpriteIndex()], 10, 10, 10, 10);
+        tmp = new NinePatch(textures[SpriteNames.BUTTON_SWORDFIGHTER.getSpriteIndex()], 10, 10, 10, 10);
         skin.add("swordfighterIcon",tmp);
+        tmp = new NinePatch(textures[SpriteNames.BUTTON_ARCHER.getSpriteIndex()], 10, 10, 10, 10);
+        skin.add("archerIcon",tmp);
         tmp = new NinePatch(textures[SpriteNames.TECHTREE.getSpriteIndex()], 10, 10, 10, 10);
         skin.add("treeBackground",tmp);
 
