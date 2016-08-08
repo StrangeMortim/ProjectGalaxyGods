@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2015.12.18)  5 AUG 2016 21:50
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2015.12.18)  5 AUG 2016 22:07
 entering extended mode
 **./[ProjectGG]_Architekturbeschreibung.tex
 ([ProjectGG]_Architekturbeschreibung.tex
@@ -807,7 +807,7 @@ LaTeX Font Info:    Try loading font information for U+stmry on input line 94.
 )
 
 LaTeX Font Warning: Font shape `OT1/cmss/m/it' in size <12> not available
-(Font)              Font shape `OT1/cmss/m/sl' tried instead on input line 114.
+(Font)              Font shape `OT1/cmss/m/sl' tried instead on input line 118.
 
 
 [1{C:/Users/Fabi/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}
@@ -822,19 +822,19 @@ Underfull \vbox (badness 1314) has occurred while \output is active []
 
 
 [4]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 170.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 174.
 
  ("C:\Users\Fabi\AppData\Local\Programs\MiKTeX 2.9\tex\latex\base\omscmr.fd"
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 170.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 174.
  [5] [6]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [7]
 [8]
-Underfull \hbox (badness 7851) in paragraph at lines 239--240
+Underfull \hbox (badness 7851) in paragraph at lines 243--244
 []|\OT1/cmr/m/n/12 Die Ar-chi-tek-tur muss so gew[]ahlt wer-den dass
  []
 
@@ -845,7 +845,7 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [10]
-Underfull \hbox (badness 1168) in paragraph at lines 363--364
+Underfull \hbox (badness 1168) in paragraph at lines 367--368
 []|\OT1/cmr/m/n/12 Der Do-zent hat die M[]oglich-keit An-for-de-run-gen zu
  []
 
@@ -866,29 +866,19 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 File: ComponentDiagram1.png Graphic file (type png)
 
 <use ComponentDiagram1.png>
-Package pdftex.def Info: ComponentDiagram1.png used on input line 481.
+Package pdftex.def Info: ComponentDiagram1.png used on input line 485.
 (pdftex.def)             Requested size: 448.13095pt x 354.08612pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [15] [16 <./ComponentDiagram1.png>] [17]
-Underfull \hbox (badness 10000) in paragraph at lines 529--531
+Underfull \hbox (badness 10000) in paragraph at lines 533--535
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 529--531
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 532--533
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 534--535
+Underfull \hbox (badness 10000) in paragraph at lines 533--535
 
  []
 
@@ -897,15 +887,25 @@ Underfull \hbox (badness 10000) in paragraph at lines 536--537
 
  []
 
-[18]
+
 Underfull \hbox (badness 10000) in paragraph at lines 538--539
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 540--541
+
+ []
+
+[18]
+Underfull \hbox (badness 10000) in paragraph at lines 542--543
 
  []
 
 <Paketdiagramm.png, id=261, 807.7678pt x 430.60875pt>
 File: Paketdiagramm.png Graphic file (type png)
  <use Paketdiagramm.png>
-Package pdftex.def Info: Paketdiagramm.png used on input line 547.
+Package pdftex.def Info: Paketdiagramm.png used on input line 551.
 (pdftex.def)             Requested size: 448.13095pt x 238.89212pt.
 
 Underfull \vbox (badness 1783) has occurred while \output is active []
@@ -915,13 +915,13 @@ t>
 File: ServerClass.png Graphic file (type png)
 
 <use ServerClass.png>
-Package pdftex.def Info: ServerClass.png used on input line 558.
+Package pdftex.def Info: ServerClass.png used on input line 562.
 (pdftex.def)             Requested size: 448.13095pt x 141.23131pt.
  <ChatClass.png, id=270, 1439.3775pt x 656.4525pt>
 File: ChatClass.png Graphic file (type png)
 
 <use ChatClass.png>
-Package pdftex.def Info: ChatClass.png used on input line 575.
+Package pdftex.def Info: ChatClass.png used on input line 579.
 (pdftex.def)             Requested size: 448.13095pt x 204.37964pt.
 
 
@@ -932,16 +932,16 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 File: GameObjectsClass.png Graphic file (type png)
 
 <use GameObjectsClass.png>
-Package pdftex.def Info: GameObjectsClass.png used on input line 594.
+Package pdftex.def Info: GameObjectsClass.png used on input line 598.
 (pdftex.def)             Requested size: 448.13095pt x 266.54744pt.
  [21 <./ChatClass.png>] [22 <./GameObjectsClass.png>] <ActionClass.png, id=288,
  485.56406pt x 446.41782pt>
 File: ActionClass.png Graphic file (type png)
  <use ActionClass.png>
-Package pdftex.def Info: ActionClass.png used on input line 612.
+Package pdftex.def Info: ActionClass.png used on input line 616.
 (pdftex.def)             Requested size: 448.13095pt x 411.9968pt.
 
-Underfull \hbox (badness 1253) in paragraph at lines 617--618
+Underfull \hbox (badness 1253) in paragraph at lines 621--622
 |   []   |   []   |   []   |   []   |   []   |   []   |   []   |   []   |   [] 
   |   []
  []
@@ -950,7 +950,7 @@ Underfull \hbox (badness 1253) in paragraph at lines 617--618
 File: PlayerClass.png Graphic file (type png)
 
 <use PlayerClass.png>
-Package pdftex.def Info: PlayerClass.png used on input line 628.
+Package pdftex.def Info: PlayerClass.png used on input line 632.
 (pdftex.def)             Requested size: 448.13095pt x 385.40904pt.
 
 
@@ -960,7 +960,7 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 File: ScreenClass.png Graphic file (type png)
 
 <use ScreenClass.png>
-Package pdftex.def Info: ScreenClass.png used on input line 644.
+Package pdftex.def Info: ScreenClass.png used on input line 648.
 (pdftex.def)             Requested size: 448.13095pt x 369.0525pt.
 
 
@@ -973,7 +973,7 @@ Underfull \vbox (badness 6300) has occurred while \output is active []
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [27]
-Underfull \hbox (badness 6675) in paragraph at lines 702--705
+Underfull \hbox (badness 6675) in paragraph at lines 706--709
 []|   [] |   []   |   []   |   []   |   []   |   []   |   []
  []
 
@@ -981,25 +981,25 @@ Underfull \hbox (badness 6675) in paragraph at lines 702--705
 File: DatensichtForReal.png Graphic file (type png)
 
 <use DatensichtForReal.png>
-Package pdftex.def Info: DatensichtForReal.png used on input line 730.
+Package pdftex.def Info: DatensichtForReal.png used on input line 734.
 (pdftex.def)             Requested size: 448.13095pt x 301.0421pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [28]
-Underfull \hbox (badness 10000) in paragraph at lines 756--757
+Underfull \hbox (badness 10000) in paragraph at lines 760--761
 
  []
 
 [29 <./DatensichtForReal.png>] [30] [31] [32]
-Underfull \hbox (badness 5231) in paragraph at lines 879--880
+Underfull \hbox (badness 5231) in paragraph at lines 883--884
 []\OT1/cmr/bx/n/12 ressources: \OT1/cmr/m/n/12 Die Res-sour-cen []uber die der 
 Spie-ler verf[]ugt. Die Men-ge
  []
 
 
-Underfull \hbox (badness 2150) in paragraph at lines 879--880
+Underfull \hbox (badness 2150) in paragraph at lines 883--884
 \OT1/cmr/m/n/12 wird di-rekt als Wert ge-spei-chert und der Typ []uber den In-d
 ex iden-ti-fi-
  []
@@ -1008,7 +1008,7 @@ ex iden-ti-fi-
 Underfull \vbox (badness 5077) has occurred while \output is active []
 
  [33]
-Underfull \hbox (badness 10000) in paragraph at lines 923--924
+Underfull \hbox (badness 10000) in paragraph at lines 927--928
 []\OT1/cmr/bx/n/12 resType: \OT1/cmr/m/n/12 Gibt an wel-che Res-sour-ce das Fel
 d besitzt(-
  []
@@ -1017,14 +1017,14 @@ d besitzt(-
 File: Deployment.png Graphic file (type png)
 
 <use Deployment.png>
-Package pdftex.def Info: Deployment.png used on input line 1003.
+Package pdftex.def Info: Deployment.png used on input line 1007.
 (pdftex.def)             Requested size: 448.13095pt x 209.44048pt.
  [37 <./Deployment.png>]
 <sequenzdiagramm1.png, id=362, 837.88031pt x 605.26125pt>
 File: sequenzdiagramm1.png Graphic file (type png)
 
 <use sequenzdiagramm1.png>
-Package pdftex.def Info: sequenzdiagramm1.png used on input line 1026.
+Package pdftex.def Info: sequenzdiagramm1.png used on input line 1030.
 (pdftex.def)             Requested size: 448.13095pt x 323.71458pt.
 
 
@@ -1041,7 +1041,7 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 File: sequenz2.png Graphic file (type png)
 
 <use sequenz2.png>
-Package pdftex.def Info: sequenz2.png used on input line 1043.
+Package pdftex.def Info: sequenz2.png used on input line 1047.
 (pdftex.def)             Requested size: 448.13095pt x 289.014pt.
  [40 <./sequenz2.png>]
 Underfull \vbox (badness 4899) has occurred while \output is active []
@@ -1050,45 +1050,45 @@ Underfull \vbox (badness 4899) has occurred while \output is active []
 <ClassDiagram1.png, id=382, 678.28406pt x 1005.7575pt>
 File: ClassDiagram1.png Graphic file (type png)
  <use ClassDiagram1.png>
-Package pdftex.def Info: ClassDiagram1.png used on input line 1081.
+Package pdftex.def Info: ClassDiagram1.png used on input line 1085.
 (pdftex.def)             Requested size: 448.13095pt x 664.47726pt.
 
 
-LaTeX Warning: Float too large for page by 59.1678pt on input line 1084.
+LaTeX Warning: Float too large for page by 59.1678pt on input line 1088.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1089--1090
+Underfull \hbox (badness 10000) in paragraph at lines 1093--1094
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1091--1093
+Underfull \hbox (badness 10000) in paragraph at lines 1095--1097
 
  []
 
 [42] [43] [44] [45] [46]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1245.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1249.
  [47] [48 <./ClassDiagram1.png>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1245.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1249.
 
 ([ProjectGG]_Architekturbeschreibung.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1245.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 1245.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1249.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 1249.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1245.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1249.
  ) 
 Here is how much of TeX's memory you used:
- 10180 strings out of 493634
- 154491 string characters out of 3135646
- 323821 words of memory out of 3000000
- 13243 multiletter control sequences out of 15000+200000
- 10615 words of font info for 38 fonts, out of 3000000 for 9000
+ 10181 strings out of 493634
+ 154509 string characters out of 3135646
+ 323817 words of memory out of 3000000
+ 13244 multiletter control sequences out of 15000+200000
+ 10922 words of font info for 39 fonts, out of 3000000 for 9000
  1026 hyphenation exceptions out of 8191
  43i,12n,51p,1215b,641s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Users/Fabi/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/
@@ -1103,7 +1103,7 @@ si12.pfb><C:/Users/Fabi/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/am
 sfonts/cm/cmsy10.pfb><C:/Users/Fabi/AppData/Local/Programs/MiKTeX 2.9/fonts/typ
 e1/public/amsfonts/cm/cmti12.pfb><C:/Users/Fabi/AppData/Local/Programs/MiKTeX 2
 .9/fonts/type1/public/amsfonts/cm/cmti8.pfb>
-Output written on [ProjectGG]_Architekturbeschreibung.pdf (48 pages, 1205087 by
+Output written on [ProjectGG]_Architekturbeschreibung.pdf (48 pages, 1205532 by
 tes).
 PDF statistics:
  721 PDF objects out of 1000 (max. 8388607)
